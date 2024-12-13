@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Provider } from "@/components/providers/Provider";
+import clsx from "clsx";
+import { fontSans } from "@/config/fonts";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body >
+      <body  className={clsx("font-sans antialiased", fontSans.className)}>
         <Provider>{children}</Provider>
       </body>
     </html>

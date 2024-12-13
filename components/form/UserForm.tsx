@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import { useModalStore } from "@/store/ModalStore";
-import { Input } from "@nextui-org/react";
+import {  DateInput, DateValue, Input } from "@nextui-org/react";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
 import { SelectPackage } from "../select/SelectPackage";
@@ -17,26 +17,36 @@ export interface StateFormUser {
   address: string;
   email: string;
   phone: string;
-  photo?: string;
+  photo: string;
   stateId: string;
   packageId: string;
+  birthday: DateValue;
   languageId: string;
   roleId: string;
 }
 export const UserForm = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        watch,
-      } = useForm<StateFormUser>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    watch,
+  } = useForm<StateFormUser>();
   const [loading, setLoading] = useState(false);
   const { onClose } = useModalStore();
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
+    const date = new Date(
+      state.birthday.year,
+      state.birthday.month - 1,
+      state.birthday.day
+     )
+       .toISOString()
+       .split("T")[0];
     try {
-        state.photo='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtuphMb4mq-EcVWhMVT8FCkv5dqZGgvn_QiA&s'
-      const resp = await InsertUsers(state);
+      state.photo =
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtuphMb4mq-EcVWhMVT8FCkv5dqZGgvn_QiA&s";
+      const resp = await InsertUsers(state,date);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -48,7 +58,7 @@ export const UserForm = () => {
         position: "top-right",
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error("Ha ocurrido un error inesperado", {
         position: "top-right",
       });
@@ -56,7 +66,10 @@ export const UserForm = () => {
     setLoading(false);
   };
   return (
-    <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit(OnSubmit)}>
+    <form
+      className="grid grid-cols-1 md:grid-cols-2 gap-3"
+      onSubmit={handleSubmit(OnSubmit)}
+    >
       <Input
         type="text"
         label="Nombre"
@@ -66,7 +79,7 @@ export const UserForm = () => {
         isInvalid={!!errors.firstname}
         errorMessage={errors.firstname?.message}
       />
-       <Input
+      <Input
         type="text"
         label="Apellido"
         placeholder="Ingrese apellido"
@@ -75,7 +88,7 @@ export const UserForm = () => {
         isInvalid={!!errors.lastname}
         errorMessage={errors.lastname?.message}
       />
-       <Input
+      <Input
         type="text"
         label="Direccion"
         placeholder="Ingrese Direccion"
@@ -84,22 +97,22 @@ export const UserForm = () => {
         isInvalid={!!errors.address}
         errorMessage={errors.address?.message}
       />
-       <Input
+      <Input
         type="email"
         label="email"
         placeholder="Ingrese Email"
-        {...register("email", { 
-            required: "El campo es requerido", 
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Debe ingresar un email válido"
-            }
-          })}
+        {...register("email", {
+          required: "El campo es requerido",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Debe ingresar un email válido",
+          },
+        })}
         value={watch("email")}
         isInvalid={!!errors.email}
         errorMessage={errors.email?.message}
       />
-       <Input
+      <Input
         type="text"
         label="Celular"
         placeholder="Ingrese celular"
@@ -108,15 +121,28 @@ export const UserForm = () => {
         isInvalid={!!errors.phone}
         errorMessage={errors.phone?.message}
         startContent={
-        <div>
+          <div>
             <h1>+</h1>
-        </div>
+          </div>
         }
       />
-        <SelectState register={register} errors={errors} watch={watch}/>
-        <SelectPackage register={register} errors={errors} watch={watch}/>
-        <SelectLanguage register={register} errors={errors} watch={watch}/>
-        <SelectRole register={register} errors={errors} watch={watch}/>
+       <Controller
+            name="birthday"
+            control={control}
+            rules={{ required: "La fecha de nacimiento es requerida" }}
+            render={({ field }) => (
+              <DateInput
+                {...field}
+                label={"Fecha Nacimiento"}
+                isInvalid={!!errors.birthday}
+                errorMessage={errors.birthday?.message}
+              />
+            )}
+          />
+      <SelectState register={register} errors={errors} watch={watch} />
+      <SelectPackage register={register} errors={errors} watch={watch} />
+      <SelectLanguage register={register} errors={errors} watch={watch} />
+      <SelectRole register={register} errors={errors} watch={watch} />
       {/* <SelectCountry register={register} errors={errors} watch={watch} /> */}
       <CotentButtonForm state={loading} />
     </form>

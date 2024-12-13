@@ -9,7 +9,7 @@ export const CotentButtonForm = ({state}:Props) => {
   const { onClose } = useModalStore();
 
   return (
-    <div className="mt-5 flex justify-end flex-row">
+    <div className="mt-5 flex justify-end flex-row col-span-2">
       <Button color="danger" variant="light" onPress={onClose}>
         Cerrar
       </Button>

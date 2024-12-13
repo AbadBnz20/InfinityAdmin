@@ -65,7 +65,7 @@ export const SidebarWrapper = () => {
               />
               <SidebarItem
                 isActive={pathname === "/phones"}
-                title="Telefonos"
+                title="Celulares"
                 icon={<IoCall size={"20px"} />}
                 href="phones"
               />

@@ -21,8 +21,7 @@ export const ListUsers = async () => {
   //       role (name)
   //   `);
 
-  const { data: profile } = await supabase.from("profile_with_users")
-    .select(`
+  const { data: profile } = await supabase.from("profile_with_users").select(`
       *,
       state (name),
       package (name),
@@ -33,13 +32,26 @@ export const ListUsers = async () => {
   return profile as User[];
 };
 
-export const InsertUsers = async (user: StateFormUser) => {
+export interface UserData {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phono: string;
+}
+export const InsertUsers = async (user: StateFormUser,date:string) => {
+  const usercookie: UserData = {
+    firstname: user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    phono: user.photo,
+  };
+
   const { data, error } = await supabase.auth.admin.createUser({
     email: user.email,
     phone: user.phone,
     email_confirm: true,
     phone_confirm: true,
-    user_metadata: { firstname: user.firstname, lastname: user.lastname },
+    user_metadata: usercookie,
   });
 
   if (error) {
@@ -48,7 +60,8 @@ export const InsertUsers = async (user: StateFormUser) => {
       message: error.message,
     };
   }
-  let { data: users, error: error2 } = await supabase
+ 
+  const { data: users, error: error2 } = await supabase
     .from("profile")
     .insert([
       {
@@ -61,6 +74,7 @@ export const InsertUsers = async (user: StateFormUser) => {
         packageId: user.packageId,
         languageId: user.languageId,
         roleId: user.roleId,
+        birthday:date
       },
     ])
     .select();
