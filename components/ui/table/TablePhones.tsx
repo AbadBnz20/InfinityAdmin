@@ -2,6 +2,7 @@
 import { Phone } from "@/interfaces/phones-interfaces";
 import {
   Chip,
+  Pagination,
   Table,
   TableBody,
   TableCell,
@@ -9,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 export const columns = [
   { name: "Tipo", uid: "type" },
@@ -23,7 +24,7 @@ export const columns = [
 interface TableProps {
   items: Phone[];
 }
-export const TablePhones = ({ items }: TableProps) => {
+export const TablePhones = ({ items: rows }: TableProps) => {
   const renderCell = useCallback((item: Phone, columnKey: React.Key) => {
     switch (columnKey) {
       case "profile.firstname":
@@ -79,9 +80,72 @@ export const TablePhones = ({ items }: TableProps) => {
       // <span>{item[columnKey as keyof State]?.toString() || ""}</span>;
     }
   }, []);
+
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(1);
+  const pages = Math.ceil(rows.length / rowsPerPage);
+
+  const items = React.useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return rows.slice(start, end);
+  }, [page, rows, rowsPerPage]);
+
+  const onRowsPerPageChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setRowsPerPage(Number(e.target.value));
+      setPage(1);
+    },
+    []
+  );
+
+  const topContent = useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <span className="text-default-400 text-small">
+            Total {rows.length} items
+          </span>
+          <label className="flex items-center text-default-400 text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    );
+  }, [onRowsPerPageChange]);
+
+  const bottomContent = useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-center items-center">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+      </div>
+    );
+  }, [items.length, page, pages]);
+
   return (
     <div className=" w-full flex flex-col gap-4">
-      <Table aria-label="Example table with custom cells">
+      <Table
+        topContent={topContent}
+        bottomContent={bottomContent}
+        aria-label="Example table with custom cells"
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn

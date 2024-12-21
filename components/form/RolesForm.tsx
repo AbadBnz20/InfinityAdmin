@@ -1,78 +1,129 @@
-'use client';
+"use client";
 
 import { GetRole, InsertRole } from "@/actions/roles.action";
 import { useModalStore } from "@/store/ModalStore";
-import { Input } from "@nextui-org/react";
+import { Checkbox, CheckboxGroup, Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
-
+import { ChecboxModules } from "../select/ChecboxModules";
 
 export interface StateForm {
-    id?: string;
-    name: string;
-  }
+  id?: string;
+  name: string;
+}
+type action = "register" | "update" | "delete";
 export const RolesForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<StateForm>();
+  const [loading, setLoading] = useState(false);
+  const { onClose, idItem } = useModalStore();
+  const [groupSelected, setGroupSelected] = useState<string[]>([]);
+  const [actionSelected, setactionSelected] = useState<action[]>([]);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        setValue,
-        watch,
-      } = useForm<StateForm>();
-      const [loading, setLoading] = useState(false);
-      const { onClose, idItem } = useModalStore();
-    
-      useEffect(() => {
-        const GetItem = async () => {
-          if (idItem) {
-            const resp = await GetRole(idItem);
-            setValue("id", resp.roleId);
-            setValue("name", resp.name);
+  useEffect(() => {
+    const GetItem = async () => {
+      if (idItem) {
+        const resp = await GetRole(idItem);
+        console.log(resp);
+        setGroupSelected(resp.permissions.map((item) => item.moduleId));
+        if (resp.permissions.length > 0) {
+          const selectedActions: action[] = [];
+          if (resp.permissions[0].delete) {
+            selectedActions.push("delete");
           }
-        };
-    
-        GetItem();
-      }, [idItem]);
-
-      const OnSubmit = async (state: StateForm) => {
-        setLoading(true);
-        try {
-          const resp = await InsertRole(state.name,state.id);
-          if (!resp.status) {
-            onClose();
-            return toast.error(resp.message, {
-              position: "top-right",
-            });
+          if (resp.permissions[0].update) {
+            selectedActions.push("update");
           }
-          onClose();
-          toast.success(resp.message, {
-            position: "top-right",
-          });
-        } catch (error) {
-          console.log(error)
-          toast.error("Ha ocurrido un error inesperado", {
-            position: "top-right",
-          });
+          if (resp.permissions[0].write) {
+            selectedActions.push("register");
+          }
+          setactionSelected(selectedActions);
         }
-        setLoading(false);
-      };
+
+        setValue("id", resp.roleId);
+        setValue("name", resp.name);
+      }
+    };
+
+    GetItem();
+  }, [idItem]);
+
+  const OnSubmit = async (state: StateForm) => {
+    setLoading(true);
+
+    if (groupSelected.length === 0) {
+      setLoading(false);
+      return toast.error("Seleccione un modulo", {
+        position: "top-right",
+      });
+    }
+
+    try {
+      const resp = await InsertRole(
+        state.name,
+        groupSelected,
+        actionSelected,
+        state.id
+      );
+      if (!resp.status) {
+        onClose();
+        return toast.error(resp.message, {
+          position: "top-right",
+        });
+      }
+      onClose();
+      toast.success(resp.message, {
+        position: "top-right",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Ha ocurrido un error inesperado", {
+        position: "top-right",
+      });
+    }
+    setLoading(false);
+  };
+
+  const handleActionChange = (value: string[]) => {
+    setactionSelected(value as action[]);
+  };
 
   return (
     <form onSubmit={handleSubmit(OnSubmit)}>
-    <Input
-      type="text"
-      label="Nombre"
-      placeholder="Ingrese nombre"
-      {...register("name", { required: "El campo es requerido" })}
-      value={watch("name")}
-      isInvalid={!!errors.name}
-      errorMessage={errors.name?.message}
-    />
+      <Input
+        type="text"
+        label="Nombre"
+        placeholder="Ingrese nombre"
+        {...register("name", { required: "El campo es requerido" })}
+        value={watch("name")}
+        isInvalid={!!errors.name}
+        errorMessage={errors.name?.message}
+      />
 
-    <CotentButtonForm state={loading} />
-  </form>
-  )
-}
+      <div className="grid grid-cols-2 mt-3">
+        <ChecboxModules
+          groupSelected={groupSelected}
+          setGroupSelected={setGroupSelected}
+        />
+        <CheckboxGroup
+          value={actionSelected}
+          onChange={handleActionChange}
+          label="Acciones"
+        >
+          <Checkbox value="register">Registrar</Checkbox>
+          <Checkbox value="update">Editar</Checkbox>
+          <Checkbox value="delete">Eliminar</Checkbox>
+        </CheckboxGroup>
+      </div>
+
+      <CotentButtonForm state={loading} />
+    </form>
+  );
+};

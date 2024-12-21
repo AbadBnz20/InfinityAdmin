@@ -5,9 +5,10 @@ import { TableRoles } from "@/components/ui/table/TableRoles";
 
 export default async function RolesPage() {
   const roles = await ListRoles();
+  // console.log(roles);
   return (
     <div className="container">
-      <h3 className="text-xl font-semibold">Estados</h3>
+      <h3 className="text-xl font-semibold">Roles</h3>
       <div className="my-3">
         <ModalMain title="Registrar Nuevo Rol">
           <RolesForm />
