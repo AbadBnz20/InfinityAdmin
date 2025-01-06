@@ -1,7 +1,10 @@
+'use server';
 import { Modules } from "@/interfaces/module-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 
 export const ListModules = async () => {
+        const supabase = await createClient();
+  
   const { data: modules, error } = await supabase.from("modules").select("*");
   return modules as Modules[];
 };
@@ -12,6 +15,8 @@ export const InsertModule = async (
   modules: string[],
   action: action[]
 ) => {
+  const supabase = await createClient();
+
   const verifiedregister: boolean = action.includes("register");
   const verifiedupdate: boolean = action.includes("update");
   const verifieddelete: boolean = action.includes("delete");

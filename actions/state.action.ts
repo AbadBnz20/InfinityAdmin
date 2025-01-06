@@ -1,9 +1,11 @@
 'use server';
 import { State } from "@/interfaces/state-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 
 export const ListStates = async () => {
+    const supabase = await createClient();
+  
   const { data: state } = await supabase.from("state").select(`
       *,
       country (
@@ -18,6 +20,8 @@ export const InsertState = async (
   idcountry: string,
   id?: string
 ) => {
+  const supabase = await createClient();
+
   let response;
   if (id) {
     response = await supabase
@@ -47,6 +51,8 @@ export const InsertState = async (
 };
 
 export const GetState = async (id: string) => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("state")
     .select("*")
@@ -60,6 +66,8 @@ export const GetState = async (id: string) => {
 
 
 export const DeleteState = async (id: string) => {
+  const supabase = await createClient();
+
   const { error } = await supabase
     .from("state")
     .update({ state: false })

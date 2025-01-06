@@ -1,10 +1,12 @@
 'use server';
 
 import { Phone } from "@/interfaces/phones-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 
 
 export const ListPhone = async () => {
+    const supabase = await createClient();
+  
     let { data: phone, error } = await supabase
   .from('phone')
   .select(`*,

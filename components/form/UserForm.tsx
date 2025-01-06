@@ -1,6 +1,6 @@
 "use client";
 import { useModalStore } from "@/store/ModalStore";
-import {  DateInput, DateValue, Input } from "@nextui-org/react";
+import {  Autocomplete, AutocompleteItem, Avatar, DateInput, DateValue, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
@@ -10,6 +10,7 @@ import { SelectLanguage } from "../select/SelectLanguage";
 import SelectRole from "../select/SelectRole";
 import { InsertUsers } from "@/actions/user.action";
 import { toast } from "react-toastify";
+import { Contries } from "@/data/countries";
 
 export interface StateFormUser {
   firstname: string;
@@ -17,6 +18,7 @@ export interface StateFormUser {
   address: string;
   email: string;
   phone: string;
+  code: string;
   photo: string;
   stateId: string;
   packageId: string;
@@ -46,6 +48,7 @@ export const UserForm = () => {
     try {
       state.photo =
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtuphMb4mq-EcVWhMVT8FCkv5dqZGgvn_QiA&s";
+       state.code = state.code.replace("+", ""); 
       const resp = await InsertUsers(state,date);
       if (!resp.status) {
         onClose();
@@ -112,20 +115,55 @@ export const UserForm = () => {
         isInvalid={!!errors.email}
         errorMessage={errors.email?.message}
       />
+      <div className="grid grid-cols-3">
+      <Controller
+        name="code"
+        control={control}
+        rules={{ required: "El campo es requerido" }}
+        render={({ field }) => (
+          <Autocomplete
+            {...field}
+           
+            defaultItems={Contries}
+            label="Code"
+            placeholder="+"
+            errorMessage={errors.code?.message}
+            isInvalid={!!errors.code}
+            onInputChange={(value) => field.onChange(value)}
+          >
+            {(item) => (
+              <AutocompleteItem
+                key={item.key}
+                value={item.code}
+                startContent={
+                  <Avatar
+                    alt={item.code}
+                    className="w-6 h-6"
+                    src={item.image}
+                  />
+                }
+              >
+                {item.code}
+              </AutocompleteItem>
+            )}
+          </Autocomplete>
+        )}
+      />
       <Input
         type="text"
         label="Celular"
+        className="col-span-2"
         placeholder="Ingrese celular"
-        {...register("phone", { required: "El campo es requerido" })}
+        {...register("phone", { required: "El campo es requerido",pattern: {
+          value: /^[0-9]+$/,
+          message: "Solo se permiten números",
+        }, })}
         value={watch("phone")}
         isInvalid={!!errors.phone}
         errorMessage={errors.phone?.message}
-        startContent={
-          <div>
-            <h1>+</h1>
-          </div>
-        }
       />
+
+      </div>
        <Controller
             name="birthday"
             control={control}

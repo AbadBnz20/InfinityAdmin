@@ -1,14 +1,18 @@
 "use server";
 import { Countries } from "@/interfaces/countries-interfaces";
-import { supabase } from "../utils/server";
+import { createClient } from "../utils/server";
 import { revalidatePath } from "next/cache";
 
 export const ListCountries = async () => {
+      const supabase = await createClient();
+  
   const { data: country } = await supabase.from("country").select("*");
   return country as Countries[];
 };
 
 export const InsertCountry = async (name: string, id?: string) => {
+  const supabase = await createClient();
+
   let response;
   if (id) {
     response = await supabase
@@ -37,6 +41,8 @@ export const InsertCountry = async (name: string, id?: string) => {
   };
 };
 export const GetCountry = async (id: string) => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("country")
     .select("*")
@@ -49,6 +55,8 @@ export const GetCountry = async (id: string) => {
 };
 
 export const DeleteCountry = async (id: string) => {
+  const supabase = await createClient();
+
   const { error } = await supabase
     .from("country")
     .update({ state: false })
@@ -70,6 +78,8 @@ export const DeleteCountry = async (id: string) => {
 };
 
 export const GetCountryActive = async () => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("country")
     .select("*")

@@ -5,7 +5,6 @@ import { TableRoles } from "@/components/ui/table/TableRoles";
 
 export default async function RolesPage() {
   const roles = await ListRoles();
-  // console.log(roles);
   return (
     <div className="container">
       <h3 className="text-xl font-semibold">Roles</h3>

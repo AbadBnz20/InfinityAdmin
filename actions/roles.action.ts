@@ -1,11 +1,13 @@
 "use server";
 
 import { Role } from "@/interfaces/roles-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 import { InsertModule } from "./modules.action";
 
 export const ListRoles = async () => {
+      const supabase = await createClient();
+  
   const { data: roles } = await supabase.from("role").select(`
     *,
     permissions(
@@ -23,6 +25,8 @@ export const InsertRole = async (
   action: action[],
   id?: string
 ) => {
+  const supabase = await createClient();
+
   let response;
   if (id) {
     response = await supabase
@@ -63,6 +67,8 @@ export const InsertRole = async (
 };
 
 export const GetRole = async (id: string) => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("role")
     .select(
@@ -83,6 +89,8 @@ export const GetRole = async (id: string) => {
 };
 
 export const DeleteRole = async (id: string) => {
+  const supabase = await createClient();
+
   const { error } = await supabase
     .from("role")
     .update({ state: false })

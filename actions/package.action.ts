@@ -2,10 +2,12 @@
 
 import { FormStatePackage } from "@/components/form/PackageForm";
 import { Packages } from "@/interfaces/package-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 
 export const ListPackages = async () => {
+      const supabase = await createClient();
+  
     let { data } = await supabase
     .from('package')
     .select('*');
@@ -13,6 +15,8 @@ export const ListPackages = async () => {
   };
 
   export const InsertPackages = async (packages:FormStatePackage) => {
+    const supabase = await createClient();
+
     let response;
     if (packages.id) {
       response = await supabase
@@ -42,6 +46,8 @@ export const ListPackages = async () => {
   };
 
   export const GetPackage = async (id: string) => {
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from("package")
       .select("*")
@@ -55,6 +61,8 @@ export const ListPackages = async () => {
 
 
   export const DeletePackage = async (id: string) => {
+    const supabase = await createClient();
+
     const { error } = await supabase
       .from("package")
       .update({ state: false })

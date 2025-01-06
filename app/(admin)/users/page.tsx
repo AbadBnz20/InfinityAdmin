@@ -9,7 +9,7 @@ export default async function UsersPage() {
     <div className="container">
       <h3 className="text-xl font-semibold">Usuarios</h3>
       <div className="my-3">
-        <ModalMain title="Registrar Nuevo Estado" size="3xl">
+        <ModalMain title="Registrar Nuevo Usuario" size="3xl">
           <UserForm />
         </ModalMain>
       </div>

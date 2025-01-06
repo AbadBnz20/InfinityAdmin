@@ -5,7 +5,7 @@ import { Packages } from "@/interfaces/package-interfaces";
 import { Role } from "@/interfaces/roles-interfaces";
 import { State } from "@/interfaces/state-interfaces";
 import { User } from "@/interfaces/users-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
@@ -20,7 +20,7 @@ export const ListUsers = async () => {
   //       language (name),
   //       role (name)
   //   `);
-
+  const supabase = await createClient();
   const { data: profile } = await supabase.from("profile_with_users").select(`
       *,
       state (name),
@@ -39,6 +39,8 @@ export interface UserData {
   phono: string;
 }
 export const InsertUsers = async (user: StateFormUser,date:string) => {
+  const supabase = await createClient();
+
   const usercookie: UserData = {
     firstname: user.firstname,
     lastname: user.lastname,
@@ -48,7 +50,7 @@ export const InsertUsers = async (user: StateFormUser,date:string) => {
 
   const { data, error } = await supabase.auth.admin.createUser({
     email: user.email,
-    phone: user.phone,
+    phone: `${user.code}${user.phone}`,
     email_confirm: true,
     phone_confirm: true,
     user_metadata: usercookie,
@@ -61,6 +63,8 @@ export const InsertUsers = async (user: StateFormUser,date:string) => {
     };
   }
  
+ 
+
   const { data: users, error: error2 } = await supabase
     .from("profile")
     .insert([
@@ -79,6 +83,15 @@ export const InsertUsers = async (user: StateFormUser,date:string) => {
     ])
     .select();
 
+    const { data:phone  } = await supabase
+    .from('phone')
+    .insert([
+      { type: 'Phone', code: user.code, number: user.phone, profileId: users?.[0].profileId },
+    ])
+    .select()
+
+
+
   if (error2) {
     return {
       status: false,
@@ -93,6 +106,8 @@ export const InsertUsers = async (user: StateFormUser,date:string) => {
 };
 
 export const GetStateActive = async () => {
+  const supabase = await createClient();
+
   const { data: state, error } = await supabase
     .from("state")
     .select("*")
@@ -104,6 +119,8 @@ export const GetStateActive = async () => {
 };
 
 export const GetPackageActive = async () => {
+  const supabase = await createClient();
+
   const { data: state, error } = await supabase
     .from("package")
     .select("*")
@@ -115,6 +132,8 @@ export const GetPackageActive = async () => {
 };
 
 export const GetLanguagesActive = async () => {
+  const supabase = await createClient();
+
   const { data: state, error } = await supabase
     .from("language")
     .select("*")
@@ -126,6 +145,8 @@ export const GetLanguagesActive = async () => {
 };
 
 export const GetRoleActive = async () => {
+  const supabase = await createClient();
+
   const { data: state, error } = await supabase
     .from("role")
     .select("*")

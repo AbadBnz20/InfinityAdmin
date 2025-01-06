@@ -1,3 +1,4 @@
+'use client';
 import { ListModules } from "@/actions/modules.action";
 import { Modules } from "@/interfaces/module-interfaces";
 import { Checkbox, CheckboxGroup, Spinner } from "@nextui-org/react"

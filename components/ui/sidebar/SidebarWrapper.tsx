@@ -15,6 +15,7 @@ import {
   IoGlobe,
   IoHome,
   IoPeople,
+  IoSwapHorizontalOutline,
 } from "react-icons/io5";
 import { SidebarMenu } from "./SidebarMenu";
 
@@ -88,6 +89,12 @@ export const SidebarWrapper = () => {
                 icon={<IoGlobe size={"20px"} />}
                 href="languages"
               />
+              <SidebarItem
+                isActive={pathname === "/cars"}
+                title="Vehiculos"
+                icon={<IoCar size={"20px"} />}
+                href="cars"
+              />
             </SidebarMenu>
 
             <SidebarMenu title="Administracion">
@@ -107,7 +114,7 @@ export const SidebarWrapper = () => {
                 isActive={pathname === "/transfers"}
                 title="Traslados"
                 href="transfers"
-                icon={<IoCar size={"20px"} />}
+                icon={<IoSwapHorizontalOutline size={"20px"} />}
               />
                <SidebarItem
                 isActive={pathname === "/points"}

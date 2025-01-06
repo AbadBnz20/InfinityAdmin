@@ -1,9 +1,11 @@
 'use server';
 import { Languages } from "@/interfaces/languages-interfaces";
-import { supabase } from "@/utils/server";
+import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 
 export const ListLanguages = async () => {
+    const supabase = await createClient();
+  
   const { data: language } = await supabase
     .from('language')
     .select('*')
@@ -14,6 +16,8 @@ export const InsertLanguages = async (
     name: string,
     id?: string
   ) => {
+    const supabase = await createClient();
+
     let response;
     if (id) {
       response = await supabase
@@ -43,6 +47,8 @@ export const InsertLanguages = async (
   };
 
   export const GetLanguage = async (id: string) => {
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from("language")
       .select("*")
@@ -54,6 +60,8 @@ export const InsertLanguages = async (
     return data?.[0] as Languages;
   };
   export const DeleteLanguage = async (id: string) => {
+    const supabase = await createClient();
+
     const { error } = await supabase
       .from("language")
       .update({ state: false })
