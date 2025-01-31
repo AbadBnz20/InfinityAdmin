@@ -9,7 +9,8 @@ interface Props {
     errors: FieldErrors<StateFormUser>;
     watch: UseFormWatch<StateFormUser>;
   }
-export const SelectLanguage = ({ register, errors }: Props) => {
+export const SelectLanguage = ({ register, errors,watch }: Props) => {
+    const value = watch("languageId");
     const [data, setdata] = useState<Languages[]>([]);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -21,7 +22,7 @@ export const SelectLanguage = ({ register, errors }: Props) => {
       };
   
       GetCountry();
-    }, []);
+    }, [value]);
     if (loading) {
       return (
         <div className="my-4">

@@ -1,45 +1,37 @@
 "use client";
-import { Languages } from "@/interfaces/languages-interfaces";
+import { Category } from "@/interfaces/destinations-interfaces";
 import { useModalStore } from "@/store/ModalStore";
-import {
-  Chip,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Tooltip,
-} from "@nextui-org/react";
+import { Chip, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
-import { DeleteLanguage } from "@/actions/languages.actions";
 import { ModalConfirm } from "../modal/ModalConfirm";
-
+import { DeleteCategory } from "@/actions/destinations.action";
 export const columns = [
   { name: "Nombre", uid: "name" },
   { name: "Estado", uid: "state" },
   { name: "Acciones", uid: "actions" },
 ];
 interface TableProps {
-  items: Languages[];
+  items: Category[];
   update: boolean;
   deletecell: boolean;
 }
-export const TableLanguages = ({
+export const TableCategory = ({
   items: rows,
   update,
   deletecell,
 }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
+  const renderCell = useCallback((user: Category, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof Category];
 
-  const renderCell = useCallback((item: Languages, columnKey: React.Key) => {
     switch (columnKey) {
       case "name":
         return (
           <div>
-            <span>{item.name}</span>
+            <div>
+              <span>{cellValue}</span>
+            </div>
           </div>
         );
       case "state":
@@ -47,38 +39,38 @@ export const TableLanguages = ({
           <Chip
             size="sm"
             variant="flat"
-            color={item.state ? "success" : "danger"}
+            color={cellValue ? "success" : "danger"}
           >
             <span className="capitalize text-xs">
-              {item.state ? "Activo" : "Inactivo"}
+              {cellValue ? "Activo" : "Inactivo"}
             </span>
           </Chip>
         );
+
       case "actions":
         return (
-          <div className="flex items-center gap-4">
-            {update && (
-              <Tooltip content="Editar" color="primary">
-                <button
-                  onClick={() => {
-                    onChanseItem(item.languageId);
-                    onOpen();
-                  }}
-                >
-                  <EditIcon size={20} fill="#979797" />
-                </button>
-              </Tooltip>
-            )}
+          <div className="flex items-center gap-4 ">
+            <div>
+              {update && (
+                <Tooltip content="Editar" color="primary">
+                  <button
+                    onClick={() => {
+                      onChanseItem(user.categoryId);
+                      onOpen();
+                    }}
+                  >
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
+                </Tooltip>
+              )}
+            </div>
             {deletecell && (
-              <ModalConfirm
-                idItem={item.languageId}
-                Ondelete={DeleteLanguage}
-              />
+              <ModalConfirm idItem={user.categoryId} Ondelete={DeleteCategory} />
             )}
           </div>
         );
       default:
-        return;
+        return cellValue;
     }
   }, []);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -138,35 +130,34 @@ export const TableLanguages = ({
       </div>
     );
   }, [items.length, page, pages]);
-
   return (
-    <div className=" w-full flex flex-col gap-4">
-      <Table
-        topContent={topContent}
-        bottomContent={bottomContent}
-        aria-label="Example table with custom cells"
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              hideHeader={column.uid === "actions"}
-              align={column.uid === "actions" ? "center" : "start"}
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody emptyContent={"No hay items para mostrar"} items={items}>
-          {(item) => (
-            <TableRow key={item.languageId}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+    <div className="w-full flex flex-col gap-4">
+    <Table
+      topContent={topContent}
+      bottomContent={bottomContent}
+      aria-label="Example table with custom cells"
+    >
+      <TableHeader columns={columns}>
+        {(column) => (
+          <TableColumn
+            key={column.uid}
+            hideHeader={column.uid === "actions"}
+            align={column.uid === "actions" ? "center" : "start"}
+          >
+            {column.name}
+          </TableColumn>
+        )}
+      </TableHeader>
+      <TableBody emptyContent={"No hay items para mostrar"} items={items}>
+        {(item) => (
+          <TableRow key={item.categoryId}>
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  </div>
   );
 };

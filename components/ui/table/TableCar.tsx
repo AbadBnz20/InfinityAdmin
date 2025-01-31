@@ -1,5 +1,6 @@
 "use client";
 import { Car } from "@/interfaces/car-interfaces";
+import { useModalStore } from "@/store/ModalStore";
 import {
   Chip,
   Image,
@@ -10,14 +11,21 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
 } from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
+import { EditIcon } from "../icons/edit-icon";
+import { DeleteCar } from "@/actions/car.actions";
+import { ModalConfirm } from "../modal/ModalConfirm";
 
 export const columns = [
-    { name: "Imagen", uid: "image" },
+  { name: "Imagen", uid: "image" },
+  { name: "Tipo", uid: "type" },
+  { name: "Marca", uid: "brand" },
   { name: "Modelo", uid: "model" },
   { name: "Placa", uid: "plate" },
   { name: "Capacidad", uid: "ability" },
+  { name: "Color", uid: "color" },
   { name: "Descripcion", uid: "description" },
   { name: "Precio por traslado", uid: "transferprice" },
   { name: "Estado", uid: "state" },
@@ -26,8 +34,12 @@ export const columns = [
 
 interface TableProps {
   items: Car[];
+  update: boolean;
+  deletecell: boolean;
 }
-export const TableCar = ({ items: rows }: TableProps) => {
+
+export const TableCar = ({ items: rows,update,deletecell }: TableProps) => {
+    const { onChanseItem, onOpen } = useModalStore();
   const renderCell = useCallback((item: Car, columnKey: React.Key) => {
     switch (columnKey) {
       case "image":
@@ -36,6 +48,18 @@ export const TableCar = ({ items: rows }: TableProps) => {
             <Image alt="NextUI hero Image" src={item.image} width={150} />
           </div>
         );
+      case "type":
+        return (
+          <div>
+            <span>{item.type}</span>
+          </div>
+        );
+        case "brand":
+          return (
+            <div>
+              <span>{item.brand}</span>
+            </div>
+          );
       case "model":
         return (
           <div>
@@ -54,7 +78,13 @@ export const TableCar = ({ items: rows }: TableProps) => {
             <span>{item.ability}</span>
           </div>
         );
-
+        case "color":
+          return (
+            <div>
+              <span>{item.color}</span>
+            </div>
+          );
+  
       case "description":
         return (
           <div>
@@ -83,7 +113,24 @@ export const TableCar = ({ items: rows }: TableProps) => {
       case "actions":
         return (
           <div className="flex items-center gap-4">
-            {/* <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} /> */}
+             <div>
+              {update && (
+                <Tooltip content="Editar" color="primary">
+                  <button
+                    onClick={() => {
+                      onChanseItem(item.carId);
+                      onOpen();
+                    }}
+                  >
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
+                </Tooltip>
+              )}
+            </div>
+            {
+              deletecell && <ModalConfirm idItem={item.carId} Ondelete={DeleteCar} />
+            }
+            
           </div>
         );
       default:

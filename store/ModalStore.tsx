@@ -12,7 +12,9 @@ interface ModalState {
 export const useModalStore = create<ModalState>((set) => ({
   isOpen: false,
   idItem: null,
-  onOpen: () => set({ isOpen: true }),
+  onOpen: () => {
+    set({ isOpen: true })
+  },
   onClose: () => set({ isOpen: false, idItem: null}),
   onChanseItem: (id)=>{
     set({idItem:id});

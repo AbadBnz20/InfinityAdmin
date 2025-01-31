@@ -1,5 +1,5 @@
 "use client";
-import { Languages } from "@/interfaces/languages-interfaces";
+import { DestinationShip } from "@/interfaces/destinations-interfaces";
 import { useModalStore } from "@/store/ModalStore";
 import {
   Chip,
@@ -14,85 +14,91 @@ import {
 } from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
-import { DeleteLanguage } from "@/actions/languages.actions";
 import { ModalConfirm } from "../modal/ModalConfirm";
+import { DeleteDestinationShip } from "@/actions/destinationship";
 
 export const columns = [
   { name: "Nombre", uid: "name" },
   { name: "Estado", uid: "state" },
   { name: "Acciones", uid: "actions" },
 ];
+
 interface TableProps {
-  items: Languages[];
+  items: DestinationShip[];
   update: boolean;
   deletecell: boolean;
 }
-export const TableLanguages = ({
+export const TableDestinationShip = ({
   items: rows,
   update,
   deletecell,
 }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
 
-  const renderCell = useCallback((item: Languages, columnKey: React.Key) => {
-    switch (columnKey) {
-      case "name":
-        return (
-          <div>
-            <span>{item.name}</span>
-          </div>
-        );
-      case "state":
-        return (
-          <Chip
-            size="sm"
-            variant="flat"
-            color={item.state ? "success" : "danger"}
-          >
-            <span className="capitalize text-xs">
-              {item.state ? "Activo" : "Inactivo"}
-            </span>
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="flex items-center gap-4">
-            {update && (
-              <Tooltip content="Editar" color="primary">
-                <button
-                  onClick={() => {
-                    onChanseItem(item.languageId);
-                    onOpen();
-                  }}
-                >
-                  <EditIcon size={20} fill="#979797" />
-                </button>
-              </Tooltip>
-            )}
-            {deletecell && (
+  const renderCell = useCallback(
+    (item: DestinationShip, columnKey: React.Key) => {
+      switch (columnKey) {
+        case "name":
+          return (
+            <div>
+              <span>{item.name}</span>
+            </div>
+          );
+
+        case "state":
+          return (
+            <Chip
+              size="sm"
+              variant="flat"
+              color={item.state ? "success" : "danger"}
+            >
+              <span className="capitalize text-xs">
+                {item.state ? "Activo" : "Inactivo"}
+              </span>
+            </Chip>
+          );
+        case "actions":
+          return (
+            <div className="flex items-center gap-4">
+              {update && (
+                <Tooltip content="Editar" color="primary">
+                  <button
+                    onClick={() => {
+                      onChanseItem(item.origin_destination_ship_id);
+                      onOpen();
+                    }}
+                  >
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
+                </Tooltip>
+              )}
+              {deletecell && (
               <ModalConfirm
-                idItem={item.languageId}
-                Ondelete={DeleteLanguage}
+                idItem={item.origin_destination_ship_id}
+                Ondelete={DeleteDestinationShip}
               />
             )}
-          </div>
-        );
-      default:
-        return;
-    }
-  }, []);
+            </div>
+          );
+        default:
+          return;
+      }
+    },
+    []
+  );
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const pages = Math.ceil(rows.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
     return rows.slice(start, end);
   }, [page, rows, rowsPerPage]);
 
-  const onRowsPerPageChange = React.useCallback(
+  const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
@@ -157,9 +163,9 @@ export const TableLanguages = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No hay items para mostrar"} items={items}>
+        <TableBody items={items}>
           {(item) => (
-            <TableRow key={item.languageId}>
+            <TableRow key={item.origin_destination_ship_id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

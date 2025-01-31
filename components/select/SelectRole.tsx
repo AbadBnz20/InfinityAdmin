@@ -10,7 +10,8 @@ interface Props {
   errors: FieldErrors<StateFormUser>;
   watch: UseFormWatch<StateFormUser>;
 }
-const SelectRole = ({ register, errors }: Props) => {
+const SelectRole = ({ register, errors,watch }: Props) => {
+  const value = watch("roleId");
   const [data, setdata] = useState<Role[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -22,7 +23,7 @@ const SelectRole = ({ register, errors }: Props) => {
     };
 
     GetCountry();
-  }, []);
+  }, [value]);
   if (loading) {
     return (
       <div className="my-4">

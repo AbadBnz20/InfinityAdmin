@@ -19,8 +19,10 @@ export const columns = [
 
   interface TableProps {
     items: State[];
+    update:boolean,
+    deletecell:boolean
   }
-export const TableState = ({ items:rows}: TableProps) => {
+export const TableState = ({ items:rows,update,deletecell }: TableProps) => {
     const { onChanseItem, onOpen } = useModalStore();
 
     const renderCell = useCallback((item: State, columnKey: React.Key) => {
@@ -52,7 +54,8 @@ export const TableState = ({ items:rows}: TableProps) => {
           case "actions":
             return (
               <div className="flex items-center gap-4">
-                <Tooltip content="Editar" color="primary">
+                {
+                  update &&  <Tooltip content="Editar" color="primary">
                   <button
                     onClick={() => {
                       onChanseItem(item.stateId);
@@ -62,7 +65,11 @@ export const TableState = ({ items:rows}: TableProps) => {
                     <EditIcon size={20} fill="#979797" />
                   </button>
                 </Tooltip>
-                <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} />
+                }
+                {
+                  deletecell && <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} />
+                }
+               
               </div>
             );
           default:

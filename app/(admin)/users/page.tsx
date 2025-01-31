@@ -1,19 +1,31 @@
+import { GetPermissionBySession } from "@/actions/permissions.action";
 import { ListUsers } from "@/actions/user.action";
 import { UserForm } from "@/components/form/UserForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
 import { TableUser } from "@/components/ui/table/TableUser";
 
 export default async function UsersPage() {
-  const users = await ListUsers();
+  const [users, permission] = await Promise.all([
+    ListUsers(),
+    GetPermissionBySession("Usuarios"),
+  ]);
   return (
     <div className="container">
       <h3 className="text-xl font-semibold">Usuarios</h3>
-      <div className="my-3">
-        <ModalMain title="Registrar Nuevo Usuario" size="3xl">
-          <UserForm />
-        </ModalMain>
-      </div>
-      <TableUser items={users} />
+      {permission && (
+        <>
+          <div className="my-3">
+            <ModalMain
+              active={permission.write}
+              title="Registrar Nuevo Usuario"
+              size="3xl"
+            >
+              <UserForm />
+            </ModalMain>
+          </div>
+          {permission.read && <TableUser items={users} update />}
+        </>
+      )}
     </div>
   );
 }

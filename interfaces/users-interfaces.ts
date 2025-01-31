@@ -21,3 +21,22 @@ export interface User {
 interface Property{
     name: string;
 }
+
+
+
+export interface Profile {
+  profileId: string;
+  firstname: string;
+  lastname: string;
+  address: string;
+  photo: string;
+  userId: string;
+  email: string;
+  phone: string;
+  created_at: string;
+  stateId: string;
+  packageId: string;
+  languageId: string;
+  roleId:string;
+  discount:string,
+}

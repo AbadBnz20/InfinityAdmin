@@ -9,7 +9,8 @@ interface Props {
     errors: FieldErrors<StateFormUser>;
     watch: UseFormWatch<StateFormUser>;
   }
-export const SelectPackage = ({ register, errors }: Props) => {
+export const SelectPackage = ({ register, errors,watch }: Props) => {
+    const value = watch("packageId");
     const [data, setdata] = useState<Packages[]>([]);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -21,7 +22,7 @@ export const SelectPackage = ({ register, errors }: Props) => {
       };
   
       GetCountry();
-    }, []);
+    }, [value]);
     if (loading) {
       return (
         <div className="my-4">

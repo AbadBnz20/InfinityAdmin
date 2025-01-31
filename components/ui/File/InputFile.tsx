@@ -12,8 +12,9 @@ interface Props {
   control: Control<StateFormCard>;
   errors?: FieldErrors<StateFormCard>;
   watch: UseFormWatch<StateFormCard>;
+  isRequired: boolean;
 }
-export const InputFile = ({ control, errors }: Props) => {
+export const InputFile = ({ control, errors, isRequired }: Props) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -33,7 +34,7 @@ export const InputFile = ({ control, errors }: Props) => {
     event.preventDefault();
     const file = event.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
-        field.onChange(file);
+      field.onChange(file);
       const url = URL.createObjectURL(file);
       setImageUrl(url);
     }
@@ -50,7 +51,7 @@ export const InputFile = ({ control, errors }: Props) => {
       if (inputRef.current) {
         inputRef.current.value = "";
       }
-      field.onChange(null); 
+      field.onChange(null);
     }
   };
 
@@ -66,16 +67,18 @@ export const InputFile = ({ control, errors }: Props) => {
     <Controller
       name={"image"}
       control={control}
-      rules={{ required: "Debe seleccionar una foto de usted" }}
+      rules={{
+        required: isRequired ? "Debe seleccionar una foto de usted" : false,
+      }}
       render={({ field }) => (
         <div className="w-full max-w-md mx-auto space-y-4">
           <div className="p-4">
             <div
               className={`border-2 ${
-                errors?.image ? "border-red-500" : "border-dashed"
+                errors?.image ? "border-[#f31260]" : "border-dashed"
               } border-dashed  rounded-lg p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors`}
               onClick={() => inputRef.current?.click()}
-              onDrop={(e)=>handleDrop(e, field)}
+              onDrop={(e) => handleDrop(e, field)}
               onDragOver={handleDragOver}
             >
               <input
@@ -107,7 +110,7 @@ export const InputFile = ({ control, errors }: Props) => {
               ) : (
                 <div
                   className={`py-8 flex flex-col items-center gap-2 text-muted-foreground   ${
-                    errors?.image ? "text-red-500" : "text-gray-700"
+                    errors?.image ? "text-[#f31260]" : "text-gray-700"
                   }`}
                 >
                   <IoImageOutline className="w-8 h-8" />

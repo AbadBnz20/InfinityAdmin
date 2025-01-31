@@ -33,40 +33,122 @@ const uploadImages = async (images: File) => {
       return uploadedImage.secure_url; // Devuelve la URL segura
     } catch (error) {
       console.error("Error al procesar o subir la imagen:", error);
-      return null; // En caso de error, devuelve null para esta imagen
+      return undefined; // En caso de error, devuelve null para esta imagen
     }
   } catch (error) {
     console.error("Error al subir las imágenes:", error);
-    return null;
+    return undefined;
+  }
+};
+
+const deleteImages = async (imageUrl: string) => {
+  try {
+    const imageName = imageUrl.split("/").pop()?.split(".")[0] ?? "";
+    console.log({imageName});
+    const resp= await cloudinary.uploader.destroy(`Cards/${imageName}`);
+    console.log(resp)
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 };
 
 export const ListCars = async () => {
   const supabase = await createClient();
-  let { data: car, error } = await supabase
-  .from('car')
-  .select('*')
- return car as Car[]
+  let { data: car, error } = await supabase.from("car").select("*");
+  return car as Car[];
+};
+
+interface CarData {
+  carId?: string;
+  model: string;
+  plate: string;
+  ability: number;
+  description: string;
+  transferprice: number;
+  type: string;
+  brand: string;
+  color: string;
+  image?: string;
+  url?: string;
 }
-
-
 
 export const InsertCar = async (data: StateFormCard) => {
   const supabase = await createClient();
-  const urlimage = await uploadImages(data.image);
+  let response;
+  const carData: CarData = {
+    model: data.model,
+    plate: data.plate,
+    ability: +data.ability,
+    description: data.description,
+    transferprice: +data.transferprice,
+    type: data.type,
+    brand: data.brand,
+    color: data.color,
+  };
 
-  const { data: car, error } = await supabase
+  if (data.carId) {
+    if (data.image) {
+      const resp = await deleteImages(data.url!);
+      if (!resp) {
+        return {
+          status: false,
+          message: "Error al eliminar la imagen anterior",
+        };
+      }
+      carData.image = await uploadImages(data.image);
+    }
+
+    response = await supabase
+      .from("car")
+      .update([carData])
+      .eq("carId", data.carId)
+      .select();
+  } else {
+    carData.image = await uploadImages(data.image);
+    response = await supabase.from("car").insert([carData]).select();
+  }
+
+  const { error } = response;
+  if (error) {
+    return {
+      status: false,
+      message: error.message,
+    };
+  }
+  revalidatePath("/cars");
+  return {
+    status: true,
+    message: data.carId
+      ? "Actualizado correctamente"
+      : "Guardado correctamente",
+  };
+};
+
+export const GetCar = async (id: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
     .from("car")
-    .insert([
-      {
-        model: data.model,
-        plate: data.plate,
-        ability: +data.ability,
-        description: data.description,
-        transferprice: +data.transferprice,
-        image: urlimage,
-      },
-    ])
+    .select("*")
+    .eq("carId", id)
+    .single();
+  if (error) {
+    return {} as Car;
+  }
+
+  return data as Car;
+};
+
+
+export const DeleteCar = async (id: string) => {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("car")
+    .update({ state: false })
+    .eq("carId", id)
     .select();
 
   if (error) {
@@ -75,9 +157,10 @@ export const InsertCar = async (data: StateFormCard) => {
       message: error.message,
     };
   }
-  revalidatePath("/users");
+
+  revalidatePath("/cars");
   return {
     status: true,
-    message: "Guardado correctamente",
+    message: "Eliminado correctamente",
   };
 };

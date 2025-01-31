@@ -1,7 +1,8 @@
+import { GetPermissionsByUser } from "@/actions/permissions.action";
 import { NavbarWrapper } from "@/components/ui/navbar/NavbarWrapper";
 import { SidebarWrapper } from "@/components/ui/sidebar/SidebarWrapper";
 import { createClient } from "@/utils/server";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
@@ -16,11 +17,15 @@ export default async function AdminLayout({
     return redirect("/auth/login");
   }
 
-  
+  const permissions = await GetPermissionsByUser(user.id);
+  console.log(permissions.length)
+  if (permissions.length == 0) {
+    notFound();
+  }
 
   return (
     <section className="flex">
-      <SidebarWrapper />
+      <SidebarWrapper permissions={permissions} />
       <NavbarWrapper>{children}</NavbarWrapper>
     </section>
   );

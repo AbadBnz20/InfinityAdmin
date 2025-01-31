@@ -1,6 +1,7 @@
 "use client";
 
 import { User as Profile } from "@/interfaces/users-interfaces";
+import { useModalStore } from "@/store/ModalStore";
 import {
   Avatar,
   Chip,
@@ -11,9 +12,10 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-
+  Tooltip,
 } from "@nextui-org/react";
 import { useCallback, useMemo, useState } from "react";
+import { EditIcon } from "../icons/edit-icon";
 
 export const columns = [
   { name: "Imagen", uid: "photo" },
@@ -31,8 +33,10 @@ export const columns = [
 
 interface TableProps {
   items: Profile[];
+  update: boolean;
 }
-export const TableUser = ({ items:rows }: TableProps) => {
+export const TableUser = ({ items: rows, update }: TableProps) => {
+  const { onChanseItem, onOpen } = useModalStore();
   const renderCell = useCallback((item: Profile, columnKey: React.Key) => {
     switch (columnKey) {
       case "photo":
@@ -40,7 +44,9 @@ export const TableUser = ({ items:rows }: TableProps) => {
       case "firstname":
         return (
           <div>
-            <span>{item.firstname} {item.lastname}</span>
+            <span>
+              {item.firstname} {item.lastname}
+            </span>
           </div>
         );
       case "email":
@@ -100,6 +106,19 @@ export const TableUser = ({ items:rows }: TableProps) => {
       case "actions":
         return (
           <div className="flex items-center gap-4">
+            {update && (
+              <Tooltip content="Editar" color="primary">
+                <button
+                  onClick={() => {
+                    onChanseItem(item.profileId);
+                    onOpen();
+                  }}
+                >
+                  <EditIcon size={20} fill="#979797" />
+                </button>
+              </Tooltip>
+            )}
+
             {/* <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} /> */}
           </div>
         );
@@ -107,7 +126,6 @@ export const TableUser = ({ items:rows }: TableProps) => {
         return;
     }
   }, []);
-
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
@@ -127,7 +145,6 @@ export const TableUser = ({ items:rows }: TableProps) => {
     },
     []
   );
-
 
   const topContent = useMemo(() => {
     return (
@@ -170,8 +187,11 @@ export const TableUser = ({ items:rows }: TableProps) => {
 
   return (
     <div className=" w-full flex flex-col gap-4">
-      <Table  topContent={topContent}
-        bottomContent={bottomContent}  aria-label="Example table with custom cells">
+      <Table
+        topContent={topContent}
+        bottomContent={bottomContent}
+        aria-label="Example table with custom cells"
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn

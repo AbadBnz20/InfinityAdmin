@@ -58,12 +58,12 @@ export const RolesForm = () => {
   const OnSubmit = async (state: StateForm) => {
     setLoading(true);
 
-    if (groupSelected.length === 0) {
-      setLoading(false);
-      return toast.error("Seleccione un modulo", {
-        position: "top-right",
-      });
-    }
+    // if (groupSelected.length === 0) {
+    //   setLoading(false);
+    //   return toast.error("Seleccione un modulo", {
+    //     position: "top-right",
+    //   });
+    // }
 
     try {
       const resp = await InsertRole(

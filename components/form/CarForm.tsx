@@ -1,17 +1,21 @@
 "use client";
 import { Input, Textarea } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { InputFile } from "../ui/File/InputFile";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
-import { InsertCar } from "@/actions/car.actions";
+import { GetCar, InsertCar } from "@/actions/car.actions";
 import { toast } from "react-toastify";
 import { useModalStore } from "@/store/ModalStore";
 
 export interface StateFormCard {
   carId?: string;
+  url?: string;
   model: string;
   plate: string;
+  type: string;
+  brand: string;
+  color: string;
   ability: string;
   image: File;
   description: string;
@@ -20,14 +24,41 @@ export interface StateFormCard {
 export const CarForm = () => {
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
     control,
     watch,
   } = useForm<StateFormCard>();
-  const { onClose } = useModalStore();
+  const { onClose, idItem } = useModalStore();
   const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    const GetItem = async () => {
+      if (idItem) {
+        const resp = await GetCar(idItem);
+        setValue("carId", resp.carId);
+        setValue("model", resp.model);
+        setValue("plate", resp.plate);
+        setValue("type", resp.type);
+        setValue("brand", resp.brand);
+        setValue("color", resp.color);
+        setValue("ability", resp.ability.toString());
+        setValue("description", resp.description);
+        setValue("transferprice", resp.transferprice.toString());
+        // const imageFile = await urlToFile(resp.image, "image.jpg");
+        // setValue("image", imageFile);
+        setValue("url",resp.image);
+
+      }
+    };
+
+    GetItem();
+  }, [idItem]);
+
   const OnSubmit = async (state: StateFormCard) => {
+    console.log(state);
     try {
       setLoading(true);
       const resp = await InsertCar(state);
@@ -55,6 +86,17 @@ export const CarForm = () => {
       <div className="grid gap-3">
         <Input
           type="text"
+          label="Marca"
+          placeholder="Ingrese marca"
+          {...register("brand", {
+            required: "El campo es requerido",
+          })}
+          value={watch("brand")}
+          isInvalid={!!errors.ability}
+          errorMessage={errors.ability?.message}
+        />
+        <Input
+          type="text"
           label="Modelo"
           placeholder="Ingrese modelo"
           {...register("model", { required: "El campo es requerido" })}
@@ -72,17 +114,35 @@ export const CarForm = () => {
           errorMessage={errors.plate?.message}
         />
         <Input
-          type="text"
+          type="number"
           label="Capacidad"
           placeholder="Ingrese capacidad"
           {...register("ability", {
             required: "El campo es requerido",
-            pattern: {
-              value: /^[0-9]+$/,
-              message: "Solo se permiten números",
-            },
           })}
           value={watch("ability")}
+          isInvalid={!!errors.ability}
+          errorMessage={errors.ability?.message}
+        />
+        <Input
+          type="text"
+          label="Tipo"
+          placeholder="Ingrese tipo"
+          {...register("type", {
+            required: "El campo es requerido",
+          })}
+          value={watch("type")}
+          isInvalid={!!errors.ability}
+          errorMessage={errors.ability?.message}
+        />
+        <Input
+          type="text"
+          label="Color"
+          placeholder="Ingrese color"
+          {...register("color", {
+            required: "El campo es requerido",
+          })}
+          value={watch("color")}
           isInvalid={!!errors.ability}
           errorMessage={errors.ability?.message}
         />
@@ -110,7 +170,7 @@ export const CarForm = () => {
           isInvalid={!!errors.transferprice}
           errorMessage={errors.transferprice?.message}
         />
-        <InputFile control={control} watch={watch} errors={errors} />
+        <InputFile control={control} watch={watch} errors={errors} isRequired={!idItem} />
       </div>
       <CotentButtonForm state={loading} />
     </form>

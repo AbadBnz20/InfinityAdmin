@@ -11,7 +11,8 @@ interface Props {
   watch: UseFormWatch<StateFormUser>;
 }
 
-export const SelectState = ({ register, errors }: Props) => {
+export const SelectState = ({ register, errors,watch }: Props) => {
+  const value = watch("stateId");
   const [data, setdata] = useState<State[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -23,7 +24,7 @@ export const SelectState = ({ register, errors }: Props) => {
     };
 
     GetCountry();
-  }, []);
+  }, [value]);
   if (loading) {
     return (
       <div className="my-4">

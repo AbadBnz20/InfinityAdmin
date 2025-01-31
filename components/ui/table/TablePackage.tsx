@@ -27,9 +27,15 @@ export const columns = [
 ];
 interface TableProps {
   items: Packages[];
+  update: boolean;
+  deletecell: boolean;
 }
 
-export const TablePackage = ({ items: rows }: TableProps) => {
+export const TablePackage = ({
+  items: rows,
+  update,
+  deletecell,
+}: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
   const renderCell = useCallback((item: Packages, columnKey: React.Key) => {
     const cellValue = item[columnKey as keyof Packages];
@@ -84,18 +90,22 @@ export const TablePackage = ({ items: rows }: TableProps) => {
         return (
           <div className="flex items-center gap-4 ">
             <div>
-              <Tooltip content="Editar" color="primary">
-                <button
-                  onClick={() => {
-                    onChanseItem(item.packageId);
-                    onOpen();
-                  }}
-                >
-                  <EditIcon size={20} fill="#979797" />
-                </button>
-              </Tooltip>
+              {update && (
+                <Tooltip content="Editar" color="primary">
+                  <button
+                    onClick={() => {
+                      onChanseItem(item.packageId);
+                      onOpen();
+                    }}
+                  >
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
+                </Tooltip>
+              )}
             </div>
-            <ModalConfirm idItem={item.packageId} Ondelete={DeletePackage} />
+            {deletecell && (
+              <ModalConfirm idItem={item.packageId} Ondelete={DeletePackage} />
+            )}
           </div>
         );
       default:

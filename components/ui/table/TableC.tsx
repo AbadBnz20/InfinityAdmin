@@ -24,9 +24,11 @@ export const columns = [
 
 interface TableProps {
   items: Countries[];
+  update: boolean;
+  deletecell: boolean;
 }
 
-export const TableC = ({ items: rows }: TableProps) => {
+export const TableC = ({ items: rows, update, deletecell }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
   const renderCell = useCallback((user: Countries, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof Countries];
@@ -57,18 +59,21 @@ export const TableC = ({ items: rows }: TableProps) => {
         return (
           <div className="flex items-center gap-4 ">
             <div>
-              <Tooltip content="Editar" color="primary">
-                <button
-                  onClick={() => {
-                    onChanseItem(user.countryId);
-                    onOpen();
-                  }}
-                >
-                  <EditIcon size={20} fill="#979797" />
-                </button>
-              </Tooltip>
+              {update && (
+                <Tooltip content="Editar" color="primary">
+                  <button
+                    onClick={() => {
+                      onChanseItem(user.countryId);
+                      onOpen();
+                    }}
+                  >
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
+                </Tooltip>
+              )}
             </div>
-            <ModalConfirm idItem={user.countryId} Ondelete={DeleteCountry} />
+            {
+                  deletecell &&  <ModalConfirm idItem={user.countryId} Ondelete={DeleteCountry} /> }
           </div>
         );
       default:
@@ -93,7 +98,6 @@ export const TableC = ({ items: rows }: TableProps) => {
     },
     []
   );
-
 
   const topContent = useMemo(() => {
     return (
@@ -138,7 +142,7 @@ export const TableC = ({ items: rows }: TableProps) => {
     <div className="w-full flex flex-col gap-4">
       <Table
         topContent={topContent}
-        bottomContent={bottomContent}  
+        bottomContent={bottomContent}
         aria-label="Example table with custom cells"
       >
         <TableHeader columns={columns}>

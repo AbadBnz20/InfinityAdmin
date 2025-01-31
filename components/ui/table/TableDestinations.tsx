@@ -1,5 +1,6 @@
 "use client";
-import { Languages } from "@/interfaces/languages-interfaces";
+
+import { Destination } from "@/interfaces/destinations-interfaces";
 import { useModalStore } from "@/store/ModalStore";
 import {
   Chip,
@@ -12,34 +13,42 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
-import { DeleteLanguage } from "@/actions/languages.actions";
 import { ModalConfirm } from "../modal/ModalConfirm";
+import { DeleteDestination } from "@/actions/destinations.action";
 
 export const columns = [
   { name: "Nombre", uid: "name" },
+  { name: "Categoria", uid: "category_origin_destination.name" },
   { name: "Estado", uid: "state" },
   { name: "Acciones", uid: "actions" },
 ];
+
 interface TableProps {
-  items: Languages[];
+  items: Destination[];
   update: boolean;
   deletecell: boolean;
 }
-export const TableLanguages = ({
+export const TableDestinations = ({
   items: rows,
   update,
   deletecell,
 }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
 
-  const renderCell = useCallback((item: Languages, columnKey: React.Key) => {
+  const renderCell = useCallback((item: Destination, columnKey: React.Key) => {
     switch (columnKey) {
       case "name":
         return (
           <div>
             <span>{item.name}</span>
+          </div>
+        );
+      case "category_origin_destination.name":
+        return (
+          <div>
+            <span>{item.category_origin_destination.name}</span>
           </div>
         );
       case "state":
@@ -61,7 +70,7 @@ export const TableLanguages = ({
               <Tooltip content="Editar" color="primary">
                 <button
                   onClick={() => {
-                    onChanseItem(item.languageId);
+                    onChanseItem(item.origindestinationId);
                     onOpen();
                   }}
                 >
@@ -71,28 +80,30 @@ export const TableLanguages = ({
             )}
             {deletecell && (
               <ModalConfirm
-                idItem={item.languageId}
-                Ondelete={DeleteLanguage}
+                idItem={item.origindestinationId}
+                Ondelete={DeleteDestination}
               />
             )}
           </div>
         );
       default:
         return;
+      // <span>{item[columnKey as keyof State]?.toString() || ""}</span>;
     }
   }, []);
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const pages = Math.ceil(rows.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
     return rows.slice(start, end);
   }, [page, rows, rowsPerPage]);
 
-  const onRowsPerPageChange = React.useCallback(
+  const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
@@ -138,7 +149,6 @@ export const TableLanguages = ({
       </div>
     );
   }, [items.length, page, pages]);
-
   return (
     <div className=" w-full flex flex-col gap-4">
       <Table
@@ -157,9 +167,9 @@ export const TableLanguages = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No hay items para mostrar"} items={items}>
+        <TableBody items={items}>
           {(item) => (
-            <TableRow key={item.languageId}>
+            <TableRow key={item.origindestinationId}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
