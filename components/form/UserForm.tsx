@@ -50,6 +50,7 @@ export const UserForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
+  const value = watch("stateId");
 
   useEffect(() => {
     const GetItem = async () => {
@@ -226,7 +227,7 @@ export const UserForm = () => {
         />
       )}
 
-      <SelectState register={register} errors={errors} watch={watch} />
+      <SelectState name="stateId" register={register} errors={errors.stateId}  value={value} />
       <SelectPackage register={register} errors={errors} watch={watch} />
       <SelectLanguage register={register} errors={errors} watch={watch} />
       <SelectRole register={register} errors={errors} watch={watch} />

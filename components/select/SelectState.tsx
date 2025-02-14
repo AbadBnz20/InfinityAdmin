@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { StateFormUser } from "../form/UserForm";
-import { FieldErrors, UseFormRegister, UseFormWatch } from "react-hook-form";
+import {
+  FieldError,
+  FieldValues,
+  Path,
+  PathValue,
+  UseFormRegister,
+} from "react-hook-form";
 import { State } from "@/interfaces/state-interfaces";
 import { GetStateActive } from "@/actions/user.action";
 import { Progress, Select, SelectItem } from "@nextui-org/react";
 
-interface Props {
-  register: UseFormRegister<StateFormUser>;
-  errors: FieldErrors<StateFormUser>;
-  watch: UseFormWatch<StateFormUser>;
+interface Props<T extends FieldValues> {
+  register: UseFormRegister<T>;
+  errors?: FieldError;
+  // watch: UseFormWatch<T>;
+  name: Path<T>;
+  value: PathValue<T, Path<T>>;
 }
 
-export const SelectState = ({ register, errors,watch }: Props) => {
-  const value = watch("stateId");
+export const SelectState = <T extends FieldValues>({
+  register,
+  errors,
+  name,
+  value,
+}: Props<T>) => {
   const [data, setdata] = useState<State[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -25,6 +36,7 @@ export const SelectState = ({ register, errors,watch }: Props) => {
 
     GetCountry();
   }, [value]);
+  
   if (loading) {
     return (
       <div className="my-4">
@@ -42,13 +54,11 @@ export const SelectState = ({ register, errors,watch }: Props) => {
       items={data}
       label="Estado"
       placeholder="Seleccione Estado"
-      {...register("stateId", { required: "El Estado es requerido" })}
-      isInvalid={!!errors.stateId}
-      errorMessage={errors.stateId?.message}
+      {...register(name, { required: "El Estado es requerido" })}
+      isInvalid={!!errors}
+      errorMessage={errors?.message}
     >
-      {(animal) => (
-        <SelectItem key={animal.stateId}>{animal.name}</SelectItem>
-      )}
+      {(animal) => <SelectItem key={animal.stateId}>{animal.name}</SelectItem>}
     </Select>
   );
 };

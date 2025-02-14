@@ -1,49 +1,50 @@
 "use client";
-import {
-  GetDestinationShip,
-  InsertDestinationShip,
-} from "@/actions/destinationship";
+
+export interface CityForm {
+  id?: string;
+  name: string;
+  stateId: string;
+}
+
+import { GetState, InsertCity } from "@/actions/ctity.action";
 import { useModalStore } from "@/store/ModalStore";
 import { Input } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
-import { SelectCity } from "../select/SelectCity";
+import { SelectState } from "../select/SelectState";
 
-export interface DestinationShip {
-  id?: string;
-  name: string;
-  cityId: string;
-}
-export const DestinationShipForm = () => {
+export const CityForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     watch,
-  } = useForm<DestinationShip>();
+  } = useForm<CityForm>();
+  const value = watch("stateId");
+
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
+
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
-        const resp = await GetDestinationShip(idItem);
-        setValue("id", resp.origin_destination_ship_id);
-        setValue("cityId", resp.cityId);
+        const resp = await GetState(idItem);
+        setValue("id", resp.cityId);
         setValue("name", resp.name);
+        setValue("stateId", resp.stateId);
       }
     };
 
     GetItem();
   }, [idItem]);
 
-  const OnSubmit = async (state: DestinationShip) => {
-
+  const OnSubmit = async (state: CityForm) => {
     setLoading(true);
     try {
-      const resp = await InsertDestinationShip(state.name,state.cityId, state.id);
+      const resp = await InsertCity(state.name, state.stateId, state.id);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -62,6 +63,7 @@ export const DestinationShipForm = () => {
     }
     setLoading(false);
   };
+
   return (
     <form onSubmit={handleSubmit(OnSubmit)}>
       <Input
@@ -74,7 +76,13 @@ export const DestinationShipForm = () => {
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
       />
-      <SelectCity register={register} errors={errors} watch={watch} />
+
+      <SelectState
+        name="stateId"
+        register={register}
+        errors={errors.stateId}
+        value={value}
+      />
       <CotentButtonForm state={loading} />
     </form>
   );

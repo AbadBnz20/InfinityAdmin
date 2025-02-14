@@ -20,4 +20,10 @@ export interface DestinationShip {
   description: string | null;
   registration_date: Date;
   state: boolean;
+  cityId:string;
+  city:City
+}
+
+interface City{
+  name:string
 }

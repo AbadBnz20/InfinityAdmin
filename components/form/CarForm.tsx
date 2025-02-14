@@ -58,7 +58,7 @@ export const CarForm = () => {
   }, [idItem]);
 
   const OnSubmit = async (state: StateFormCard) => {
-    console.log(state);
+    // console.log(state);
     try {
       setLoading(true);
       const resp = await InsertCar(state);

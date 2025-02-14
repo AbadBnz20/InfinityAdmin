@@ -1,8 +1,7 @@
 "use client";
-import { DestinationShip } from "@/interfaces/destinations-interfaces";
-import { useModalStore } from "@/store/ModalStore";
+
+import { Journey } from "@/interfaces/journey-interfaces";
 import {
-  Chip,
   Pagination,
   Table,
   TableBody,
@@ -10,89 +9,107 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip,
 } from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
-import { EditIcon } from "../icons/edit-icon";
-import { ModalConfirm } from "../modal/ModalConfirm";
-import { DeleteDestinationShip } from "@/actions/destinationship";
 
 export const columns = [
-  { name: "Nombre", uid: "name" },
-  { name: "Ciudad", uid: "city.name" },
-  { name: "Estado", uid: "state" },
-  { name: "Acciones", uid: "actions" },
+  { name: "Nombre", uid: "user" },
+  { name: "Email", uid: "email" },
+  { name: "Celular", uid: "phone" },
+  { name: "Pais de origen", uid: "country_origin" },
+  { name: "Ciudad de origen", uid: "city_origin" },
+  { name: "Pais de destino", uid: "contry_destination" },
+  { name: "Ciudad de destino", uid: "city_destination" },
+  { name: "Fecha de ida", uid: "departure_date" },
+  { name: "Fecha de retorno", uid: "return_date" },
+  { name: "Presupuesto(USD)", uid: "budget" },
+  { name: "Pasajeros", uid: "passengers" },
 ];
 
 interface TableProps {
-  items: DestinationShip[];
+  items: Journey[];
   update: boolean;
   deletecell: boolean;
 }
-export const TableDestinationShip = ({
-  items: rows,
-  update,
-  deletecell,
-}: TableProps) => {
-  const { onChanseItem, onOpen } = useModalStore();
 
-  const renderCell = useCallback(
-    (item: DestinationShip, columnKey: React.Key) => {
-      switch (columnKey) {
-        case "name":
-          return (
-            <div>
-              <span>{item.name}</span>
-            </div>
-          );
-          case "city.name":
-            return (
-              <div>
-                <span>{item.city.name}</span>
-              </div>
-            );
-  
-        case "state":
-          return (
-            <Chip
-              size="sm"
-              variant="flat"
-              color={item.state ? "success" : "danger"}
-            >
-              <span className="capitalize text-xs">
-                {item.state ? "Activo" : "Inactivo"}
-              </span>
-            </Chip>
-          );
-        case "actions":
-          return (
-            <div className="flex items-center gap-4">
-              {update && (
-                <Tooltip content="Editar" color="primary">
-                  <button
-                    onClick={() => {
-                      onChanseItem(item.origin_destination_ship_id);
-                      onOpen();
-                    }}
-                  >
-                    <EditIcon size={20} fill="#979797" />
-                  </button>
-                </Tooltip>
-              )}
-              {deletecell && (
-              <ModalConfirm
-                idItem={item.origin_destination_ship_id}
-                Ondelete={DeleteDestinationShip}
-              />
-            )}
-            </div>
-          );
-        default:
-          return;
-      }
-    },
-    []
-  );
+export const TableJourney = ({
+  items: rows,
+}: TableProps) => {
+  const renderCell = useCallback((item: Journey, columnKey: React.Key) => {
+    switch (columnKey) {
+      case "user":
+        return (
+          <div>
+            <span>{item.user}</span>
+          </div>
+        );
+      case "email":
+        return (
+          <div>
+            <span>{item.email}</span>
+          </div>
+        );
+      case "phone":
+        return (
+          <div>
+            <span>{item.phone}</span>
+          </div>
+        );
+      case "country_origin":
+        return (
+          <div>
+            <span>{item.country_origin}</span>
+          </div>
+        );
+      case "city_origin":
+        return (
+          <div>
+            <span>{item.city_origin}</span>
+          </div>
+        );
+      case "contry_destination":
+        return (
+          <div>
+            <span>{item.contry_destination}</span>
+          </div>
+        );
+      case "city_destination":
+        return (
+          <div>
+            <span>{item.city_destination}</span>
+          </div>
+        );
+
+      case "departure_date":
+        return (
+          <div>
+            <span>{item.departure_date}</span>
+          </div>
+        );
+      case "return_date":
+        return (
+          <div>
+            <span>{item.return_date}</span>
+          </div>
+        );
+      case "budget":
+        return (
+          <div>
+            <span>{item.budget}</span>
+          </div>
+        );
+      case "passengers":
+        return (
+          <div>
+            <span>
+              Adultos:{item.adult}, Niños: {item.children}
+            </span>
+          </div>
+        );
+      default:
+        return;
+    }
+  }, []);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
@@ -172,7 +189,7 @@ export const TableDestinationShip = ({
         </TableHeader>
         <TableBody items={items}>
           {(item) => (
-            <TableRow key={item.origin_destination_ship_id}>
+            <TableRow key={item.quotesId}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

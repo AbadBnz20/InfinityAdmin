@@ -1,5 +1,6 @@
 "use client";
-import { DestinationShip } from "@/interfaces/destinations-interfaces";
+
+import { City } from "@/interfaces/city-interfaces";
 import { useModalStore } from "@/store/ModalStore";
 import {
   Chip,
@@ -14,86 +15,75 @@ import {
 } from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
+import { DeleteCity } from "@/actions/ctity.action";
 import { ModalConfirm } from "../modal/ModalConfirm";
-import { DeleteDestinationShip } from "@/actions/destinationship";
 
 export const columns = [
   { name: "Nombre", uid: "name" },
-  { name: "Ciudad", uid: "city.name" },
-  { name: "Estado", uid: "state" },
+  { name: "Estado", uid: "state.name" },
+  { name: "Estado", uid: "status" },
   { name: "Acciones", uid: "actions" },
 ];
 
 interface TableProps {
-  items: DestinationShip[];
+  items: City[];
   update: boolean;
   deletecell: boolean;
 }
-export const TableDestinationShip = ({
-  items: rows,
-  update,
-  deletecell,
-}: TableProps) => {
+export const TableCity = ({ items: rows, update, deletecell }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
 
-  const renderCell = useCallback(
-    (item: DestinationShip, columnKey: React.Key) => {
-      switch (columnKey) {
-        case "name":
-          return (
-            <div>
-              <span>{item.name}</span>
-            </div>
-          );
-          case "city.name":
-            return (
-              <div>
-                <span>{item.city.name}</span>
-              </div>
-            );
-  
-        case "state":
-          return (
-            <Chip
-              size="sm"
-              variant="flat"
-              color={item.state ? "success" : "danger"}
-            >
-              <span className="capitalize text-xs">
-                {item.state ? "Activo" : "Inactivo"}
-              </span>
-            </Chip>
-          );
-        case "actions":
-          return (
-            <div className="flex items-center gap-4">
-              {update && (
-                <Tooltip content="Editar" color="primary">
-                  <button
-                    onClick={() => {
-                      onChanseItem(item.origin_destination_ship_id);
-                      onOpen();
-                    }}
-                  >
-                    <EditIcon size={20} fill="#979797" />
-                  </button>
-                </Tooltip>
-              )}
-              {deletecell && (
-              <ModalConfirm
-                idItem={item.origin_destination_ship_id}
-                Ondelete={DeleteDestinationShip}
-              />
+  const renderCell = useCallback((item: City, columnKey: React.Key) => {
+    switch (columnKey) {
+      case "name":
+        return (
+          <div>
+            <span>{item.name}</span>
+          </div>
+        );
+      case "state.name":
+        return (
+          <div>
+            <span>{item.state.name}</span>
+          </div>
+        );
+      case "status":
+        return (
+          <Chip
+            size="sm"
+            variant="flat"
+            color={item.status ? "success" : "danger"}
+          >
+            <span className="capitalize text-xs">
+              {item.status ? "Activo" : "Inactivo"}
+            </span>
+          </Chip>
+        );
+      case "actions":
+        return (
+          <div className="flex items-center gap-4">
+            {update && (
+              <Tooltip content="Editar" color="primary">
+                <button
+                  onClick={() => {
+                    onChanseItem(item.cityId);
+                    onOpen();
+                  }}
+                >
+                  <EditIcon size={20} fill="#979797" />
+                </button>
+              </Tooltip>
             )}
-            </div>
-          );
-        default:
-          return;
-      }
-    },
-    []
-  );
-
+            {
+                  deletecell && <ModalConfirm idItem={item.cityId} Ondelete={DeleteCity} />
+                }
+          </div>
+        );
+      default:
+        return;
+      // <span>{item[columnKey as keyof State]?.toString() || ""}</span>;
+    }
+  }, []);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const pages = Math.ceil(rows.length / rowsPerPage);
@@ -172,7 +162,7 @@ export const TableDestinationShip = ({
         </TableHeader>
         <TableBody items={items}>
           {(item) => (
-            <TableRow key={item.origin_destination_ship_id}>
+            <TableRow key={item.stateId}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

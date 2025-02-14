@@ -1,4 +1,5 @@
 "use server";
+import { City } from "@/interfaces/city-interfaces";
 import { DestinationShip } from "@/interfaces/destinations-interfaces";
 import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
@@ -8,25 +9,28 @@ export const ListDestinationShip = async () => {
 
   const { data: origin_destination_ship, error } = await supabase
     .from("origin_destination_ship")
-    .select("*");
-
+    .select("*, city(name)");
   return origin_destination_ship as DestinationShip[];
 };
 
-export const InsertDestinationShip = async (name: string, id?: string) => {
+export const InsertDestinationShip = async (
+  name: string,
+  cityId: string,
+  id?: string
+) => {
   const supabase = await createClient();
 
   let response;
   if (id) {
     response = await supabase
       .from("origin_destination_ship")
-      .update({ name: name })
+      .update({ name: name, cityId: cityId })
       .eq("origin_destination_ship_id", id)
       .select();
   } else {
     response = await supabase
       .from("origin_destination_ship")
-      .insert([{ name: name }])
+      .insert([{ name: name, cityId: cityId }])
       .select();
   }
   const { error } = response;
@@ -80,4 +84,17 @@ export const DeleteDestinationShip = async (id: string) => {
     status: true,
     message: "Eliminado correctamente",
   };
+};
+
+export const GetCityActive = async () => {
+  const supabase = await createClient();
+
+  const { data: state, error } = await supabase
+    .from("city")
+    .select("*")
+    .eq("status", true);
+  if (error) {
+    return [];
+  }
+  return state as City[];
 };

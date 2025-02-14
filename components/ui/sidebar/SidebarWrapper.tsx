@@ -5,6 +5,7 @@ import { Sidebar } from "./sidebarstyle";
 import { usePathname } from "next/navigation";
 import { SidebarItem } from "./SidebarItem";
 import {
+  IoAirplaneOutline,
   IoAlbumsOutline,
   IoApps,
   IoBoatOutline,
@@ -102,6 +103,16 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="points"
                       />
                     );
+                    case "Viajes":
+                      return (
+                        <SidebarItem
+                          key={permission.modules.name}
+                          isActive={pathname === "/journey"}
+                          title="Viajes"
+                          icon={<IoAirplaneOutline size={"20px"} />}
+                          href="journey"
+                        />
+                      );
                   default:
                     return null;
                 }
@@ -155,6 +166,16 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/roles"
                       />
                     );
+                    case "Ciudades":
+                      return (
+                        <SidebarItem
+                          key={permission.modules.name}
+                          isActive={pathname === "/city"}
+                          title="Ciudades"
+                          icon={<IoEarth size={"20px"} />}
+                          href="/city"
+                        />
+                      );
                   case "Celulares":
                     return (
                       <SidebarItem

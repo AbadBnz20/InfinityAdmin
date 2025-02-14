@@ -1,8 +1,13 @@
+import { ListPoints } from "@/actions/point.action";
+import { TablePoints } from "@/components/ui/table/TablePoints";
 
-export default function PointsPage() {
+export default async function PointsPage() {
+
+  const points = await ListPoints()
   return (
-    <div>
-      <h1>Points</h1>
+    <div className="container">
+      <h3 className="text-xl font-semibold">Usuarios</h3>
+      <TablePoints items={points}/>
     </div>
   );
 }
