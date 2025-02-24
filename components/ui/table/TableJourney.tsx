@@ -102,7 +102,7 @@ export const TableJourney = ({
         return (
           <div>
             <span>
-              Adultos:{item.adult}, Niños: {item.children}
+              Adultos:{item.adult}, Niños: {item.childrens.join(", ")}
             </span>
           </div>
         );

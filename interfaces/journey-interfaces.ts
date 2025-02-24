@@ -12,5 +12,5 @@ export interface Journey {
   budget: number;
   passengers: number;
   adult: number;
-  children: number;
+  childrens: Array<string>;
 }
