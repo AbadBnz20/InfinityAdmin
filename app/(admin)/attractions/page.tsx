@@ -1,18 +1,18 @@
-import { ListLanguages } from "@/actions/languages.actions";
+import { ListAttractions } from "@/actions/attractions";
 import { GetPermissionBySession } from "@/actions/permissions.action";
-import { LanguajesForm } from "@/components/form/LanguajesForm";
+import { AttractionsForm } from "@/components/form/AttractionsForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
-import { TableLanguages } from "@/components/ui/table/TableLanguages";
+import { TableAttractions } from "@/components/ui/table/TableAttractions";
 
-export default async function LanguagesPage() {
-  const [languages, permission] = await Promise.all([
-    ListLanguages(),
+export default async function AttractionsPage() {
+  const [categoryCars, permission] = await Promise.all([
+    ListAttractions(),
     GetPermissionBySession("Lenguajes"),
   ]);
 
   return (
     <div className="container">
-      <h3 className="text-xl font-semibold">Lenguajes</h3>
+      <h3 className="text-xl font-semibold">Atracciones</h3>
       {permission && (
         <>
           <div className="my-3">
@@ -20,12 +20,12 @@ export default async function LanguagesPage() {
               active={permission.write}
               title="Registrar Nuevo Lenguaje"
             >
-              <LanguajesForm />
+              <AttractionsForm />
             </ModalMain>
           </div>
           {permission.read && (
-            <TableLanguages
-              items={languages}
+            <TableAttractions
+              items={categoryCars}
               update={permission.update}
               deletecell={permission.delete}
             />
