@@ -7,7 +7,7 @@ import { TableCategoryCar } from "@/components/ui/table/TableCategoryCar";
 export default async function CarCategoryPage() {
   const [categoryCars, permission] = await Promise.all([
       ListCategoryCars(),
-      GetPermissionBySession("Lenguajes"),
+      GetPermissionBySession("CategoriaAutos"),
     ]);
   
     return (

@@ -7,7 +7,7 @@ import { TableAttractions } from "@/components/ui/table/TableAttractions";
 export default async function AttractionsPage() {
   const [categoryCars, permission] = await Promise.all([
     ListAttractions(),
-    GetPermissionBySession("Lenguajes"),
+    GetPermissionBySession("Atracciones"),
   ]);
 
   return (

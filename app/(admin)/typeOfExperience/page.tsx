@@ -7,7 +7,7 @@ import { TableTypeOfExperience } from "@/components/ui/table/TableTypeOfExperien
 export default async function TypeOfExperiencePage() {
   const [categoryCars, permission] = await Promise.all([
     ListTypeOfExperience(),
-    GetPermissionBySession("Lenguajes"),
+    GetPermissionBySession("Experiencia"),
   ]);
 
   return (

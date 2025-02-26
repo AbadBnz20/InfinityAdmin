@@ -11,15 +11,19 @@ import {
   IoBoatOutline,
   IoCall,
   IoCar,
+  IoCarSportOutline,
   IoClipboard,
   IoEarth,
   IoFileTrayStacked,
   IoFilter,
   IoGlobe,
   IoHome,
+  IoLayersOutline,
   IoLocationOutline,
   IoPeople,
+  IoSparklesOutline,
   IoSwapHorizontalOutline,
+  IoTicketOutline,
 } from "react-icons/io5";
 import { SidebarMenu } from "./SidebarMenu";
 import { Permissions } from "@/interfaces/permissions-interfaces";
@@ -103,44 +107,20 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="points"
                       />
                     );
-                    case "Viajes":
-                      return (
-                        <SidebarItem
-                          key={permission.modules.name}
-                          isActive={pathname === "/journey"}
-                          title="Viajes"
-                          icon={<IoAirplaneOutline size={"20px"} />}
-                          href="journey"
-                        />
-                      );
+                  case "Viajes":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/journey"}
+                        title="Viajes"
+                        icon={<IoAirplaneOutline size={"20px"} />}
+                        href="journey"
+                      />
+                    );
                   default:
                     return null;
                 }
               })}
-              {/* <SidebarItem
-                isActive={pathname === "/packages"}
-                title="Paquetes"
-                href="packages"
-                icon={<IoFileTrayStacked size={"20px"} />}
-              />
-              <SidebarItem
-                isActive={pathname === "/booking"}
-                title="Reservas"
-                href="booking"
-                icon={<IoClipboard size={"20px"} />}
-              />
-              <SidebarItem
-                isActive={pathname === "/transfers"}
-                title="Traslados"
-                href="transfers"
-                icon={<IoSwapHorizontalOutline size={"20px"} />}
-              />
-              <SidebarItem
-                isActive={pathname === "/points"}
-                title="Puntos"
-                href="points"
-                icon={<IoFilter size={"20px"} />}
-              /> */}
             </SidebarMenu>
 
             <SidebarMenu title="General">
@@ -156,6 +136,46 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/users"
                       />
                     );
+                  case "Atracciones":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/attractions"}
+                        title="Atracciones"
+                        icon={<IoSparklesOutline size={"20px"} />}
+                        href="/attractions"
+                      />
+                    );
+                  case "CategoriaAutos":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/categoryCar"}
+                        title="Categoria Autos"
+                        icon={<IoCarSportOutline size={"20px"} />}
+                        href="/categoryCar"
+                      />
+                    );
+                  case "Experiencia":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/typeOfExperience"}
+                        title="Tipo Experiencia"
+                        icon={<IoTicketOutline size={"20px"} />}
+                        href="/typeOfExperience"
+                      />
+                    );
+                    case "MotorYates":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/yachtEngine"}
+                        title="Motor Yates"
+                        icon={<IoLayersOutline size={"20px"} />}
+                        href="/yachtEngine"
+                      />
+                    );
                   case "Roles":
                     return (
                       <SidebarItem
@@ -166,16 +186,16 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/roles"
                       />
                     );
-                    case "Ciudades":
-                      return (
-                        <SidebarItem
-                          key={permission.modules.name}
-                          isActive={pathname === "/city"}
-                          title="Ciudades"
-                          icon={<IoEarth size={"20px"} />}
-                          href="/city"
-                        />
-                      );
+                  case "Ciudades":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/city"}
+                        title="Ciudades"
+                        icon={<IoEarth size={"20px"} />}
+                        href="/city"
+                      />
+                    );
                   case "Celulares":
                     return (
                       <SidebarItem
@@ -236,7 +256,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/category"
                       />
                     );
-                    case "Destinos":
+                  case "Destinos":
                     return (
                       <SidebarItem
                         key={permission.modules.name}
@@ -246,64 +266,20 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/destinations"
                       />
                     );
-                    case "DestinosYates":
-                      return (
-                        <SidebarItem
-                          key={permission.modules.name}
-                          isActive={pathname === "/destinationship"}
-                          title="Origen/Destinos Yates"
-                          icon={<IoBoatOutline size={"20px"} />}
-                          href="/destinationship"
-                        />
-                      );
+                  case "DestinosYates":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/destinationship"}
+                        title="Origen/Destinos Yates"
+                        icon={<IoBoatOutline size={"20px"} />}
+                        href="/destinationship"
+                      />
+                    );
                   default:
                     return null;
                 }
               })}
-
-              {/* <SidebarItem
-                isActive={pathname === "/users"}
-                title="Usuarios"
-                icon={<IoPeople size={"20px"} />}
-                href="users"
-              />
-              <SidebarItem
-                isActive={pathname === "/roles"}
-                title="Roles"
-                icon={<IoApps size={"20px"} />}
-                href="roles"
-              />
-              <SidebarItem
-                isActive={pathname === "/phones"}
-                title="Celulares"
-                icon={<IoCall size={"20px"} />}
-                href="phones"
-              />
-              <SidebarItem
-                isActive={pathname === "/states"}
-                title="Estados"
-                icon={<IoEarth size={"20px"} />}
-                href="states"
-              />
-
-              <SidebarItem
-                isActive={pathname === "/countries"}
-                title="Paises"
-                icon={<IoEarth size={"20px"} />}
-                href="countries"
-              />
-              <SidebarItem
-                isActive={pathname === "/languages"}
-                title="Lenguajes"
-                icon={<IoGlobe size={"20px"} />}
-                href="languages"
-              />
-              <SidebarItem
-                isActive={pathname === "/cars"}
-                title="Vehiculos"
-                icon={<IoCar size={"20px"} />}
-                href="cars"
-              /> */}
             </SidebarMenu>
           </div>
         </div>

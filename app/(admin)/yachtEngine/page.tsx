@@ -7,7 +7,7 @@ import { TableYachtEngine } from "@/components/ui/table/TableYachtEngine";
 export default async function YachtEnginePage() {
   const [yachtEngine, permission] = await Promise.all([
         ListYachtEngine(),
-        GetPermissionBySession("Lenguajes"),
+        GetPermissionBySession("MotorYates"),
       ]);
       return (
         <div className="container">
