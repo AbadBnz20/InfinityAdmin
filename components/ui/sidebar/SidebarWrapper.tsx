@@ -15,6 +15,7 @@ import {
   IoClipboard,
   IoEarth,
   IoFileTrayStacked,
+  IoFileTrayStackedOutline,
   IoFilter,
   IoGlobe,
   IoHome,
@@ -226,6 +227,29 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/countries"
                       />
                     );
+
+                    case "PaquetesYates":
+                      return (
+                        <SidebarItem
+                          key={permission.modules.name}
+                          isActive={pathname === "/packageyachts"}
+                          title="Paquetes Yates"
+                          icon={<IoFileTrayStackedOutline size={"20px"} />}
+                          href="/packageyachts"
+                        />
+                      );
+                      case "SolicitudYates":
+                        return (
+                          <SidebarItem
+                            key={permission.modules.name}
+                            isActive={pathname === "/yachtrequest"}
+                            title="Solicitud Yates"
+                            icon={<IoBoatOutline size={"20px"} />}
+                            href="/yachtrequest"
+                          />
+                        );
+
+
                   case "Lenguajes":
                     return (
                       <SidebarItem

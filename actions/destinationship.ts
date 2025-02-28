@@ -1,6 +1,6 @@
 "use server";
 import { City } from "@/interfaces/city-interfaces";
-import { DestinationShip } from "@/interfaces/destinations-interfaces";
+import { DestinationShip, DestinationYach } from "@/interfaces/destinations-interfaces";
 import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 
@@ -98,3 +98,19 @@ export const GetCityActive = async () => {
   }
   return state as City[];
 };
+
+
+export const GetDestinationYachtsActive = async () => {
+  const supabase = await createClient();
+
+  const { data: state, error } = await supabase
+    .from("origin_destination_ship")
+    .select("*")
+    .eq("state", true);
+  if (error) {
+    return [];
+  }
+  return state as DestinationYach[];
+};
+
+

@@ -19,6 +19,7 @@ export interface DestinationShip {
 export const DestinationShipForm = () => {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     setValue,
@@ -26,6 +27,7 @@ export const DestinationShipForm = () => {
   } = useForm<DestinationShip>();
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
+  const value = watch("cityId");
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
@@ -74,7 +76,7 @@ export const DestinationShipForm = () => {
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
       />
-      <SelectCity register={register} errors={errors} watch={watch} />
+      <SelectCity  control={control} name="cityId" error={errors.cityId} value={value} />
       <CotentButtonForm state={loading} />
     </form>
   );

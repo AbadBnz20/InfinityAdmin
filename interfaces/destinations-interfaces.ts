@@ -27,3 +27,13 @@ export interface DestinationShip {
 interface City{
   name:string
 }
+
+export interface DestinationYach {
+  origin_destination_ship_id: string;
+  name: string;
+  description: string | null;
+  registration_date: Date;
+  state: boolean;
+  cityId:string;
+
+}

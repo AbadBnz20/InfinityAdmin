@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { DestinationShip } from "../form/DestinationShipForm";
-import { FieldErrors, UseFormRegister, UseFormWatch } from "react-hook-form";
+import { Control, Controller, FieldError, FieldValues, Path, PathValue } from "react-hook-form";
 import { City } from "@/interfaces/city-interfaces";
 import { Progress, Select, SelectItem } from "@nextui-org/react";
 import { GetCityActive } from "@/actions/destinationship";
 
-interface Props {
-  register: UseFormRegister<DestinationShip>;
-  errors: FieldErrors<DestinationShip>;
-  watch: UseFormWatch<DestinationShip>;
+interface Props<T extends FieldValues> {
+  control: Control<T, any>;
+  name: Path<T>;
+  error?: FieldError;
+   value: PathValue<T, Path<T>>;
 }
-
-export const SelectCity = ({ register, errors, watch }: Props) => {
-  const value = watch("cityId");
+export const SelectCity = <T extends FieldValues>({ control,name,error,value }: Props<T>) => {
   const [data, setdata] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -38,15 +36,28 @@ export const SelectCity = ({ register, errors, watch }: Props) => {
     );
   }
   return (
-    <Select
-      items={data}
-      label="Rol"
-      placeholder="Seleccione Ciudad"
-      {...register("cityId", { required: "La ciudad es requerido" })}
-      isInvalid={!!errors.cityId}
-      errorMessage={errors.cityId?.message}
-    >
-      {(item) => <SelectItem key={item.cityId}>{item.name}</SelectItem>}
-    </Select>
+    <Controller
+      control={control}
+      name={name}
+      rules={{ required: "La ciudad es requerido" }}
+      render={({ field, fieldState }) => {
+        return (
+          <Select
+          {...field}
+          items={data}
+          label="Ciudad"
+          placeholder="Seleccione Ciudad"
+          isInvalid={fieldState.invalid}
+          defaultSelectedKeys={field.value ? new Set([field.value]) : new Set()}
+          onSelectionChange={(keys) => field.onChange(Array.from(keys).pop())}
+          errorMessage={error?.message}
+        >
+          {(item) => <SelectItem key={item.cityId}>{item.name}</SelectItem>}
+        </Select>
+        );
+      }}
+    />
   );
 };
+
+
