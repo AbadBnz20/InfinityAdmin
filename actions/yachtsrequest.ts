@@ -7,6 +7,6 @@ export const ListYachtsRequest = async () => {
   const supabase = await createClient();
   const { data: yachtRequest, error } = await supabase
     .from("yachtRequest")
-    .select("*, origin_destination_ship ( name ), typeOfExperience(name), motorYacht(name)");
+    .select("*, origin_destination_ship ( name ), typeOfExperience(name), motorYacht(name)").eq("state", true);
   return yachtRequest as YachsRequest[]
 };

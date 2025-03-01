@@ -11,7 +11,7 @@ export const ListStates = async () => {
       country (
         name
       )
-    `);
+    `).eq("state", true);
   return state as State[];
 };
 

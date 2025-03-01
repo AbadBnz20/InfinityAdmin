@@ -14,7 +14,7 @@ export const ListRoles = async () => {
       *,
       modules(name)
     )
-  `);
+  `).eq("state", true);
   return roles as Role[];
 };
 

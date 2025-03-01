@@ -58,7 +58,7 @@ export const ListPackageYachts = async () => {
   const supabase = await createClient();
   const { data: yachtPackage, error } = await supabase
     .from("yachtPackage")
-    .select("*, origin_destination_ship (name)");
+    .select("*, origin_destination_ship (name)").eq("state", true);
   return yachtPackage as packageyachts[];
 };
 

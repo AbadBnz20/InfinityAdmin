@@ -56,7 +56,7 @@ export const deleteImages = async (imageUrl: string) => {
 
 export const ListCars = async () => {
   const supabase = await createClient();
-  let { data: car, error } = await supabase.from("car").select("*");
+  let { data: car, error } = await supabase.from("car").select("*").eq("state", true);
   return car as Car[];
 };
 

@@ -10,7 +10,7 @@ export const ListPackages = async () => {
   
     let { data } = await supabase
     .from('package')
-    .select('*');
+    .select('*').eq("state", true);
    return data as Packages[]
   };
 

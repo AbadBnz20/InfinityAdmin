@@ -12,7 +12,7 @@ export const ListPhone = async () => {
   .select(`*,
       profile (
         photo,lastname,firstname
-      )`);
+      )`).eq("state", true);
     
       return phone as Phone[];
   };

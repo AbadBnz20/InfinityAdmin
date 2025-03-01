@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 export const ListCity = async () => {
   const supabase = await createClient();
-  let { data: city, error } = await supabase.from("city").select("*, state (name)");
+  let { data: city, error } = await supabase.from("city").select("*, state (name)").eq("status", true);
  
 return city as City[];
 };

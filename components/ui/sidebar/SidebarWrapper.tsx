@@ -137,46 +137,6 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/users"
                       />
                     );
-                  case "Atracciones":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/attractions"}
-                        title="Atracciones"
-                        icon={<IoSparklesOutline size={"20px"} />}
-                        href="/attractions"
-                      />
-                    );
-                  case "CategoriaAutos":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/categoryCar"}
-                        title="Categoria Autos"
-                        icon={<IoCarSportOutline size={"20px"} />}
-                        href="/categoryCar"
-                      />
-                    );
-                  case "Experiencia":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/typeOfExperience"}
-                        title="Tipo Experiencia"
-                        icon={<IoTicketOutline size={"20px"} />}
-                        href="/typeOfExperience"
-                      />
-                    );
-                    case "MotorYates":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/yachtEngine"}
-                        title="Motor Yates"
-                        icon={<IoLayersOutline size={"20px"} />}
-                        href="/yachtEngine"
-                      />
-                    );
                   case "Roles":
                     return (
                       <SidebarItem
@@ -228,27 +188,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                       />
                     );
 
-                    case "PaquetesYates":
-                      return (
-                        <SidebarItem
-                          key={permission.modules.name}
-                          isActive={pathname === "/packageyachts"}
-                          title="Paquetes Yates"
-                          icon={<IoFileTrayStackedOutline size={"20px"} />}
-                          href="/packageyachts"
-                        />
-                      );
-                      case "SolicitudYates":
-                        return (
-                          <SidebarItem
-                            key={permission.modules.name}
-                            isActive={pathname === "/yachtrequest"}
-                            title="Solicitud Yates"
-                            icon={<IoBoatOutline size={"20px"} />}
-                            href="/yachtrequest"
-                          />
-                        );
-
+                 
 
                   case "Lenguajes":
                     return (
@@ -259,17 +199,46 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         icon={<IoGlobe size={"20px"} />}
                         href="/languages"
                       />
-                    );
-                  case "Vehiculos":
+                    );        
+                  default:
+                    return null;
+                }
+              })}
+            </SidebarMenu>
+
+            <SidebarMenu title="Mi Viaje Perfecto">
+              {permissions.map((permission) => {
+                switch (permission.modules.name) {
+                
+                  case "Atracciones":
                     return (
                       <SidebarItem
                         key={permission.modules.name}
-                        isActive={pathname === "/cars"}
-                        title="Vehiculos"
-                        icon={<IoCar size={"20px"} />}
-                        href="/cars"
+                        isActive={pathname === "/attractions"}
+                        title="Atracciones"
+                        icon={<IoSparklesOutline size={"20px"} />}
+                        href="/attractions"
                       />
                     );
+                  case "CategoriaAutos":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/categoryCar"}
+                        title="Categoria Autos"
+                        icon={<IoCarSportOutline size={"20px"} />}
+                        href="/categoryCar"
+                      />
+                    );
+       
+                  default:
+                    return null;
+                }
+              })}
+            </SidebarMenu>
+            <SidebarMenu title="Traslados">
+              {permissions.map((permission) => {
+                switch (permission.modules.name) {
                   case "Categorias":
                     return (
                       <SidebarItem
@@ -288,6 +257,66 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         title="Origen/Destinos"
                         icon={<IoLocationOutline size={"20px"} />}
                         href="/destinations"
+                      />
+                    );
+                  case "Vehiculos":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/cars"}
+                        title="Vehiculos"
+                        icon={<IoCar size={"20px"} />}
+                        href="/cars"
+                      />
+                    );
+                  default:
+                    return null;
+                }
+              })}
+            </SidebarMenu>
+
+            <SidebarMenu title="Yates">
+              {permissions.map((permission) => {
+                switch (permission.modules.name) {
+                  case "PaquetesYates":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/packageyachts"}
+                        title="Paquetes Yates"
+                        icon={<IoFileTrayStackedOutline size={"20px"} />}
+                        href="/packageyachts"
+                      />
+                    );
+                  case "Experiencia":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/typeOfExperience"}
+                        title="Tipo Experiencia"
+                        icon={<IoTicketOutline size={"20px"} />}
+                        href="/typeOfExperience"
+                      />
+                    );
+                  case "MotorYates":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/yachtEngine"}
+                        title="Motor Yates"
+                        icon={<IoLayersOutline size={"20px"} />}
+                        href="/yachtEngine"
+                      />
+                    );
+
+                  case "SolicitudYates":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/yachtrequest"}
+                        title="Solicitud Yates"
+                        icon={<IoBoatOutline size={"20px"} />}
+                        href="/yachtrequest"
                       />
                     );
                   case "DestinosYates":

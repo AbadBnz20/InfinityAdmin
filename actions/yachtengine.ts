@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 export const ListYachtEngine = async () => {
   const supabase = await createClient();
 
-  const { data: yachtEngine } = await supabase.from("motorYacht").select("*");
+  const { data: yachtEngine } = await supabase.from("motorYacht").select("*").eq("state", true);
   return yachtEngine as YachtEngine[];
 };
 

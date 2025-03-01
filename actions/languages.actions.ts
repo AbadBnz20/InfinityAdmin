@@ -8,7 +8,7 @@ export const ListLanguages = async () => {
   
   const { data: language } = await supabase
     .from('language')
-    .select('*')
+    .select('*').eq("state", true);
    return language as Languages[]
   };
 

@@ -9,7 +9,7 @@ export const ListCategory = async () => {
 
   const { data: category } = await supabase
     .from("category_origin_destination")
-    .select("*");
+    .select("*").eq("state", true);
   return category as Category[];
 };
 
@@ -106,7 +106,7 @@ export const ListDestinations = async () => {
       category_origin_destination (
         name
       )
-    `);
+    `).eq("state", true);
 
     return destinations as  Destination[];
 };

@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 export const ListCategoryCars = async () => {
   const supabase = await createClient();
 
-  const { data: categoryCars } = await supabase.from("categoryCars").select("*");
+  const { data: categoryCars } = await supabase.from("categoryCars").select("*").eq("state", true);
   return categoryCars as CategoryCars[];
 };
 

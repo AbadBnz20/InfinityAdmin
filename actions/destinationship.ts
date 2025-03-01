@@ -9,7 +9,7 @@ export const ListDestinationShip = async () => {
 
   const { data: origin_destination_ship, error } = await supabase
     .from("origin_destination_ship")
-    .select("*, city(name)");
+    .select("*, city(name)").eq("state", true);
   return origin_destination_ship as DestinationShip[];
 };
 
