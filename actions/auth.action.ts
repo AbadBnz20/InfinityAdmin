@@ -34,10 +34,19 @@ export const signInActionVerifyOTP = async (email: string, token: string) => {
     token: token,
     type: "email",
   });
+
   if (error) {
-    return encodedRedirect("error", "/auth/login", error.message);
+    // await encodedRedirect("error", "/auth/login", error.message);
+    return {
+      status: false,
+      messsage: error.message,
+    };
   }
+
   return redirect("/");
+  // return {
+  //   status:true
+  // }
 };
 
 export const signInActionPhone = async (phone: string, token: string) => {
@@ -72,7 +81,10 @@ export const signInActionVerifyOTPPhone = async (
     type: "sms",
   });
   if (error) {
-    return encodedRedirect("error", "/auth/login", error.message);
+    return {
+      status: false,
+      messsage: error.message,
+    };
   }
   return redirect("/");
 };

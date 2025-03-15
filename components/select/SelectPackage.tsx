@@ -44,8 +44,8 @@ export const SelectPackage = ({ register, errors,watch }: Props) => {
     isInvalid={!!errors.stateId}
     errorMessage={errors.stateId?.message}
   >
-    {(animal) => (
-      <SelectItem key={animal.packageId}>{animal.name}</SelectItem>
+    {(item) => (
+      <SelectItem key={item.packageId}>{`${item.name} (${item.percentage}%)`}</SelectItem>
     )}
   </Select>
   )

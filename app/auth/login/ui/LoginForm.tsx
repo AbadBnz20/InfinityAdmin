@@ -1,11 +1,11 @@
 "use client";
-
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import { useState } from "react";
 import { SignIn } from "./SignIn";
 import { SignUp } from "./SignUp";
 import { FormMessage, Message } from "./form-message";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useTheme } from "next-themes";
 
 interface Props {
   searchParams: Message;
@@ -14,16 +14,19 @@ interface Props {
 export const LoginForm = ({ searchParams }: Props) => {
   const [selected, setSelected] = useState<string | number | null>("login");
   const [captchaToken, setCaptchaToken] = useState("");
-  const site = "29125b28-4758-4a6e-9c02-1334e26a77da";
+  const { theme } = useTheme();
+  const image = theme === 'dark' ? "https://res.cloudinary.com/devz7obre/image/upload/v1742005463/ACT_350X55px-04_b5dqrf.png" : "https://res.cloudinary.com/devz7obre/image/upload/v1742005463/ACT_350X55px-02_2_f9gxig.png"
+  // const site = "29125b28-4758-4a6e-9c02-1334e26a77da";
+  const site = "0x4AAAAAABAG3GMy0bEbQ6Da";
 
   return (
     <div className="w-full max-w-md m-auto p-6">
       <div className="my-3 text-center flex justify-center items-center flex-col">
-        {/* <img
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-eigb5La26zWW8G8xrkuVbJPlSSBNEC.png"
+        <img
+          src={image}
           alt="Infinity Luxury Travel Logo"
           className="h-20"
-        /> */}
+        />
         <p className="text-4xl font-semibold">Dashboard</p>
         <p className="text-small font-light">Ingrese credenciales</p>
       </div>
@@ -46,9 +49,9 @@ export const LoginForm = ({ searchParams }: Props) => {
               </Tab>
             </Tabs>
             <div className="flex justify-center items-center">
-              <HCaptcha
-                sitekey={site}
-                onVerify={(token) => {
+              <Turnstile
+                siteKey={site}
+                onSuccess={(token) => {
                   setCaptchaToken(token);
                 }}
               />

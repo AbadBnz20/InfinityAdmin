@@ -168,6 +168,12 @@ export const UserForm = () => {
                 <Autocomplete
                   {...field}
                   defaultItems={Contries}
+                  inputProps={{
+                    classNames: {
+                      input: "rounded-none rounded-bl-md rounded-br-md",
+                      inputWrapper: "rounded-none rounded-bl-md rounded-tl-md",
+                    },
+                  }}
                   label="Code"
                   placeholder="+"
                   errorMessage={errors.code?.message}
@@ -193,8 +199,11 @@ export const UserForm = () => {
               )}
             />
             <Input
-              type="text"
+              type="number"
               label="Celular"
+              classNames={{
+                inputWrapper: "rounded-none  rounded-br-md rounded-tr-md",
+              }}
               className="col-span-2"
               placeholder="Ingrese celular"
               {...register("phone", {

@@ -6,28 +6,23 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-
 interface State {
   email: string;
 }
 interface Props {
-  captchaToken:string;
+  captchaToken: string;
 }
 
-export const SignIn = ({captchaToken}:Props) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-  } = useForm<State>();
+export const SignIn = ({ captchaToken }: Props) => {
+  const { register, handleSubmit, watch } = useForm<State>();
   const [loading, setLoading] = useState(false);
-  const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const emailValue = watch("email");
   const OnSubmit = async (state: State) => {
     setLoading(true);
-    console.log(captchaToken)
-    const resp = await signInAction(state.email,captchaToken);
-    console.log(resp)
+    // console.log(captchaToken)
+    const resp = await signInAction(state.email, captchaToken);
+    // console.log(resp)
     if (!resp.status) {
       setLoading(false);
       return toast.error(resp.message, {
@@ -57,7 +52,7 @@ export const SignIn = ({captchaToken}:Props) => {
         </div>
       </form>
       <SignInModal
-      onClose={onClose}
+        onClose={onClose}
         isOpen={isOpen}
         onOpen={onOpen}
         onOpenChange={onOpenChange}
