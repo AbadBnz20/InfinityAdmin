@@ -1,9 +1,8 @@
 "use client";
 
-import { User as Profile } from "@/interfaces/users-interfaces";
+import { Position } from "@/interfaces/position-interfaces";
 import { useModalStore } from "@/store/ModalStore";
 import {
-  Avatar,
   Chip,
   Pagination,
   Table,
@@ -14,150 +13,43 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import { useCallback, useMemo, useState } from "react";
+
+import React, { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
+import { ModalConfirm } from "../modal/ModalConfirm";
+import { DeletePosition } from "@/actions/position.action";
 
 export const columns = [
-  { name: "Imagen", uid: "photo" },
-  { name: "Nombre", uid: "firstname" },
-  { name: "Email", uid: "email" },
-  { name: "Celular", uid: "phone" },
-  // { name: "Dirección", uid: "address" },
-
-
-  { name: "Fecha nacimiento", uid: "birthdate" },
-  { name: "Descuento", uid: "discount" },
-  { name: "Nro. Contrato", uid: "NroContract" },
-  { name: "Fecha de Venta", uid: "DateSold" },
-  { name: "Fecha de Expiración", uid: "Expiration" },
-  { name: "Email Secundario", uid: "SecondaryEmail" },
-  { name: "Estado de Billetera", uid: "StatusWallet" },
-
-  { name: "Nota", uid: "Note" },
-  { name: "Estado/Provincia", uid: "state.name" },
-  { name: "Localizacion", uid: "location.name" },
-
-  { name: "Paquete", uid: "package.name" },
-  { name: "Lenguaje", uid: "language.name" },
-  { name: "Rol", uid: "role.name" },
+  { name: "Nombre", uid: "name" },
+  { name: "Descripcion", uid: "description" },
   { name: "Estado", uid: "state" },
   { name: "Acciones", uid: "actions" },
 ];
 
 interface TableProps {
-  items: Profile[];
+  items: Position[];
   update: boolean;
+  deletecell: boolean;
 }
-export const TableUser = ({ items: rows, update }: TableProps) => {
+export const TablePosition = ({
+  items: rows,
+  update,
+  deletecell,
+}: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
-  const renderCell = useCallback((item: Profile, columnKey: React.Key) => {
+
+  const renderCell = useCallback((item: Position, columnKey: React.Key) => {
     switch (columnKey) {
-      case "photo":
-        return <Avatar isBordered size="lg" src={item.photo} />;
-      case "firstname":
+      case "name":
         return (
           <div>
-            <span>
-              {item.firstname} {item.lastname}
-            </span>
+            <span>{item.name}</span>
           </div>
         );
-      case "email":
+      case "description":
         return (
           <div>
-            <span>{item.email}</span>
-          </div>
-        );
-      case "phone":
-        return (
-          <div>
-            <span>{item.phone}</span>
-          </div>
-        );
-      // case "address":
-      //   return (
-      //     <div>
-      //       <span>{item.address}</span>
-      //     </div>
-      //   );
-      case "birthdate":
-        return (
-          <div>
-            <span>{item.birthdate}</span>
-          </div>
-        );
-      case "discount":
-        return (
-          <div>
-            <span>{item.discount}</span>
-          </div>
-        );
-      case "NroContract":
-        return (
-          <div>
-            <span>{item.NroContract}</span>
-          </div>
-        );
-      case "DateSold":
-        return (
-          <div>
-            <span>{item.DateSold}</span>
-          </div>
-        );
-      case "Expiration":
-        return (
-          <div>
-            <span>{item.Expiration}</span>
-          </div>
-        );
-      case "SecondaryEmail":
-        return (
-          <div>
-            <span>{item.SecondaryEmail}</span>
-          </div>
-        );
-      case "StatusWallet":
-        return (
-          <div>
-            <span>{item.StatusWallet}</span>
-          </div>
-        );
-      case "Note":
-        return (
-          <div>
-            <span>{item.Note}</span>
-          </div>
-        );
-      case "location.name":
-        return (
-          <div>
-            <span>{item.location.name}</span>
-          </div>
-        );
-
-
-      case "state.name":
-        return (
-          <div>
-            <span>{item.state.name}</span>
-          </div>
-        );
-      case "package.name":
-        return (
-          <div>
-            <span>{item.package.name}</span>
-          </div>
-        );
-      case "language.name":
-        return (
-          <div>
-            <span>{item.language.name}</span>
-          </div>
-        );
-      case "role.name":
-        return (
-          <div>
-            <span>{item.role.name}</span>
+            <span>{item.description}</span>
           </div>
         );
       case "state":
@@ -179,7 +71,7 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
               <Tooltip content="Editar" color="primary">
                 <button
                   onClick={() => {
-                    onChanseItem(item.profileId);
+                    onChanseItem(item.IdPosition);
                     onOpen();
                   }}
                 >
@@ -187,12 +79,14 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
                 </button>
               </Tooltip>
             )}
-
-            {/* <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} /> */}
+            {
+                  deletecell && <ModalConfirm idItem={item.IdPosition} Ondelete={DeletePosition} />
+                }
           </div>
         );
       default:
         return;
+      // <span>{item[columnKey as keyof State]?.toString() || ""}</span>;
     }
   }, []);
 
@@ -274,7 +168,7 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
         </TableHeader>
         <TableBody items={items}>
           {(item) => (
-            <TableRow key={item.profileId}>
+            <TableRow key={item.IdPosition}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

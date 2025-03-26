@@ -1,17 +1,17 @@
+import { ListAdmin } from "@/actions/admin.action";
 import { GetPermissionBySession } from "@/actions/permissions.action";
-import { ListUsers } from "@/actions/user.action";
-import { UserForm } from "@/components/form/UserForm";
+import { AdminForm } from "@/components/form/AdminForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
-import { TableUser } from "@/components/ui/table/TableUser";
+import { TableAdmin } from "@/components/ui/table/TableAdmin";
 
 export default async function UsersPage() {
   const [users, permission] = await Promise.all([
-    ListUsers(),
+    ListAdmin(),
     GetPermissionBySession("Usuarios"),
   ]);
   return (
     <div className="container">
-      <h3 className="text-xl font-semibold">Usuarios</h3>
+      <h3 className="text-xl font-semibold">Administradores</h3>
       {permission && (
         <>
           <div className="my-3">
@@ -20,10 +20,11 @@ export default async function UsersPage() {
               title="Registrar Nuevo Usuario"
               size="3xl"
             >
-              <UserForm />
+             <AdminForm/>
             </ModalMain>
           </div>
-          {permission.read && <TableUser items={users} update />}
+
+          {permission.read && <TableAdmin items={users} update />}
         </>
       )}
     </div>

@@ -24,7 +24,7 @@ export const StatesForm = () => {
   } = useForm<StateForm>();
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
-
+ const value = watch("countryId");
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
@@ -72,7 +72,7 @@ export const StatesForm = () => {
         errorMessage={errors.name?.message}
       />
 
-      <SelectCountry register={register} errors={errors} watch={watch} />
+      <SelectCountry register={register} errors={errors.countryId} name="countryId" value={value}  />
       <CotentButtonForm state={loading} />
     </form>
   );

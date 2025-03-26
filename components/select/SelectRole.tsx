@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { FieldErrors, UseFormRegister, UseFormWatch } from "react-hook-form";
-import { StateFormUser } from "../form/UserForm";
+import { FieldError, FieldValues, Path, PathValue, UseFormRegister } from "react-hook-form";
 import { Role } from "@/interfaces/roles-interfaces";
 import { GetRoleActive } from "@/actions/user.action";
 import { Progress, Select, SelectItem } from "@nextui-org/react";
 
-interface Props {
-  register: UseFormRegister<StateFormUser>;
-  errors: FieldErrors<StateFormUser>;
-  watch: UseFormWatch<StateFormUser>;
+interface Props<T extends FieldValues> {
+  register: UseFormRegister<T>;
+  errors?: FieldError;
+  name: Path<T>;
+  value: PathValue<T, Path<T>>;
+  is_admin:boolean
 }
-const SelectRole = ({ register, errors,watch }: Props) => {
-  const value = watch("roleId");
+const SelectRole = <T extends FieldValues>({register,
+  errors,
+  name,
+  value,is_admin }: Props<T>) => {
+ 
   const [data, setdata] = useState<Role[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const GetCountry = async () => {
       setLoading(true);
-      const resp = await GetRoleActive();
+      const resp = await GetRoleActive(is_admin);
       setdata(resp);
       setLoading(false);
     };
@@ -41,9 +45,9 @@ const SelectRole = ({ register, errors,watch }: Props) => {
       items={data}
       label="Rol"
       placeholder="Seleccione Rol"
-      {...register("roleId", { required: "El rol es requerido" })}
-      isInvalid={!!errors.roleId}
-      errorMessage={errors.roleId?.message}
+      {...register(name, { required: "El rol es requerido" })}
+      isInvalid={!!errors}
+      errorMessage={errors?.message}
     >
       {(animal) => <SelectItem key={animal.roleId}>{animal.name}</SelectItem>}
     </Select>

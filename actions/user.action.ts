@@ -10,24 +10,18 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 export const ListUsers = async () => {
-  //     let { data: profile, error } = await supabase
-  //   .from('profile')
-  //   .select(`
-  //       *,
-  //       country (name),
-  //       state (name),
-  //       package (name),
-  //       language (name),
-  //       role (name)
-  //   `);
   const supabase = await createClient();
-  const { data: profile } = await supabase.from("profile_with_users").select(`
-      *,
-      state (name),
-      package (name),
-      language (name),
-      role (name)
-   `);
+  const { data: profile } = await supabase.from("profile_with_parther").select(`
+    *,
+    state (name),
+    package (name),
+    language (name),
+    role (name, is_admin),
+    location (name)
+  `);
+  console.log(profile)
+  // .not('role', 'is', null)
+  // .eq('role.is_admin', is_admin);
 
   return profile as User[];
 };
@@ -38,25 +32,43 @@ export interface UserData {
   email: string;
   phono: string;
 }
-export const InsertUsers = async (user: StateFormUser, date: string) => {
+export const InsertUsers = async (
+  parther: StateFormUser,
+  date: string,
+  DateSold: string,
+  Expiration: string
+) => {
   const supabase = await createClient();
-
-  if (user.id) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: admin } = await supabase
+    .from("admin")
+    .select("IdLocation")
+    .eq("IdUser", user?.id)
+    .single();
+  if (parther.id) {
     const { data: users, error } = await supabase
       .from("profile")
       .update([
         {
-          firstname: user.firstname,
-          lastname: user.lastname,
-          address: user.address,
-          stateId: user.stateId,
-          packageId: user.packageId,
-          languageId: user.languageId,
-          roleId: user.roleId,
-          discount: +user.discount,
+          firstname: parther.firstname,
+          lastname: parther.lastname,
+          address: parther.address,
+          stateId: parther.stateId,
+          packageId: parther.packageId,
+          languageId: parther.languageId,
+          roleId: parther.roleId,
+          discount: +parther.discount,
+          IdUserCity: parther.IdUserCity,
+          IdLocation: admin?.IdLocation,
+          NroContract: parther.NroContract,
+          SecondaryEmail: parther.SecondaryEmail,
+          StatusWallet: parther.StatusWallet,
+          Note: parther.Note,
         },
       ])
-      .eq("profileId", user.id)
+      .eq("profileId", parther.id)
       .select();
 
     if (error) {
@@ -72,15 +84,15 @@ export const InsertUsers = async (user: StateFormUser, date: string) => {
     };
   }
   const usercookie: UserData = {
-    firstname: user.firstname,
-    lastname: user.lastname,
-    email: user.email!,
-    phono: user.photo,
+    firstname: parther.firstname,
+    lastname: parther.lastname,
+    email: parther.email!,
+    phono: parther.photo,
   };
 
   const { data, error } = await supabase.auth.admin.createUser({
-    email: user.email,
-    phone: `${user.code}${user.phone}`,
+    email: parther.email,
+    phone: `${parther.code}${parther.phone}`,
     email_confirm: true,
     phone_confirm: true,
     user_metadata: usercookie,
@@ -98,16 +110,25 @@ export const InsertUsers = async (user: StateFormUser, date: string) => {
     .insert([
       {
         user_id: data.user.id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        address: user.address,
-        photo: user.photo,
-        stateId: user.stateId,
-        packageId: user.packageId,
-        languageId: user.languageId,
-        roleId: user.roleId,
-        discount: +user.discount,
-        birthday: date,
+        firstname: parther.firstname,
+        lastname: parther.lastname,
+        address: parther.address,
+        photo: parther.photo,
+        stateId: parther.stateId,
+        packageId: parther.packageId,
+        languageId: parther.languageId,
+        roleId: parther.roleId,
+        discount: +parther.discount,
+        birthdate: date,
+
+        IdUserCity: parther.IdUserCity,
+        IdLocation: admin?.IdLocation,
+        NroContract: parther.NroContract,
+        DateSold: DateSold,
+        Expiration: Expiration,
+        SecondaryEmail: parther.SecondaryEmail,
+        StatusWallet: parther.StatusWallet,
+        Note: parther.Note,
       },
     ])
     .select();
@@ -117,8 +138,8 @@ export const InsertUsers = async (user: StateFormUser, date: string) => {
     .insert([
       {
         type: "Phone",
-        code: user.code,
-        number: user.phone,
+        code: parther.code,
+        number: parther.phone,
         profileId: users?.[0].profileId,
       },
     ])
@@ -146,7 +167,6 @@ export const GetUser = async (id: string) => {
     .select("*")
     .eq("profileId", id)
     .single();
-
   if (error) {
     return {} as Profile;
   }
@@ -192,13 +212,14 @@ export const GetLanguagesActive = async () => {
   return state as Languages[];
 };
 
-export const GetRoleActive = async () => {
+export const GetRoleActive = async (is_admin: boolean) => {
   const supabase = await createClient();
 
   const { data: state, error } = await supabase
     .from("role")
     .select("*")
-    .eq("state", true);
+    .eq("state", true)
+    .eq("is_admin", is_admin);
   if (error) {
     return [];
   }

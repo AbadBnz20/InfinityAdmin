@@ -9,6 +9,7 @@ import {
   IoAlbumsOutline,
   IoApps,
   IoBoatOutline,
+  IoBusinessOutline,
   IoCall,
   IoCar,
   IoCarSportOutline,
@@ -132,11 +133,42 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                       <SidebarItem
                         key={permission.modules.name}
                         isActive={pathname === "/users"}
-                        title="Usuarios"
+                        title="Administradores"
                         icon={<IoPeople size={"20px"} />}
                         href="/users"
                       />
                     );
+                  case "Socios":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/partner"}
+                        title="Socios"
+                        icon={<IoPeople size={"20px"} />}
+                        href="/partner"
+                      />
+                    );
+                  case "Departamentos":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/departments"}
+                        title="Departamentos"
+                        icon={<IoBusinessOutline size={"20px"} />}
+                        href="/departments"
+                      />
+                    );
+                  case "Puestos":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/position"}
+                        title="Puestos"
+                        icon={<IoBusinessOutline size={"20px"} />}
+                        href="/position"
+                      />
+                    );
+
                   case "Roles":
                     return (
                       <SidebarItem
@@ -155,6 +187,26 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         title="Ciudades"
                         icon={<IoEarth size={"20px"} />}
                         href="/city"
+                      />
+                    );
+                  case "Ubicaciones":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/location"}
+                        title="Ubicaciones"
+                        icon={<IoLocationOutline size={"20px"} />}
+                        href="/location"
+                      />
+                    );
+                  case "CiudadesUsuario":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/usercity"}
+                        title="Ciudades(Usuarios)"
+                        icon={<IoEarth size={"20px"} />}
+                        href="/usercity"
                       />
                     );
                   case "Celulares":
@@ -188,8 +240,6 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                       />
                     );
 
-                 
-
                   case "Lenguajes":
                     return (
                       <SidebarItem
@@ -199,7 +249,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         icon={<IoGlobe size={"20px"} />}
                         href="/languages"
                       />
-                    );        
+                    );
                   default:
                     return null;
                 }
@@ -209,7 +259,6 @@ export const SidebarWrapper = ({ permissions }: Props) => {
             <SidebarMenu title="Mi Viaje Perfecto">
               {permissions.map((permission) => {
                 switch (permission.modules.name) {
-                
                   case "Atracciones":
                     return (
                       <SidebarItem
@@ -230,7 +279,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/categoryCar"
                       />
                     );
-       
+
                   default:
                     return null;
                 }

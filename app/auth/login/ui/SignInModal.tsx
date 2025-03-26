@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { encodedRedirect } from "@/utils/utils";
+import { ContentTimer } from "./ContentTimer";
 
 interface Props {
   isOpen: boolean;
@@ -67,6 +68,7 @@ export const SignInModal = ({
               Verificar{" "}
             </ModalHeader>
             <ModalBody>
+              <ContentTimer/>
               <p className="text-center mb-4">Ingrese código de 6 dígitos.</p>
               <div className="flex justify-center gap-2 my-3">
                 <form className="" onSubmit={handleSubmit(onsubmit)}>

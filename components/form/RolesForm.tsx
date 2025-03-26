@@ -12,6 +12,7 @@ import { ChecboxModules } from "../select/ChecboxModules";
 export interface StateForm {
   id?: string;
   name: string;
+  is_admin: boolean;
 }
 type action = "register" | "update" | "delete";
 export const RolesForm = () => {
@@ -31,7 +32,6 @@ export const RolesForm = () => {
     const GetItem = async () => {
       if (idItem) {
         const resp = await GetRole(idItem);
-        console.log(resp);
         setGroupSelected(resp.permissions.map((item) => item.moduleId));
         if (resp.permissions.length > 0) {
           const selectedActions: action[] = [];
@@ -49,6 +49,7 @@ export const RolesForm = () => {
 
         setValue("id", resp.roleId);
         setValue("name", resp.name);
+        setValue("is_admin", resp.is_admin);
       }
     };
 
@@ -57,7 +58,7 @@ export const RolesForm = () => {
 
   const OnSubmit = async (state: StateForm) => {
     setLoading(true);
-
+    console.log(state);
     // if (groupSelected.length === 0) {
     //   setLoading(false);
     //   return toast.error("Seleccione un modulo", {
@@ -69,6 +70,7 @@ export const RolesForm = () => {
       const resp = await InsertRole(
         state.name,
         groupSelected,
+        state.is_admin,
         actionSelected,
         state.id
       );
@@ -106,7 +108,16 @@ export const RolesForm = () => {
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
       />
-
+      <div>
+        <Checkbox
+          {...register("is_admin")}
+          isSelected={watch("is_admin")} // Asegura que se refleje el cambio
+          onValueChange={(value) => setValue("is_admin", value)}
+          className="my-1"
+        >
+          ¿Este Rol es administrador?
+        </Checkbox>
+      </div>
       <div className="grid grid-cols-2 mt-3">
         <ChecboxModules
           groupSelected={groupSelected}

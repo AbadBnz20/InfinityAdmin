@@ -3,6 +3,7 @@
 export interface Role{
     roleId:string,
     name: string,
+    is_admin:boolean;
     state: boolean,
     permissions: Permission[]
   }

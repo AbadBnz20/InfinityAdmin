@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { StateFormUser } from '../form/UserForm';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
-import { Packages } from '@/interfaces/package-interfaces';
+import { StateFormUser } from '../form/UserForm';
+import { ListUsercity } from '@/actions/usercity.action';
+import { UserCity } from '@/interfaces/userinterfaces-interfaces';
 import { Progress, Select, SelectItem } from '@nextui-org/react';
-import { GetPackageActive } from '@/actions/user.action';
+
+
 interface Props {
     register: UseFormRegister<StateFormUser>;
     errors: FieldErrors<StateFormUser>;
     watch: UseFormWatch<StateFormUser>;
   }
-export const SelectPackage = ({ register, errors,watch }: Props) => {
-    const value = watch("packageId");
-    const [data, setdata] = useState<Packages[]>([]);
+
+export const SelectCityUser = ({ register, errors,watch }: Props) => {
+    const value = watch("IdUserCity");
+    const [data, setdata] = useState<UserCity[]>([]);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
       const GetCountry = async () => {
         setLoading(true);
-        const resp = await GetPackageActive();
+        const resp = await ListUsercity();
         setdata(resp);
         setLoading(false);
       };
@@ -38,13 +41,15 @@ export const SelectPackage = ({ register, errors,watch }: Props) => {
   return (
     <Select
     items={data}
-    label="Paquete"
-    placeholder="Seleccione Paquete"
-    {...register("packageId", { required: "El Paquete es requerido" })}
-    isInvalid={!!errors.stateId}
-    errorMessage={errors.stateId?.message}
+    label="Ciudad"
+    placeholder="Seleccione Ciudad"
+    {...register("IdUserCity", { required: "El Idioma es requerido" })}
+    isInvalid={!!errors.IdUserCity}
+    errorMessage={errors.IdUserCity?.message}
   >
-    {(item) =>  <SelectItem key={item.packageId}>{`${item.name} (${item.percentage}%)`}</SelectItem>}
+    {(item) => (
+      <SelectItem key={item.IdUserCity}>{item.name}</SelectItem>
+    )}
   </Select>
   )
 }

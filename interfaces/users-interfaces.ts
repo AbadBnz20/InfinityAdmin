@@ -5,9 +5,18 @@ export interface User {
   address: string;
   photo: string;
   state: Property;
-  userId: string;
+  user_id: string;
   email: string;
   phone: string;
+  birthdate: string;
+  discount: string;
+  location: Property;
+  NroContract: string;
+  DateSold: string;
+  Expiration: string;
+  SecondaryEmail: string;
+  StatusWallet: string;
+  Note: string;
   created_at: string;
   stateId: string;
   packageId: string;
@@ -37,6 +46,17 @@ export interface Profile {
   stateId: string;
   packageId: string;
   languageId: string;
+  birthdate:string;
   roleId:string;
   discount:string,
+  IdUserCity: string;
+  NroContract:string,
+  DateSold:string,
+  Expiration: string,
+  SecondaryEmail: string,
+  StatusWallet:string,
+  Note: string
 }
+
+
+

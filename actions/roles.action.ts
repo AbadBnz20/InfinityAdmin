@@ -22,6 +22,7 @@ type action = "register" | "update" | "delete";
 export const InsertRole = async (
   name: string,
   modules: string[],
+  is_admin:boolean,
   action: action[],
   id?: string
 ) => {
@@ -31,7 +32,7 @@ export const InsertRole = async (
   if (id) {
     response = await supabase
       .from("role")
-      .update({ name: name })
+      .update({ name: name,is_admin:is_admin })
       .eq("roleId", id)
       .select();
     if (!response.error) {
@@ -46,7 +47,7 @@ export const InsertRole = async (
   } else {
     response = await supabase
       .from("role")
-      .insert([{ name: name }])
+      .insert([{ name: name,is_admin:is_admin }])
       .select();
   }
   const { data, error } = response;
@@ -80,12 +81,12 @@ export const GetRole = async (id: string) => {
     )
   `
     )
-    .eq("roleId", id);
+    .eq("roleId", id).single();
   if (error) {
     return {} as Role;
   }
 
-  return data?.[0] as Role;
+  return data as Role;
 };
 
 export const DeleteRole = async (id: string) => {

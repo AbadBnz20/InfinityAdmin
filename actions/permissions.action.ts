@@ -7,9 +7,9 @@ export const GetPermissionsByUser = async (id: string) => {
   try {
     const supabase = await createClient();
     const { data: role, error } = await supabase
-      .from("profile")
-      .select("roleId")
-      .eq("user_id", id)
+      .from("admin")
+      .select("IdRole")
+      .eq("IdUser", id)
       .single();
 
     if (role) {
@@ -24,7 +24,7 @@ export const GetPermissionsByUser = async (id: string) => {
        modules (name)
      `
         )
-        .eq("roleId", role.roleId);
+        .eq("roleId", role.IdRole);
 
       return permisions as unknown as Permissions[];
     }

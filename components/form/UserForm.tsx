@@ -5,8 +5,10 @@ import {
   AutocompleteItem,
   Avatar,
   DateInput,
+  DatePicker,
   DateValue,
   Input,
+  Textarea,
 } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -18,9 +20,23 @@ import SelectRole from "../select/SelectRole";
 import { GetUser, InsertUsers } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import { Contries } from "@/data/countries";
+import {
+  getLocalTimeZone,
+  parseDate,
+} from "@internationalized/date";
+import { SelectCityUser } from "../select/SelectCityUser";
 
 export interface StateFormUser {
   id?: string;
+
+  NroContract: string;
+  DateSold: DateValue;
+  Expiration: DateValue;
+  SecondaryEmail: string;
+  StatusWallet: string;
+  Note: string;
+  IdUserCity: string;
+
   firstname: string;
   lastname: string;
   address: string;
@@ -35,7 +51,11 @@ export interface StateFormUser {
   languageId: string;
   roleId: string;
 }
-export const UserForm = () => {
+
+interface Props {
+  is_admin: boolean;
+}
+export const UserForm = ({ is_admin }: Props) => {
   const {
     register,
     setValue,
@@ -48,10 +68,11 @@ export const UserForm = () => {
       discount: "0",
     },
   });
+
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
   const value = watch("stateId");
-
+  const valuerole = watch("roleId");
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
@@ -66,6 +87,15 @@ export const UserForm = () => {
         setValue("packageId", resp.packageId);
         setValue("languageId", resp.languageId);
         setValue("roleId", resp.roleId);
+        setValue("discount", resp.discount);
+        setValue("IdUserCity", resp.IdUserCity);
+        setValue("NroContract", resp.NroContract);
+        setValue("SecondaryEmail", resp.SecondaryEmail);
+        setValue("StatusWallet", resp.StatusWallet);
+        setValue("Note", resp.Note);
+        setValue("birthday", parseDate(resp.birthdate));
+        setValue("DateSold", parseDate(resp.DateSold));
+        setValue("Expiration", parseDate(resp.Expiration));
       }
     };
 
@@ -75,23 +105,18 @@ export const UserForm = () => {
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
 
-    let date = "";
-    if (state.birthday) {
-      date = new Date(
-        state.birthday.year,
-        state.birthday.month - 1,
-        state.birthday.day
-      )
-        .toISOString()
-        .split("T")[0];
-    }
-    
+    const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
+    const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
+    const Expiration = state.Expiration.toDate(
+      getLocalTimeZone()
+    ).toISOString();
+
     try {
       state.photo =
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtuphMb4mq-EcVWhMVT8FCkv5dqZGgvn_QiA&s";
-      
-      state.code = state.code ? state.code.replace("+", ""):"";
-      const resp = await InsertUsers(state, date);
+        "https://res.cloudinary.com/devz7obre/image/upload/v1743004842/pngtree-user-profile-avatar-vector-admin-png-image_5289693_szfiow.png";
+
+      state.code = state.code ? state.code.replace("+", "") : "";
+      const resp = await InsertUsers(state, birthday, DateSold, Expiration);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -124,6 +149,7 @@ export const UserForm = () => {
         isInvalid={!!errors.firstname}
         errorMessage={errors.firstname?.message}
       />
+
       <Input
         type="text"
         label="Apellido"
@@ -135,6 +161,15 @@ export const UserForm = () => {
       />
       <Input
         type="text"
+        label="Numero de Contrato"
+        placeholder="Ingrese numero"
+        {...register("NroContract", { required: "El campo es requerido" })}
+        value={watch("NroContract")}
+        isInvalid={!!errors.NroContract}
+        errorMessage={errors.NroContract?.message}
+      />
+      <Input
+        type="text"
         label="Direccion"
         placeholder="Ingrese Direccion"
         {...register("address", { required: "El campo es requerido" })}
@@ -142,6 +177,34 @@ export const UserForm = () => {
         isInvalid={!!errors.address}
         errorMessage={errors.address?.message}
       />
+
+      <Controller
+        name="DateSold"
+        control={control}
+        rules={{ required: "La fecha de inicio es requerida" }}
+        render={({ field }) => (
+          <DatePicker
+            label="Fecha de inicio"
+            {...field}
+            isInvalid={!!errors.DateSold}
+            errorMessage={errors.DateSold?.message}
+          />
+        )}
+      />
+      <Controller
+          name="Expiration"
+          control={control}
+          rules={{ required: "La fecha de expiracion es requerida" }}
+          render={({ field }) => (
+            <DatePicker
+              label="Fecha de Expiracion"
+              {...field}
+              isInvalid={!!errors.Expiration}
+              errorMessage={errors.Expiration?.message}
+            />
+          )}
+        />
+
       {!idItem && (
         <>
           <Input
@@ -158,6 +221,21 @@ export const UserForm = () => {
             value={watch("email")}
             isInvalid={!!errors.email}
             errorMessage={errors.email?.message}
+          />
+          <Input
+            type="email"
+            label="email secundario"
+            placeholder="Ingrese Email"
+            {...register("SecondaryEmail", {
+              required: "El campo es requerido",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Debe ingresar un email válido",
+              },
+            })}
+            value={watch("SecondaryEmail")}
+            isInvalid={!!errors.SecondaryEmail}
+            errorMessage={errors.SecondaryEmail?.message}
           />
           <div className="grid grid-cols-3">
             <Controller
@@ -220,8 +298,7 @@ export const UserForm = () => {
           </div>
         </>
       )}
-      {!idItem && (
-        <Controller
+     <Controller
           name="birthday"
           control={control}
           rules={{ required: "La fecha de nacimiento es requerida" }}
@@ -234,21 +311,49 @@ export const UserForm = () => {
             />
           )}
         />
-      )}
 
-      <SelectState name="stateId" register={register} errors={errors.stateId}  value={value} />
+      <SelectState
+        name="stateId"
+        register={register}
+        errors={errors.stateId}
+        value={value}
+      />
+      <SelectCityUser register={register} errors={errors} watch={watch} />
       <SelectPackage register={register} errors={errors} watch={watch} />
       <SelectLanguage register={register} errors={errors} watch={watch} />
-      <SelectRole register={register} errors={errors} watch={watch} />
+      <SelectRole
+        name="roleId"
+        is_admin={is_admin}
+        register={register}
+        errors={errors.roleId}
+        value={valuerole}
+      />
+      <Input
+        type="text"
+        label="Estado billetera"
+        placeholder="Ingrese estado"
+        {...register("StatusWallet", { required: "El campo es requerido" })}
+        value={watch("StatusWallet")}
+        isInvalid={!!errors.StatusWallet}
+        errorMessage={errors.StatusWallet?.message}
+      />
       <Input
         type="number"
         label="Descuento"
-        className="col-span-2"
         placeholder="Ingrese descuento"
-        {...register("discount")}
+        {...register("discount", { required: false })}
         value={watch("discount")}
-        isInvalid={!!errors.phone}
-        errorMessage={errors.phone?.message}
+        isInvalid={!!errors.discount}
+        errorMessage={errors.discount?.message}
+      />
+      <Textarea
+        label="Nota"
+        placeholder="Ingrese nota"
+        {...register("Note", { required: "El campo es requerido" })}
+        value={watch("Note")}
+        className="col-span-2"
+        isInvalid={!!errors.Note}
+        errorMessage={errors.Note?.message}
       />
       <CotentButtonForm state={loading} />
     </form>
