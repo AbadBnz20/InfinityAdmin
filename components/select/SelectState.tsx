@@ -9,6 +9,7 @@ import {
 import { State } from "@/interfaces/state-interfaces";
 import { GetStateActive } from "@/actions/user.action";
 import { Progress, Select, SelectItem } from "@nextui-org/react";
+import { SelectStore } from "@/store/SelectStore";
 
 interface Props<T extends FieldValues> {
   register: UseFormRegister<T>;
@@ -26,16 +27,19 @@ export const SelectState = <T extends FieldValues>({
 }: Props<T>) => {
   const [data, setdata] = useState<State[]>([]);
   const [loading, setLoading] = useState(false);
+    const {idCountry,setState}= SelectStore();
+  
   useEffect(() => {
     const GetCountry = async () => {
+      setState(value)
       setLoading(true);
-      const resp = await GetStateActive();
+      const resp = await GetStateActive(idCountry);
       setdata(resp);
       setLoading(false);
     };
 
     GetCountry();
-  }, [value]);
+  }, [value,idCountry]);
   
   if (loading) {
     return (

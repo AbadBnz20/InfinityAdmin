@@ -1,5 +1,6 @@
 import { GetCountryActive } from "@/actions/countries.action";
 import { Countries } from "@/interfaces/countries-interfaces";
+import { SelectStore } from "@/store/SelectStore";
 import { Progress, Select, SelectItem } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -24,12 +25,15 @@ export const SelectCountry = <T extends FieldValues>({
 }: Props<T>) => {
   const [data, setdata] = useState<Countries[]>([]);
   const [loading, setLoading] = useState(false);
+  const {setCountry}= SelectStore();
   useEffect(() => {
     const GetCountry = async () => {
+      setCountry(value)
       setLoading(true);
       const resp = await GetCountryActive();
       setdata(resp);
       setLoading(false);
+
     };
 
     GetCountry();
@@ -52,7 +56,7 @@ export const SelectCountry = <T extends FieldValues>({
       items={data}
       label="Pais"
       placeholder="Seleccione Pais"
-      className="mt-3"
+    
       {...register(name, { required: "El Pais es requerido" })}
       isInvalid={!!errors}
       errorMessage={errors?.message}

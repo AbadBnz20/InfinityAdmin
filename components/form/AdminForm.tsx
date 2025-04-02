@@ -5,7 +5,6 @@ import {
   Autocomplete,
   AutocompleteItem,
   Avatar,
-  DateInput,
   Input,
 } from "@nextui-org/react";
 import React, { useState } from "react";
@@ -17,14 +16,10 @@ import SelectRole from "../select/SelectRole";
 import { SelectCountry } from "../select/SelectCountry";
 import { SelectPosition } from "../select/SelectPosition";
 import { SelectDepartment } from "../select/SelectDepartment";
-import {
-  DateValue,
-  getLocalTimeZone,
-  today,
-} from "@internationalized/date";
 import { toast } from "react-toastify";
 import { InsertAdmin } from "@/actions/admin.action";
 import { SelectLocation } from "../select/SelectLocation";
+import { SelectCity } from "../select/SelectCity";
 
 export interface StateFormAdmin {
   id?: string;
@@ -34,9 +29,9 @@ export interface StateFormAdmin {
   email?: string;
   phone?: string;
   code: string;
-  birthday: string;
   IdRole: string;
   IdState: string;
+  IdCity: string;
   IdLocation: string;
   IdCountry: string;
   IdDepartment: string;
@@ -53,17 +48,14 @@ export const AdminForm = () => {
   } = useForm<StateFormAdmin>();
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
-  const [valueDate, setValueDate] = useState<DateValue | null>(
-    today(getLocalTimeZone())
-  );
   const value = watch("IdState");
   const valuerole = watch("IdRole");
   const valuecountry = watch("IdCountry");
+  const valuecity = watch("IdCity");
 
   const OnSubmit = async (state: StateFormAdmin) => {
     setLoading(true);
-    const departureDate = valueDate?.toDate(getLocalTimeZone());
-    state.birthday = departureDate?.toISOString() || "";
+
     state.code = state.code ? state.code.replace("+", "") : "";
 
     try {
@@ -199,23 +191,26 @@ export const AdminForm = () => {
           </div>
         </>
       )}
-      <DateInput
-        label="Fecha de Nacimiento"
-        value={valueDate}
-        onChange={setValueDate}
-      />
-       <SelectLocation register={register} errors={errors} watch={watch} />
+      <SelectLocation register={register} errors={errors} watch={watch} />
       <SelectCountry
         register={register}
         errors={errors.IdCountry}
         name="IdCountry"
         value={valuecountry}
       />
+
       <SelectState
         name="IdState"
         register={register}
         errors={errors.IdState}
         value={value}
+      />
+
+      <SelectCity
+        control={control}
+        name="IdCity"
+        error={errors.IdCity}
+        value={valuecity}
       />
       <SelectPosition register={register} errors={errors} watch={watch} />
       <SelectDepartment register={register} errors={errors} watch={watch} />

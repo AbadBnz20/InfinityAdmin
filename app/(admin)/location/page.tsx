@@ -7,7 +7,7 @@ export default async function LocationPage() {
   const location = await ListLocations();
   return (
     <div className="container">
-      <h3 className="text-xl font-semibold">Ubicación</h3>
+      <h3 className="text-xl font-semibold">Locacion</h3>
       <>
         <div className="my-3">
           <ModalMain active title="Registrar Nuevo Ubicacion">

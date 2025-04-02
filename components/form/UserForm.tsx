@@ -8,6 +8,8 @@ import {
   DatePicker,
   DateValue,
   Input,
+  Select,
+  SelectItem,
   Textarea,
 } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
@@ -16,15 +18,35 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
 import { SelectPackage } from "../select/SelectPackage";
 import { SelectLanguage } from "../select/SelectLanguage";
-import SelectRole from "../select/SelectRole";
 import { GetUser, InsertUsers } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import { Contries } from "@/data/countries";
-import {
-  getLocalTimeZone,
-  parseDate,
-} from "@internationalized/date";
-import { SelectCityUser } from "../select/SelectCityUser";
+import { getLocalTimeZone, parseDate } from "@internationalized/date";
+import { SelectCity } from "../select/SelectCity";
+import { SelectCountry } from "../select/SelectCountry";
+
+const data = [
+  {
+    idstatus: "Activo",
+    name: "Activo",
+  },
+  {
+    idstatus: "Inactivo",
+    name: "Inactivo",
+  },
+  {
+    idstatus: "Suspendido",
+    name: "Suspendido",
+  },
+  {
+    idstatus: "Bloqueado",
+    name: "Bloqueado",
+  },
+  {
+    idstatus: "Eliminado",
+    name: "Eliminado",
+  },
+];
 
 export interface StateFormUser {
   id?: string;
@@ -35,8 +57,8 @@ export interface StateFormUser {
   SecondaryEmail: string;
   StatusWallet: string;
   Note: string;
-  IdUserCity: string;
-
+  IdCity: string;
+  IdCountry: string;
   firstname: string;
   lastname: string;
   address: string;
@@ -49,13 +71,9 @@ export interface StateFormUser {
   packageId: string;
   birthday: DateValue;
   languageId: string;
-  roleId: string;
 }
 
-interface Props {
-  is_admin: boolean;
-}
-export const UserForm = ({ is_admin }: Props) => {
+export const UserForm = () => {
   const {
     register,
     setValue,
@@ -72,7 +90,8 @@ export const UserForm = ({ is_admin }: Props) => {
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
   const value = watch("stateId");
-  const valuerole = watch("roleId");
+  const valuecity = watch("IdCity");
+  const valuecountry = watch("IdCountry");
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
@@ -86,9 +105,8 @@ export const UserForm = ({ is_admin }: Props) => {
         setValue("discount", resp.discount);
         setValue("packageId", resp.packageId);
         setValue("languageId", resp.languageId);
-        setValue("roleId", resp.roleId);
         setValue("discount", resp.discount);
-        setValue("IdUserCity", resp.IdUserCity);
+        setValue("IdCity", resp.IdCity);
         setValue("NroContract", resp.NroContract);
         setValue("SecondaryEmail", resp.SecondaryEmail);
         setValue("StatusWallet", resp.StatusWallet);
@@ -123,6 +141,23 @@ export const UserForm = ({ is_admin }: Props) => {
           position: "top-right",
         });
       }
+
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: `${state.firstname} ${state.lastname}`,
+          email: state.email,
+         
+        }),
+      });
+      const datafetch = await res.json();
+      console.log(datafetch);
+
+
+
       onClose();
       toast.success(resp.message, {
         position: "top-right",
@@ -142,6 +177,15 @@ export const UserForm = ({ is_admin }: Props) => {
     >
       <Input
         type="text"
+        label="Numero de Contrato"
+        placeholder="Ingrese numero"
+        {...register("NroContract", { required: "El campo es requerido" })}
+        value={watch("NroContract")}
+        isInvalid={!!errors.NroContract}
+        errorMessage={errors.NroContract?.message}
+      />
+      <Input
+        type="text"
         label="Nombre"
         placeholder="Ingrese nombre"
         {...register("firstname", { required: "El campo es requerido" })}
@@ -159,15 +203,7 @@ export const UserForm = ({ is_admin }: Props) => {
         isInvalid={!!errors.lastname}
         errorMessage={errors.lastname?.message}
       />
-      <Input
-        type="text"
-        label="Numero de Contrato"
-        placeholder="Ingrese numero"
-        {...register("NroContract", { required: "El campo es requerido" })}
-        value={watch("NroContract")}
-        isInvalid={!!errors.NroContract}
-        errorMessage={errors.NroContract?.message}
-      />
+
       <Input
         type="text"
         label="Direccion"
@@ -192,18 +228,18 @@ export const UserForm = ({ is_admin }: Props) => {
         )}
       />
       <Controller
-          name="Expiration"
-          control={control}
-          rules={{ required: "La fecha de expiracion es requerida" }}
-          render={({ field }) => (
-            <DatePicker
-              label="Fecha de Expiracion"
-              {...field}
-              isInvalid={!!errors.Expiration}
-              errorMessage={errors.Expiration?.message}
-            />
-          )}
-        />
+        name="Expiration"
+        control={control}
+        rules={{ required: "La fecha de expiracion es requerida" }}
+        render={({ field }) => (
+          <DatePicker
+            label="Fecha de Expiracion"
+            {...field}
+            isInvalid={!!errors.Expiration}
+            errorMessage={errors.Expiration?.message}
+          />
+        )}
+      />
 
       {!idItem && (
         <>
@@ -298,37 +334,42 @@ export const UserForm = ({ is_admin }: Props) => {
           </div>
         </>
       )}
-     <Controller
-          name="birthday"
-          control={control}
-          rules={{ required: "La fecha de nacimiento es requerida" }}
-          render={({ field }) => (
-            <DateInput
-              {...field}
-              label={"Fecha Nacimiento"}
-              isInvalid={!!errors.birthday}
-              errorMessage={errors.birthday?.message}
-            />
-          )}
-        />
-
+      <Controller
+        name="birthday"
+        control={control}
+        rules={{ required: "La fecha de nacimiento es requerida" }}
+        render={({ field }) => (
+          <DateInput
+            {...field}
+            label={"Fecha Nacimiento"}
+            isInvalid={!!errors.birthday}
+            errorMessage={errors.birthday?.message}
+          />
+        )}
+      />
+      <SelectCountry
+        register={register}
+        errors={errors.IdCountry}
+        name="IdCountry"
+        value={valuecountry}
+      />
       <SelectState
         name="stateId"
         register={register}
         errors={errors.stateId}
         value={value}
       />
-      <SelectCityUser register={register} errors={errors} watch={watch} />
+
+      <SelectCity
+        control={control}
+        name="IdCity"
+        error={errors.IdCity}
+        value={valuecity}
+      />
       <SelectPackage register={register} errors={errors} watch={watch} />
       <SelectLanguage register={register} errors={errors} watch={watch} />
-      <SelectRole
-        name="roleId"
-        is_admin={is_admin}
-        register={register}
-        errors={errors.roleId}
-        value={valuerole}
-      />
-      <Input
+
+      {/* <Input
         type="text"
         label="Estado billetera"
         placeholder="Ingrese estado"
@@ -336,7 +377,20 @@ export const UserForm = ({ is_admin }: Props) => {
         value={watch("StatusWallet")}
         isInvalid={!!errors.StatusWallet}
         errorMessage={errors.StatusWallet?.message}
-      />
+      /> */}
+
+      <Select
+        items={data}
+        label="Estado billetera"
+        placeholder="Seleccione estado"
+        {...register("StatusWallet", { required: "El Campo es requerido" })}
+        value={watch("StatusWallet")}
+        isInvalid={!!errors.StatusWallet}
+        errorMessage={errors.StatusWallet?.message}
+      >
+        {(item) => <SelectItem key={item.idstatus}>{item.name}</SelectItem>}
+      </Select>
+
       <Input
         type="number"
         label="Descuento"

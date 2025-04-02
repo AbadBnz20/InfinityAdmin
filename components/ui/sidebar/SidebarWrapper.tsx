@@ -194,19 +194,9 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                       <SidebarItem
                         key={permission.modules.name}
                         isActive={pathname === "/location"}
-                        title="Ubicaciones"
+                        title="Locación"
                         icon={<IoLocationOutline size={"20px"} />}
                         href="/location"
-                      />
-                    );
-                  case "CiudadesUsuario":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/usercity"}
-                        title="Ciudades(Usuarios)"
-                        icon={<IoEarth size={"20px"} />}
-                        href="/usercity"
                       />
                     );
                   case "Celulares":

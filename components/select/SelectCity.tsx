@@ -3,6 +3,7 @@ import { Control, Controller, FieldError, FieldValues, Path, PathValue } from "r
 import { City } from "@/interfaces/city-interfaces";
 import { Progress, Select, SelectItem } from "@nextui-org/react";
 import { GetCityActive } from "@/actions/destinationship";
+import { SelectStore } from "@/store/SelectStore";
 
 interface Props<T extends FieldValues> {
   control: Control<T, any>;
@@ -13,16 +14,17 @@ interface Props<T extends FieldValues> {
 export const SelectCity = <T extends FieldValues>({ control,name,error,value }: Props<T>) => {
   const [data, setdata] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
+    const {idState}= SelectStore();
   useEffect(() => {
     const GetCountry = async () => {
       setLoading(true);
-      const resp = await GetCityActive();
+      const resp = await GetCityActive(idState);
       setdata(resp);
       setLoading(false);
     };
 
     GetCountry();
-  }, [value]);
+  }, [value,idState]);
   if (loading) {
     return (
       <div className="my-4">

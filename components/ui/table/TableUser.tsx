@@ -35,11 +35,10 @@ export const columns = [
 
   { name: "Nota", uid: "Note" },
   { name: "Estado/Provincia", uid: "state.name" },
-  { name: "Localizacion", uid: "location.name" },
+  { name: "Locación", uid: "location.name" },
 
   { name: "Paquete", uid: "package.name" },
   { name: "Lenguaje", uid: "language.name" },
-  { name: "Rol", uid: "role.name" },
   { name: "Estado", uid: "state" },
   { name: "Acciones", uid: "actions" },
 ];
@@ -152,12 +151,6 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
         return (
           <div>
             <span>{item.language.name}</span>
-          </div>
-        );
-      case "role.name":
-        return (
-          <div>
-            <span>{item.role.name}</span>
           </div>
         );
       case "state":

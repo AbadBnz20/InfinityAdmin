@@ -20,7 +20,7 @@ export default async function PartherPage() {
                 title="Registrar Nuevo Usuario"
                 size="3xl"
               >
-                <UserForm is_admin={false} />
+                <UserForm  />
               </ModalMain>
             </div>
             {permission.read && <TableUser items={users} update />}

@@ -86,13 +86,22 @@ export const DeleteDestinationShip = async (id: string) => {
   };
 };
 
-export const GetCityActive = async () => {
+export const GetCityActive = async (id:string) => {
   const supabase = await createClient();
 
-  const { data: state, error } = await supabase
-    .from("city")
-    .select("*")
-    .eq("status", true);
+  // const { data: state, error } = await supabase
+  //   .from("city")
+  //   .select("*")
+  //   .eq("status", true);
+
+
+    let query = supabase.from("city").select("*").eq("status", true);
+
+    if (id) {
+      query = query.eq("stateId", id);
+    }
+
+    const { data: state, error } = await query; 
   if (error) {
     return [];
   }

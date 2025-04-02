@@ -11,7 +11,7 @@ export const ListAdmin = async () => {
 
 
   const supabase = await createClient();
-  const { data, error } = await supabase.from("admin").select('IdAdmin, firstName, lastName, address,email,phone,birthdate,status, country(name), role(name), location(name), position(name), department(name), state(name)').eq('status',true);
+  const { data, error } = await supabase.from("admin").select('IdAdmin, firstName, lastName, address,email,phone,status, country(name), role(name), location(name), position(name), department(name), state(name)').eq('status',true);
   return data as unknown as  Admin[];
 }
 
@@ -49,7 +49,6 @@ export const InsertAdmin = async (useradmin: StateFormAdmin) => {
         firstName: useradmin.firstname,
         lastName: useradmin.lastname,
         address: useradmin.address,
-        birthdate: useradmin.birthday,
         email: useradmin.email,
         phone: `${useradmin.code}${useradmin.phone}`,
         IdCountry: useradmin.IdCountry,

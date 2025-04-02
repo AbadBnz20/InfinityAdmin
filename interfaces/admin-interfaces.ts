@@ -5,7 +5,6 @@ export interface Admin {
     address: string,
     email: string,
     phone: string,
-    birthdate: string,
     status: boolean,
     country: { name: string },
     role: { name: string },

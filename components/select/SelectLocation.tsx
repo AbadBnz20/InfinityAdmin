@@ -43,8 +43,8 @@ interface Props {
     return (
         <Select
         items={data}
-        label="Ubicacion"
-        placeholder="Seleccione ubicacion"
+        label="Locacion"
+        placeholder="Seleccione Locacion"
         {...register("IdLocation", { required: "El Puesto es requerido" })}
         isInvalid={!!errors.IdLocation}
         errorMessage={errors.IdLocation?.message}

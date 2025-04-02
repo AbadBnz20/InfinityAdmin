@@ -10,7 +10,6 @@ export const columns = [
   { name: "Dirección", uid: "address" },
   { name: "Email", uid: "email" },
   { name: "Teléfono", uid: "phone" },
-  { name: "Fecha de Nacimiento", uid: "birthdate" },
   { name: "País", uid: "country.name" },
   { name: "Rol", uid: "role.name" },
   { name: "Ubicación", uid: "location.name" },
@@ -53,12 +52,6 @@ export const TableAdmin = ({ items: rows }: TableProps) => {
         return (
           <div>
             <span>{item.phone}</span>
-          </div>
-        );
-      case "birthdate":
-        return (
-          <div>
-            <span>{item.birthdate}</span>
           </div>
         );
       case "country.name":

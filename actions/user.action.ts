@@ -16,10 +16,8 @@ export const ListUsers = async () => {
     state (name),
     package (name),
     language (name),
-    role (name, is_admin),
     location (name)
   `);
-  console.log(profile)
   // .not('role', 'is', null)
   // .eq('role.is_admin', is_admin);
 
@@ -58,9 +56,9 @@ export const InsertUsers = async (
           stateId: parther.stateId,
           packageId: parther.packageId,
           languageId: parther.languageId,
-          roleId: parther.roleId,
           discount: +parther.discount,
-          IdUserCity: parther.IdUserCity,
+          IdCountry: parther.IdCountry,
+          IdCity: parther.IdCity,
           IdLocation: admin?.IdLocation,
           NroContract: parther.NroContract,
           SecondaryEmail: parther.SecondaryEmail,
@@ -117,11 +115,11 @@ export const InsertUsers = async (
         stateId: parther.stateId,
         packageId: parther.packageId,
         languageId: parther.languageId,
-        roleId: parther.roleId,
         discount: +parther.discount,
         birthdate: date,
 
-        IdUserCity: parther.IdUserCity,
+        IdCountry: parther.IdCountry,
+        IdCity: parther.IdCity,
         IdLocation: admin?.IdLocation,
         NroContract: parther.NroContract,
         DateSold: DateSold,
@@ -146,6 +144,7 @@ export const InsertUsers = async (
     .select();
 
   if (error2) {
+    console.log(error2);
     return {
       status: false,
       message: error2.message,
@@ -173,13 +172,16 @@ export const GetUser = async (id: string) => {
   return profile as Profile;
 };
 
-export const GetStateActive = async () => {
+export const GetStateActive = async (id: string) => {
   const supabase = await createClient();
 
-  const { data: state, error } = await supabase
-    .from("state")
-    .select("*")
-    .eq("state", true);
+  let query = supabase.from("state").select("*").eq("state", true);
+
+  if (id) {
+    query = query.eq("countryId", id);
+  }
+
+  const { data: state, error } = await query;
   if (error) {
     return [];
   }

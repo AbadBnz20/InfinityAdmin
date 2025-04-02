@@ -49,7 +49,7 @@ export interface Profile {
   birthdate:string;
   roleId:string;
   discount:string,
-  IdUserCity: string;
+  IdCity: string;
   NroContract:string,
   DateSold:string,
   Expiration: string,

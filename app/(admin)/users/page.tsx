@@ -20,7 +20,7 @@ export default async function UsersPage() {
               title="Registrar Nuevo Usuario"
               size="3xl"
             >
-             <AdminForm/>
+              <AdminForm />
             </ModalMain>
           </div>
 
