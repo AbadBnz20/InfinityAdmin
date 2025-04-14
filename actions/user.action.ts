@@ -20,7 +20,6 @@ export const ListUsers = async () => {
   `);
   // .not('role', 'is', null)
   // .eq('role.is_admin', is_admin);
-
   return profile as User[];
 };
 
@@ -75,7 +74,7 @@ export const InsertUsers = async (
         message: error.message,
       };
     }
-    revalidatePath("/users");
+    revalidatePath("/partner");
     return {
       status: true,
       message: "Actualizado correctamente",
@@ -226,4 +225,34 @@ export const GetRoleActive = async (is_admin: boolean) => {
     return [];
   }
   return state as Role[];
+};
+
+export const UpdateSendEmail = async (id: string) => {
+  const supabase = await createClient();
+
+  const { data: profile } = await supabase
+    .from("profile")
+    .select("SendEmail")
+    .eq("profileId", id)
+    .single();
+
+  const update = +profile?.SendEmail + 1;
+
+  const { data, error: error2 } = await supabase
+    .from("profile")
+    .update({ SendEmail: update })
+    .eq("profileId", id)
+    .select()
+    .single();
+  if (error2) {
+    return {
+      status: false,
+      message: error2.message,
+    };
+  }
+  revalidatePath("/partner");
+  return {
+    status: true,
+    message: "Email Enviado",
+  };
 };

@@ -8,6 +8,7 @@ export interface packageyachts {
     state: boolean,
     ubicationId: string,
     name: string,
+    cabin:string,
     origin_destination_ship: location
   }
 

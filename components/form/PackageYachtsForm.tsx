@@ -23,6 +23,7 @@ export interface StateFormPackageYachts {
     points: string,
     state: boolean,
     ubicationId: string,
+    cabin: string,
    
 }
 
@@ -46,12 +47,12 @@ useEffect(() => {
         const resp = await GetPackageYachts(idItem);
         setValue('yachtPackageId',resp.yachtPackageId);
         setValue('name',resp.name);
-      
         setValue('passengers',resp.passengers);
         setValue('time',resp.time);
         setValue('price',resp.price.toString());
         setValue('points',resp.points.toString());
         setValue('ubicationId',resp.ubicationId);
+        setValue('cabin',resp.cabin);
         setValue("url",resp.image);
 
       }
@@ -111,6 +112,17 @@ useEffect(() => {
         value={watch("time")}
         isInvalid={!!errors.time}
         errorMessage={errors.time?.message}
+      />
+      <Input
+        type="text"
+        label="Camarote"
+        placeholder="Ingrese camarote"
+        {...register("cabin", {
+          required: "El campo es requerido",
+        })}
+        value={watch("cabin")}
+        isInvalid={!!errors.cabin}
+        errorMessage={errors.cabin?.message}
       />
       <Input
         type="number"

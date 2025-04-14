@@ -22,6 +22,7 @@ export interface User {
   packageId: string;
   languageId: string;
   roleId:string;
+  SendEmail:number;
   package: Property;
   language: Property;
   role: Property;

@@ -109,16 +109,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="points"
                       />
                     );
-                  case "Viajes":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/journey"}
-                        title="Viajes"
-                        icon={<IoAirplaneOutline size={"20px"} />}
-                        href="journey"
-                      />
-                    );
+                  
                   default:
                     return null;
                 }
@@ -269,6 +260,45 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/categoryCar"
                       />
                     );
+                    case "Viajes":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/journey"}
+                        title="Viajes"
+                        icon={<IoAirplaneOutline size={"20px"} />}
+                        href="journey"
+                      />
+                    );
+
+                  default:
+                    return null;
+                }
+              })}
+            </SidebarMenu>
+            <SidebarMenu title="Seadust">
+              {permissions.map((permission) => {
+                switch (permission.modules.name) {
+                  case "Habitaciones":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/rooms"}
+                        title="Habitaciones"
+                        icon={<IoSparklesOutline size={"20px"} />}
+                        href="/rooms"
+                      />
+                    );
+                  case "Reserva Seadust":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/categorreservationyCar"}
+                        title="Reserva"
+                        icon={<IoCarSportOutline size={"20px"} />}
+                        href="/reservation"
+                      />
+                    );
 
                   default:
                     return null;
@@ -358,22 +388,23 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/yachtrequest"
                       />
                     );
-                  case "DestinosYates":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/destinationship"}
-                        title="Origen/Destinos Yates"
-                        icon={<IoBoatOutline size={"20px"} />}
-                        href="/destinationship"
-                      />
-                    );
+                  // case "DestinosYates":
+                  //   return (
+                  //     <SidebarItem
+                  //       key={permission.modules.name}
+                  //       isActive={pathname === "/destinationship"}
+                  //       title="Origen/Destinos Yates"
+                  //       icon={<IoBoatOutline size={"20px"} />}
+                  //       href="/destinationship"
+                  //     />
+                  //   );
                   default:
                     return null;
                 }
               })}
             </SidebarMenu>
           </div>
+          
         </div>
       </div>
     </aside>

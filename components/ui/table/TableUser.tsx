@@ -4,6 +4,7 @@ import { User as Profile } from "@/interfaces/users-interfaces";
 import { useModalStore } from "@/store/ModalStore";
 import {
   Avatar,
+  Button,
   Chip,
   Pagination,
   Table,
@@ -16,6 +17,9 @@ import {
 } from "@nextui-org/react";
 import { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
+import { IoSendOutline } from "react-icons/io5";
+import { UpdateSendEmail } from "@/actions/user.action";
+import { toast } from "react-toastify";
 
 export const columns = [
   { name: "Imagen", uid: "photo" },
@@ -23,7 +27,6 @@ export const columns = [
   { name: "Email", uid: "email" },
   { name: "Celular", uid: "phone" },
   // { name: "Dirección", uid: "address" },
-
 
   { name: "Fecha nacimiento", uid: "birthdate" },
   { name: "Descuento", uid: "discount" },
@@ -41,6 +44,7 @@ export const columns = [
   { name: "Lenguaje", uid: "language.name" },
   { name: "Estado", uid: "state" },
   { name: "Acciones", uid: "actions" },
+  { name: "Enviar Email", uid: "SendEmail" },
 ];
 
 interface TableProps {
@@ -49,6 +53,35 @@ interface TableProps {
 }
 export const TableUser = ({ items: rows, update }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
+  const [loading, setloading] = useState(false);
+  const OnSendEmail = async (id: string, email: string, fullname: string) => {
+    setloading(true);
+    const res = await fetch("/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName: fullname,
+        email: email,
+      }),
+    });
+    const datafetch = await res.json();
+    console.log(datafetch);
+
+    const resp = await UpdateSendEmail(id);
+    if (!resp.status) {
+      return toast.error(resp.message, {
+        position: "top-right",
+      });
+    }
+
+    toast.success(resp.message, {
+      position: "top-right",
+    });
+    setloading(false);
+  };
+
   const renderCell = useCallback((item: Profile, columnKey: React.Key) => {
     switch (columnKey) {
       case "photo":
@@ -134,7 +167,6 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
           </div>
         );
 
-
       case "state.name":
         return (
           <div>
@@ -182,6 +214,28 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
             )}
 
             {/* <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} /> */}
+          </div>
+        );
+      case "SendEmail":
+        return (
+          <div className="flex items-center gap-4">
+            <Button
+              onPress={() =>
+                OnSendEmail(
+                  item.profileId,
+                  item.email,
+                  `${item.firstname} ${item.lastname}`
+                )
+              }
+              isLoading={loading}
+              isDisabled={item.SendEmail === 3}
+              color="primary"
+              variant="light"
+              size="sm"
+            >
+              ( {item.SendEmail}/3) 
+              <IoSendOutline />
+            </Button>
           </div>
         );
       default:

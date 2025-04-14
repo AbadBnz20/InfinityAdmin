@@ -7,5 +7,6 @@ export interface Location  {
     country:string,
     codePostal: string,
     rfc: string,
+    percentage: string,
     state: boolean
   }

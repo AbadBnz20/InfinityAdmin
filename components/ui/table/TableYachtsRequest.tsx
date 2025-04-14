@@ -13,7 +13,6 @@ export const columns = [
   { name: "Email", uid: "email" },
   { name: "Celular", uid: "phone" },
   { name: "Paquete", uid: "packageYachtId" },
-  { name: "Puerto", uid: "origin_destination_ship.name" },
   { name: "Experiencia", uid: "typeOfExperience.name" },
   { name: "Motor", uid: "motorYacht.name" },
   { name: "Estado", uid: "state" },
@@ -76,12 +75,6 @@ export const TableYachtsRequest = ({
         return (
           <div>
             <span>{item.packageYachtId ? "Si": "No" }</span>
-          </div>
-        );
-      case "origin_destination_ship.name":
-        return (
-          <div>
-            <span>{item.origin_destination_ship.name}</span>
           </div>
         );
       case "typeOfExperience.name":

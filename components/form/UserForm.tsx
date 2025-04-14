@@ -4,6 +4,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   Avatar,
+  Checkbox,
   DateInput,
   DatePicker,
   DateValue,
@@ -50,7 +51,7 @@ const data = [
 
 export interface StateFormUser {
   id?: string;
-
+  sendEmail: boolean;
   NroContract: string;
   DateSold: DateValue;
   Expiration: DateValue;
@@ -122,12 +123,11 @@ export const UserForm = () => {
 
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
-
+    console.log(state)
     const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
     const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
-    const Expiration = state.Expiration.toDate(
-      getLocalTimeZone()
-    ).toISOString();
+    const Expiration =
+      state.Expiration.toDate(getLocalTimeZone()).toISOString();
 
     try {
       state.photo =
@@ -141,22 +141,20 @@ export const UserForm = () => {
           position: "top-right",
         });
       }
-
-      const res = await fetch("/api/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: `${state.firstname} ${state.lastname}`,
-          email: state.email,
-         
-        }),
-      });
-      const datafetch = await res.json();
-      console.log(datafetch);
-
-
+      if (state.sendEmail) {
+        const res = await fetch("/api/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName: `${state.firstname} ${state.lastname}`,
+            email: state.email,
+          }),
+        });
+        const datafetch = await res.json();
+        console.log(datafetch);
+      }
 
       onClose();
       toast.success(resp.message, {
@@ -409,6 +407,14 @@ export const UserForm = () => {
         isInvalid={!!errors.Note}
         errorMessage={errors.Note?.message}
       />
+      <Checkbox
+          {...register("sendEmail")}
+          isSelected={watch("sendEmail")} // Asegura que se refleje el cambio
+          onValueChange={(value) => setValue("sendEmail", value)}
+          className="my-1"
+        >
+          ¿Deseas enviar el correo de Bienvenida?
+        </Checkbox>
       <CotentButtonForm state={loading} />
     </form>
   );

@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
   try {
     const {  error } = await resend.emails.send({
-      from: "Advantage <onboarding@advantageinfinityclub.com>",
+      from: "InfinityTravelClub <onboarding@advantageinfinityclub.com>",
       to: [email],
       subject: "¡Bienvenido a Infinity Luxury Travel Club! Accede a tu plataforma exclusiva.",
       react: EmailTemplate({

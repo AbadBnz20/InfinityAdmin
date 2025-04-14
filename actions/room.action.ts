@@ -1,10 +1,10 @@
 "use server";
 
-import { StateFormPackageYachts } from "@/components/form/PackageYachtsForm";
-import { packageyachts } from "@/interfaces/packageyachts";
+import { StateFormRoom } from "@/components/form/RoomForm";
+import { Room } from "@/interfaces/room-interfaces";
 import { createClient } from "@/utils/server";
-import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
+import { revalidatePath } from "next/cache";
 import sharp from "sharp";
 
 cloudinary.config(process.env.CLOUDINARY_URL ?? "");
@@ -15,7 +15,7 @@ const processImage = async (file: File) => {
     .webp({ quality: 80 }) // Convierte a formato webp
     .toBuffer();
 };
- const uploadImages = async (images: File) => {
+const uploadImages = async (images: File) => {
   try {
     // Procesa y sube cada imagen
     try {
@@ -42,54 +42,51 @@ const processImage = async (file: File) => {
   }
 };
 
- const deleteImages = async (imageUrl: string) => {
+const deleteImages = async (imageUrl: string) => {
   try {
     const imageName = imageUrl.split("/").pop()?.split(".")[0] ?? "";
-    console.log({imageName});
-    const resp= await cloudinary.uploader.destroy(`Cards/${imageName}`);
-    console.log(resp)
+    console.log({ imageName });
+    const resp = await cloudinary.uploader.destroy(`Cards/${imageName}`);
+    console.log(resp);
     return true;
   } catch (error) {
     console.log(error);
     return false;
   }
 };
-export const ListPackageYachts = async () => {
+
+export const ListRoom = async () => {
   const supabase = await createClient();
-  const { data: yachtPackage, error } = await supabase
-    .from("yachtPackage")
-    .select("*, origin_destination_ship (name)").eq("state", true);
-    console.log(yachtPackage)
-  return yachtPackage as packageyachts[];
+  const { data: room } = await supabase
+    .from("room")
+    .select("*")
+    .eq("state", true);
+  return room as Room[];
 };
 
-interface PackageYach {
-  image?: string;
+export interface StateRoom {
+  IdRoom?: string;
   url?: string;
-  time: string;
-  passengers: string;
-  price: number;
-  points: number;
-  ubicationId: string;
   name: string;
-  cabin:string;
+  numberOfBeds: string;
+  typeOfBed: string;
+  detail: string;
+  numberOfGuests: string;
 }
 
-export const InsertPackageYachts = async (data: StateFormPackageYachts) => {
+export const InterRoom = async (data: StateFormRoom) => {
   const supabase = await createClient();
   let response;
 
-  const packageYachst: PackageYach = {
-    time:data.time,
-    passengers:data.passengers,
-    price:+data.price,
-    points:+data.points,
-    ubicationId:data.ubicationId,
-    cabin:data.cabin,
-    name:data.name
+  const room: StateRoom = {
+    name: data.name,
+    numberOfBeds: data.numberOfBeds,
+    typeOfBed: data.typeOfBed,
+    detail: data.detail,
+    numberOfGuests: data.numberOfGuests,
   };
 
-  if (data.yachtPackageId) {
+  if (data.IdRoom) {
     if (data.image) {
       const resp = await deleteImages(data.url!);
       if (!resp) {
@@ -98,71 +95,72 @@ export const InsertPackageYachts = async (data: StateFormPackageYachts) => {
           message: "Error al eliminar la imagen anterior",
         };
       }
-      packageYachst.image = await uploadImages(data.image);
+      room.url = await uploadImages(data.image);
     }
 
     response = await supabase
-      .from("yachtPackage")
-      .update([packageYachst])
-      .eq("yachtPackageId", data.yachtPackageId)
+      .from("room")
+      .update([room])
+      .eq("IdRoom", data.IdRoom)
       .select();
   } else {
-    packageYachst.image = await uploadImages(data.image);
-    response = await supabase.from("yachtPackage").insert([packageYachst]).select();
+    room.url = await uploadImages(data.image);
+    response = await supabase.from("room").insert([room]).select();
   }
 
   const { error } = response;
-  console.log({data,error});
+  console.log({ data, error });
   if (error) {
     return {
       status: false,
       message: error.message,
     };
   }
-  revalidatePath("/packageyachts");
+  revalidatePath("/rooms");
   return {
     status: true,
-    message: data.yachtPackageId
+    message: data.IdRoom
       ? "Actualizado correctamente"
       : "Guardado correctamente",
   };
 };
 
 
-export const GetPackageYachts = async (id: string) => {
+export const GetPackageRoom = async (id: string) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("yachtPackage")
+    .from("room")
     .select("*")
-    .eq("yachtPackageId", id)
+    .eq("IdRoom", id)
     .single();
   if (error) {
-    return {} as packageyachts;
+    return {} as Room;
   }
 
-  return data as packageyachts;
+  return data as Room;
 };
 
-export const DeleteYachsPackage = async (id: string) => {
-  const supabase = await createClient();
 
-  const { error } = await supabase
-    .from("yachtPackage")
-    .update({ state: false })
-    .eq("yachtPackageId", id)
-    .select();
-
-  if (error) {
+export const DeleteYachsRoom = async (id: string) => {
+    const supabase = await createClient();
+  
+    const { error } = await supabase
+      .from("room")
+      .update({ state: false })
+      .eq("IdRoom", id)
+      .select();
+  
+    if (error) {
+      return {
+        status: false,
+        message: error.message,
+      };
+    }
+  
+    revalidatePath("/rooms");
     return {
-      status: false,
-      message: error.message,
+      status: true,
+      message: "Eliminado correctamente",
     };
-  }
-
-  revalidatePath("/packageyachts");
-  return {
-    status: true,
-    message: "Eliminado correctamente",
   };
-};

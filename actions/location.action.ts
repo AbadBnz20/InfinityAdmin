@@ -21,6 +21,7 @@ export const InsertLocation = async (
   country: string,
   codePostal: string,
   rfc: string,
+  percentage: string,
   id?: string
 ) => {
   const supabase = await createClient();
@@ -37,6 +38,7 @@ export const InsertLocation = async (
         country: country,
         codePostal: codePostal,
         rfc: rfc,
+        percentage: +percentage,
       })
       .eq("IdLocation", id)
       .select();
@@ -52,6 +54,7 @@ export const InsertLocation = async (
           country: country,
           codePostal: codePostal,
           rfc: rfc,
+          percentage: +percentage,
         },
       ])
       .select();

@@ -1,0 +1,199 @@
+'use client';
+
+import { Room } from "@/interfaces/room-interfaces";
+import { useModalStore } from "@/store/ModalStore";
+import { Chip, Image, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
+import { useCallback, useMemo, useState } from "react";
+import { EditIcon } from "../icons/edit-icon";
+import { ModalConfirm } from "../modal/ModalConfirm";
+import { DeleteYachsRoom } from "@/actions/room.action";
+
+export const columns = [
+    { name: "Imagen", uid: "url" },
+    { name: "Nombre", uid: "name" },
+    { name: "Nro Camas", uid: "numberOfBeds" },
+    { name: "Tipo de camas", uid: "typeOfBed" },
+    { name: "Detalle", uid: "detail" },
+    { name: "Nro de Huespedes", uid: "numberOfGuests" },
+    { name: "Estado", uid: "state" },
+    { name: "Acciones", uid: "actions" },
+  ];
+
+
+    interface TableProps {
+      items: Room[];
+      update: boolean;
+      deletecell: boolean;
+    }
+    
+
+  export const TableRooms = ({ items: rows,update,deletecell }: TableProps) => {
+    const { onChanseItem, onOpen } = useModalStore();
+    const renderCell = useCallback((item: Room, columnKey: React.Key) => {
+      switch (columnKey) {
+        case "url":
+          return (
+            <div>
+              <Image alt="NextUI hero Image" src={item.url} width={150} />
+            </div>
+          );
+        case "name":
+          return (
+            <div>
+              <span>{item.name}</span>
+            </div>
+          );
+          case "numberOfBeds":
+            return (
+              <div>
+                <span>{item.numberOfBeds}</span>
+              </div>
+            );
+        case "typeOfBed":
+          return (
+            <div>
+              <span>{item.typeOfBed}</span>
+            </div>
+          );
+          case "numberOfGuests":
+            return (
+              <div>
+                <span>{item.numberOfGuests}</span>
+              </div>
+            );
+        case "detail":
+          return (
+            <div>
+              <span>{item.detail}</span>
+            </div>
+          );
+      
+        case "state":
+          return (
+            <Chip
+              size="sm"
+              variant="flat"
+              color={item.state ? "success" : "danger"}
+            >
+              <span className="capitalize text-xs">
+                {item.state ? "Activo" : "Inactivo"}
+              </span>
+            </Chip>
+          );
+        case "actions":
+          return (
+            <div className="flex items-center gap-4">
+               <div>
+                {update && (
+                  <Tooltip content="Editar" color="primary">
+                    <button
+                      onClick={() => {
+                        onChanseItem(item.IdRoom);
+                        onOpen();
+                      }}
+                    >
+                      <EditIcon size={20} fill="#979797" />
+                    </button>
+                  </Tooltip>
+                )}
+              </div>
+              {
+                deletecell && <ModalConfirm idItem={item.IdRoom} Ondelete={DeleteYachsRoom} />
+              }
+              
+            </div>
+          );
+        default:
+          return;
+      }
+    }, []);
+
+ const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(1);
+    const pages = Math.ceil(rows.length / rowsPerPage);
+  
+    const items = useMemo(() => {
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+  
+      return rows.slice(start, end);
+    }, [page, rows, rowsPerPage]);
+  
+    const onRowsPerPageChange = useCallback(
+      (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
+      },
+      []
+    );
+    const topContent = useMemo(() => {
+        return (
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <span className="text-default-400 text-small">
+                Total {rows.length} items
+              </span>
+              <label className="flex items-center text-default-400 text-small">
+                Rows per page:
+                <select
+                  className="bg-transparent outline-none text-default-400 text-small"
+                  onChange={onRowsPerPageChange}
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        );
+      }, [onRowsPerPageChange]);
+    
+      const bottomContent = useMemo(() => {
+        return (
+          <div className="py-2 px-2 flex justify-center items-center">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="primary"
+              page={page}
+              total={pages}
+              onChange={setPage}
+            />
+          </div>
+        );
+      }, [items.length, page, pages]);
+
+    return (
+        <div className=" w-full flex flex-col gap-4">
+        <Table
+          topContent={topContent}
+          bottomContent={bottomContent}
+          aria-label="Example table with custom cells"
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn
+                key={column.uid}
+                hideHeader={column.uid === "actions"}
+                align={column.uid === "actions" ? "center" : "start"}
+              >
+                {column.name}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={items}>
+            {(item) => (
+              <TableRow key={item.IdRoom}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    )
+  }
+  
