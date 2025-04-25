@@ -9,6 +9,7 @@ export interface Journey {
   city_destination: string;
   departure_date: string;
   return_date: string;
+  createDate: string;
   budget: number;
   passengers: number;
   adult: number;

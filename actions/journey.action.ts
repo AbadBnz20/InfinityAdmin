@@ -8,7 +8,6 @@ export const ListJourney = async () => {
 
   const { data: quotes, error } = await supabase
     .from("quotes")
-    .select("*").order("creationDate", { ascending: false });
-
+    .select("*").order("createDate", { ascending: false });
  return quotes as Journey[]  
 };

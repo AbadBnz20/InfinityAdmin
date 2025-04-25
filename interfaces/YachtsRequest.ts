@@ -12,6 +12,7 @@ export interface YachsRequest {
     typeOfExperienceId: string,
     motorYachtId: string,
     packageYachtId?: string,
+    createDate: string,
     origin_destination_ship: { name: string },
     typeOfExperience: { name: string },
     motorYacht: { name: string }

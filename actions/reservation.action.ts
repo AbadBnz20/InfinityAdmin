@@ -9,7 +9,6 @@ export const ListSeadustRequest = async () => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("seadusRequest")
-    .select("*, room(name,numberOfBeds,typeOfBed) ").eq("state", true).order("creationDate", { ascending: false });
-   
+    .select("* ").eq("state", true).order("creationDate", { ascending: false });
   return data as SeadustRequest[]; 
 };

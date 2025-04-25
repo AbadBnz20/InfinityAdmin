@@ -89,16 +89,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="booking"
                       />
                     );
-                  case "Traslados":
-                    return (
-                      <SidebarItem
-                        key={permission.modules.name}
-                        isActive={pathname === "/transfers"}
-                        title="Traslados"
-                        icon={<IoSwapHorizontalOutline size={"20px"} />}
-                        href="/transfers"
-                      />
-                    );
+
                   case "Puntos":
                     return (
                       <SidebarItem
@@ -293,9 +284,9 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                     return (
                       <SidebarItem
                         key={permission.modules.name}
-                        isActive={pathname === "/categorreservationyCar"}
+                        isActive={pathname === "/reservation"}
                         title="Reserva"
-                        icon={<IoCarSportOutline size={"20px"} />}
+                        icon={<IoBusinessOutline size={"20px"} />}
                         href="/reservation"
                       />
                     );
@@ -336,6 +327,16 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         title="Vehiculos"
                         icon={<IoCar size={"20px"} />}
                         href="/cars"
+                      />
+                    );
+                    case "Traslados":
+                    return (
+                      <SidebarItem
+                        key={permission.modules.name}
+                        isActive={pathname === "/transfers"}
+                        title="Traslados"
+                        icon={<IoSwapHorizontalOutline size={"20px"} />}
+                        href="/transfers"
                       />
                     );
                   default:

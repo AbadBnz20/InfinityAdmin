@@ -7,6 +7,7 @@ export interface SeadustRequest {
   email: string;
   phone: string;
   state: boolean;
+  createDate: string;
   IdRoom: string;
   adult: 2;
   children: 1;
