@@ -21,18 +21,16 @@ export interface User {
   stateId: string;
   packageId: string;
   languageId: string;
-  roleId:string;
-  SendEmail:number;
+  roleId: string;
+  SendEmail: number;
   package: Property;
   language: Property;
   role: Property;
 }
 
-interface Property{
-    name: string;
+interface Property {
+  name: string;
 }
-
-
 
 export interface Profile {
   profileId: string;
@@ -47,17 +45,15 @@ export interface Profile {
   stateId: string;
   packageId: string;
   languageId: string;
-  birthdate:string;
-  roleId:string;
-  discount:string,
+  birthdate: string;
+  roleId: string;
+  discount: string;
   IdCity: string;
-  NroContract:string,
-  DateSold:string,
-  Expiration: string,
-  SecondaryEmail: string,
-  StatusWallet:string,
-  Note: string
+  IdCountry: string;
+  NroContract: string;
+  DateSold: string;
+  Expiration: string;
+  SecondaryEmail: string;
+  StatusWallet: string;
+  Note: string;
 }
-
-
-

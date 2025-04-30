@@ -9,8 +9,6 @@ import {
   DatePicker,
   DateValue,
   Input,
-  Select,
-  SelectItem,
   Textarea,
 } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
@@ -25,29 +23,8 @@ import { Contries } from "@/data/countries";
 import { getLocalTimeZone, parseDate } from "@internationalized/date";
 import { SelectCity } from "../select/SelectCity";
 import { SelectCountry } from "../select/SelectCountry";
+import { SelectStatusWallet } from "../select/SelectStatusWallet";
 
-const data = [
-  {
-    idstatus: "Activo",
-    name: "Activo",
-  },
-  {
-    idstatus: "Inactivo",
-    name: "Inactivo",
-  },
-  {
-    idstatus: "Suspendido",
-    name: "Suspendido",
-  },
-  {
-    idstatus: "Bloqueado",
-    name: "Bloqueado",
-  },
-  {
-    idstatus: "Eliminado",
-    name: "Eliminado",
-  },
-];
 
 export interface StateFormUser {
   id?: string;
@@ -96,7 +73,9 @@ export const UserForm = () => {
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
+
         const resp = await GetUser(idItem);
+        console.log(resp);
         setValue("id", resp.profileId);
         setValue("firstname", resp.firstname);
         setValue("lastname", resp.lastname);
@@ -108,6 +87,7 @@ export const UserForm = () => {
         setValue("languageId", resp.languageId);
         setValue("discount", resp.discount);
         setValue("IdCity", resp.IdCity);
+        setValue("IdCountry", resp.IdCountry);
         setValue("NroContract", resp.NroContract);
         setValue("SecondaryEmail", resp.SecondaryEmail);
         setValue("StatusWallet", resp.StatusWallet);
@@ -123,7 +103,9 @@ export const UserForm = () => {
 
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
-    console.log(state)
+    // console.log(state)
+
+
     const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
     const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
     const Expiration =
@@ -377,17 +359,7 @@ export const UserForm = () => {
         errorMessage={errors.StatusWallet?.message}
       /> */}
 
-      <Select
-        items={data}
-        label="Estado billetera"
-        placeholder="Seleccione estado"
-        {...register("StatusWallet", { required: "El Campo es requerido" })}
-        value={watch("StatusWallet")}
-        isInvalid={!!errors.StatusWallet}
-        errorMessage={errors.StatusWallet?.message}
-      >
-        {(item) => <SelectItem key={item.idstatus}>{item.name}</SelectItem>}
-      </Select>
+     <SelectStatusWallet register={register} errors={errors} watch={watch} />
 
       <Input
         type="number"

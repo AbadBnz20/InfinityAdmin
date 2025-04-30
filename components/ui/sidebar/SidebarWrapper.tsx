@@ -29,6 +29,7 @@ import {
 } from "react-icons/io5";
 import { SidebarMenu } from "./SidebarMenu";
 import { Permissions } from "@/interfaces/permissions-interfaces";
+import { useTheme } from "next-themes";
 
 interface Props {
   permissions: Permissions[];
@@ -37,6 +38,13 @@ interface Props {
 export const SidebarWrapper = ({ permissions }: Props) => {
   const pathname = usePathname();
   const { state, OnChange } = SidebarStore();
+
+  const { theme } = useTheme();
+
+  const image =
+    theme === "dark"
+      ? "https://res.cloudinary.com/devz7obre/image/upload/v1744926909/logo1dark_xmwuhb.png"
+      : "https://res.cloudinary.com/devz7obre/image/upload/v1744321737/logo1_v9yswm.png";
 
   return (
     <aside className="h-screen z-[20] sticky top-0">
@@ -48,13 +56,20 @@ export const SidebarWrapper = ({ permissions }: Props) => {
       >
         <div className={Sidebar.Header()}>
           <div className="flex items-center gap-2">
-            <div className="flex flex-col gap-4">
-              <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
-                Dashboard
-              </h3>
-              <span className="text-xs font-medium text-default-500">
-                admin
-              </span>
+            <div className="grid grid-cols-3 gap-4">
+              <img
+                src={image}
+                alt="Infinity Luxury Travel Logo"
+                className="h-10 object-fill"
+              />
+              <div className="col-span-2">
+                <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
+                  Dashboard
+                </h3>
+                <span className="text-xs font-medium text-default-500">
+                  admin
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -100,7 +115,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="points"
                       />
                     );
-                  
+
                   default:
                     return null;
                 }
@@ -251,12 +266,12 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/categoryCar"
                       />
                     );
-                    case "Viajes":
+                  case "Viajes":
                     return (
                       <SidebarItem
                         key={permission.modules.name}
                         isActive={pathname === "/journey"}
-                        title="Viajes"
+                        title="Solicitud Mi viaje perfecto"
                         icon={<IoAirplaneOutline size={"20px"} />}
                         href="journey"
                       />
@@ -267,7 +282,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                 }
               })}
             </SidebarMenu>
-            <SidebarMenu title="Seadust">
+            <SidebarMenu title="Semanas Infinity">
               {permissions.map((permission) => {
                 switch (permission.modules.name) {
                   case "Habitaciones":
@@ -285,7 +300,7 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                       <SidebarItem
                         key={permission.modules.name}
                         isActive={pathname === "/reservation"}
-                        title="Reserva"
+                        title="Solicitud Semanas Infinity"
                         icon={<IoBusinessOutline size={"20px"} />}
                         href="/reservation"
                       />
@@ -329,12 +344,12 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                         href="/cars"
                       />
                     );
-                    case "Traslados":
+                  case "Traslados":
                     return (
                       <SidebarItem
                         key={permission.modules.name}
                         isActive={pathname === "/transfers"}
-                        title="Traslados"
+                        title="Solicitud Traslados"
                         icon={<IoSwapHorizontalOutline size={"20px"} />}
                         href="/transfers"
                       />
@@ -405,7 +420,6 @@ export const SidebarWrapper = ({ permissions }: Props) => {
               })}
             </SidebarMenu>
           </div>
-          
         </div>
       </div>
     </aside>

@@ -104,7 +104,7 @@ export const TableJourney = ({ items: rows }: TableProps) => {
         return (
           <div>
             <span>
-              Adultos:{item.adult}, Niños: {item.childrens.join(", ")}
+              Adultos:{item.adult}, Niños:  {item.childrens.length  === 0 ? '0': item.childrens.join(", ")}
             </span>
           </div>
         );

@@ -17,7 +17,7 @@ export const ListUsers = async () => {
     package (name),
     language (name),
     location (name)
-  `);
+  `).eq("state", true);
   // .not('role', 'is', null)
   // .eq('role.is_admin', is_admin);
   return profile as User[];
@@ -55,6 +55,8 @@ export const InsertUsers = async (
           stateId: parther.stateId,
           packageId: parther.packageId,
           languageId: parther.languageId,
+          DateSold: DateSold,
+          Expiration: Expiration,
           discount: +parther.discount,
           IdCountry: parther.IdCountry,
           IdCity: parther.IdCity,
@@ -68,12 +70,14 @@ export const InsertUsers = async (
       .eq("profileId", parther.id)
       .select();
 
+    console.log(users);
     if (error) {
       return {
         status: false,
         message: error.message,
       };
     }
+
     revalidatePath("/partner");
     return {
       status: true,
@@ -255,4 +259,29 @@ export const UpdateSendEmail = async (id: string) => {
     status: true,
     message: "Email Enviado",
   };
+};
+
+export const DeleteUser = async (id: string) => {
+  const supabase = await createClient();
+  const { data: profile, error } = await supabase
+    .from("profile")
+    .select("user_id")
+    .eq("profileId", id)
+    .single();
+
+  const { data } = await supabase
+    .from("profile")
+    .update({ state: false })
+    .eq("profileId", id)
+    .select();
+
+
+  const { data: user, error: error2 } =
+    await supabase.auth.admin.updateUserById(profile?.user_id, {
+      ban_duration: "120000h",
+    });
+
+  revalidatePath("/partner");
+
+
 };

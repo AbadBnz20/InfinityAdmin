@@ -10,6 +10,7 @@ import {
   pdf,
 } from "@react-pdf/renderer";
 import { Button } from "@nextui-org/react";
+import { createClient } from "@/utils/supabase/client";
 const styles = StyleSheet.create({
   page: {
     padding: 20,
@@ -48,16 +49,18 @@ const styles = StyleSheet.create({
 
 interface Props {
   data: SeadustRequest[];
+  date: string;
+  fullname: string;
 }
 
-export const PdfTemplateSeadust = ({ data }: Props) => (
+export const PdfTemplateSeadust = ({ data, date, fullname }: Props) => (
   <Document>
     <Page size="A4" orientation="landscape" style={styles.page}>
       <Text style={{ fontSize: 14, marginBottom: 10, textAlign: "center" }}>
         Listado de Solicitudes Seadust
       </Text>
       <View style={styles.table}>
-        <View style={[styles.row, styles.headerRow]}>
+        <View fixed style={[styles.row, styles.headerRow]}>
           <Text style={[styles.cell, styles.cellStart]}>Fecha Inicio</Text>
           <Text style={[styles.cell, styles.cellEnd]}>Fecha Fin</Text>
           <Text style={[styles.cell, styles.cellName]}>Nombre Completo</Text>
@@ -91,12 +94,78 @@ export const PdfTemplateSeadust = ({ data }: Props) => (
           </View>
         ))}
       </View>
+      <View
+        fixed
+        style={{
+          position: "absolute",
+          bottom: 4,
+          left: 0,
+          right: 0,
+          height: 20,
+        }}
+      >
+        <View
+          style={{
+            position: "absolute",
+            width: "100%",
+            textAlign: "center",
+            fontSize: 10,
+            color: "#aaa",
+          }}
+        >
+          <Text
+            render={({ pageNumber, totalPages }) =>
+              `Página ${pageNumber} de ${totalPages}`
+            }
+          />
+        </View>
+
+        <View
+          style={{
+            position: "absolute",
+            right: 10,
+            textAlign: "right",
+            fontSize: 10,
+            color: "#aaa",
+          }}
+        >
+          <Text>
+            Usuario: {fullname} {date}
+          </Text>
+        </View>
+      </View>
     </Page>
   </Document>
 );
-export const DownloadReservation = ({ data }: Props) => {
+interface PropsMain {
+  data: SeadustRequest[];
+}
+
+export const DownloadReservation = ({ data }: PropsMain) => {
   const handleDownload = async () => {
-    const blob = await pdf(<PdfTemplateSeadust data={data} />).toBlob();
+    const supabase = await createClient();
+    const user = await supabase.auth.getUser();
+    const useractive = `${user.data.user?.user_metadata.firstname} ${user.data.user?.user_metadata.lastname}`;
+    const date = new Date();
+    const nowdate = date.toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const nowtime = date.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const formattedDate = `${nowtime} - ${nowdate} `;
+
+    const blob = await pdf(
+      <PdfTemplateSeadust
+        data={data}
+        date={formattedDate}
+        fullname={useractive}
+      />
+    ).toBlob();
 
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

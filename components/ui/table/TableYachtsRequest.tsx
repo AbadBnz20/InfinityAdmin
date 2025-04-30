@@ -125,6 +125,8 @@ export const TableYachtsRequest = ({ items: rows }: TableProps) => {
   const [startDate, setStartDate] = useState<DateValue | null>(null);
   const [endDate, setEndDate] = useState<DateValue | null>(null);
 
+  // const [value, setValue] = useState<RangeValue<DateValue> | null>(null);
+
   // const [value, setValue] = useState<DateValue | null>(today(getLocalTimeZone()));
 
   // const items = useMemo(() => {
@@ -175,7 +177,6 @@ export const TableYachtsRequest = ({ items: rows }: TableProps) => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          
           <div className="flex gap-2 flex-col items-start">
             <div className="grid grid-cols-2 gap-2">
               <DatePicker

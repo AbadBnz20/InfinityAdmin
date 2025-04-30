@@ -18,11 +18,13 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
 import { IoSendOutline } from "react-icons/io5";
-import { UpdateSendEmail } from "@/actions/user.action";
+import { DeleteUser, UpdateSendEmail } from "@/actions/user.action";
 import { toast } from "react-toastify";
+import { ModalConfirm } from "../modal/ModalConfirm";
 
 export const columns = [
   { name: "Imagen", uid: "photo" },
+  { name: "Nro. Contrato", uid: "NroContract" },
   { name: "Nombre", uid: "firstname" },
   { name: "Email", uid: "email" },
   { name: "Celular", uid: "phone" },
@@ -30,7 +32,6 @@ export const columns = [
 
   { name: "Fecha nacimiento", uid: "birthdate" },
   { name: "Descuento", uid: "discount" },
-  { name: "Nro. Contrato", uid: "NroContract" },
   { name: "Fecha de Venta", uid: "DateSold" },
   { name: "Fecha de Expiración", uid: "Expiration" },
   { name: "Email Secundario", uid: "SecondaryEmail" },
@@ -213,7 +214,7 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
               </Tooltip>
             )}
 
-            {/* <ModalConfirm idItem={item.stateId} Ondelete={DeleteState} /> */}
+            <ModalConfirm idItem={item.profileId} Ondelete={DeleteUser} />
           </div>
         );
       case "SendEmail":
