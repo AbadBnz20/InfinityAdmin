@@ -1,6 +1,6 @@
 "use client";
 import { SidebarStore } from "@/store/SidebarStore";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "./sidebarstyle";
 import { usePathname } from "next/navigation";
 import { SidebarItem } from "./SidebarItem";
@@ -40,7 +40,11 @@ export const SidebarWrapper = ({ permissions }: Props) => {
   const { state, OnChange } = SidebarStore();
 
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true); // Marca el componente como montado
+  }, []);
   const image =
     theme === "dark"
       ? "https://res.cloudinary.com/devz7obre/image/upload/v1744926909/logo1dark_xmwuhb.png"
@@ -57,11 +61,13 @@ export const SidebarWrapper = ({ permissions }: Props) => {
         <div className={Sidebar.Header()}>
           <div className="flex items-center gap-2">
             <div className="grid grid-cols-3 gap-4">
-              <img
-                src={image}
-                alt="Infinity Luxury Travel Logo"
-                className="h-10 object-fill"
-              />
+            {mounted && (
+                <img
+                  src={image}
+                  alt="Infinity Luxury Travel Logo"
+                  className="h-10 object-fill"
+                />
+              )}
               <div className="col-span-2">
                 <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
                   Dashboard

@@ -217,14 +217,13 @@ export const GetLanguagesActive = async () => {
   return state as Languages[];
 };
 
-export const GetRoleActive = async (is_admin: boolean) => {
+export const GetRoleActive = async () => {
   const supabase = await createClient();
 
   const { data: state, error } = await supabase
     .from("role")
     .select("*")
     .eq("state", true)
-    .eq("is_admin", is_admin);
   if (error) {
     return [];
   }

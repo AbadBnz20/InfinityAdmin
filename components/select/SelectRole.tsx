@@ -14,14 +14,14 @@ interface Props<T extends FieldValues> {
 const SelectRole = <T extends FieldValues>({register,
   errors,
   name,
-  value,is_admin }: Props<T>) => {
+  value }: Props<T>) => {
  
   const [data, setdata] = useState<Role[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const GetCountry = async () => {
       setLoading(true);
-      const resp = await GetRoleActive(is_admin);
+      const resp = await GetRoleActive();
       setdata(resp);
       setLoading(false);
     };
