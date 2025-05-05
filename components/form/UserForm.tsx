@@ -25,7 +25,6 @@ import { SelectCity } from "../select/SelectCity";
 import { SelectCountry } from "../select/SelectCountry";
 import { SelectStatusWallet } from "../select/SelectStatusWallet";
 
-
 export interface StateFormUser {
   id?: string;
   sendEmail: boolean;
@@ -73,7 +72,6 @@ export const UserForm = () => {
   useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
-
         const resp = await GetUser(idItem);
         console.log(resp);
         setValue("id", resp.profileId);
@@ -105,7 +103,6 @@ export const UserForm = () => {
     setLoading(true);
     // console.log(state)
 
-
     const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
     const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
     const Expiration =
@@ -124,6 +121,11 @@ export const UserForm = () => {
         });
       }
       if (state.sendEmail) {
+        const language =
+          state.languageId === "3fbff8d6-c2e2-476d-99f4-ebf47b2797cd"
+            ? "en"
+            : "es";
+
         const res = await fetch("/api/send", {
           method: "POST",
           headers: {
@@ -132,6 +134,7 @@ export const UserForm = () => {
           body: JSON.stringify({
             fullName: `${state.firstname} ${state.lastname}`,
             email: state.email,
+            language: language,
           }),
         });
         const datafetch = await res.json();
@@ -359,7 +362,7 @@ export const UserForm = () => {
         errorMessage={errors.StatusWallet?.message}
       /> */}
 
-     <SelectStatusWallet register={register} errors={errors} watch={watch} />
+      <SelectStatusWallet register={register} errors={errors} watch={watch} />
 
       <Input
         type="number"
@@ -380,13 +383,13 @@ export const UserForm = () => {
         errorMessage={errors.Note?.message}
       />
       <Checkbox
-          {...register("sendEmail")}
-          isSelected={watch("sendEmail")} // Asegura que se refleje el cambio
-          onValueChange={(value) => setValue("sendEmail", value)}
-          className="my-1"
-        >
-          ¿Deseas enviar el correo de Bienvenida?
-        </Checkbox>
+        {...register("sendEmail")}
+        isSelected={watch("sendEmail")} // Asegura que se refleje el cambio
+        onValueChange={(value) => setValue("sendEmail", value)}
+        className="my-1"
+      >
+        ¿Deseas enviar el correo de Bienvenida?
+      </Checkbox>
       <CotentButtonForm state={loading} />
     </form>
   );

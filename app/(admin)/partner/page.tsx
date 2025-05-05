@@ -7,7 +7,7 @@ import { TableUser } from "@/components/ui/table/TableUser";
 export default async function PartherPage() {
    const [users, permission] = await Promise.all([
       ListUsers(),
-      GetPermissionBySession("Usuarios"),
+      GetPermissionBySession("Socios"),
     ]);
     return (
       <div className="container">

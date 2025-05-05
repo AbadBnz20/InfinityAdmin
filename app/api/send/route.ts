@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   const {
     fullName,
     email,
+    language,
   } = body;
 
   try {
@@ -18,6 +19,7 @@ export async function POST(request: Request) {
       subject: "¡Bienvenido a Infinity Luxury Travel Club! Accede a tu plataforma exclusiva.",
       react: EmailTemplate({
         fullName: fullName,
+        language:language
        
       }),
     });

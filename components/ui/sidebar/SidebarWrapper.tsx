@@ -288,6 +288,9 @@ export const SidebarWrapper = ({ permissions }: Props) => {
                 }
               })}
             </SidebarMenu>
+
+
+          {/* //agregar cambios  */}
             <SidebarMenu title="Semanas Infinity">
               {permissions.map((permission) => {
                 switch (permission.modules.name) {

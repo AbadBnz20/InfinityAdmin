@@ -55,8 +55,14 @@ interface TableProps {
 export const TableUser = ({ items: rows, update }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
   const [loading, setloading] = useState(false);
-  const OnSendEmail = async (id: string, email: string, fullname: string) => {
+  const OnSendEmail = async (id: string, email: string, fullname: string, language:string) => {
     setloading(true);
+
+    const languageemail =
+    language === "3fbff8d6-c2e2-476d-99f4-ebf47b2797cd"
+      ? "en"
+      : "es";
+
     const res = await fetch("/api/send", {
       method: "POST",
       headers: {
@@ -65,6 +71,7 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
       body: JSON.stringify({
         fullName: fullname,
         email: email,
+        language: languageemail,
       }),
     });
     const datafetch = await res.json();
@@ -225,7 +232,8 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
                 OnSendEmail(
                   item.profileId,
                   item.email,
-                  `${item.firstname} ${item.lastname}`
+                  `${item.firstname} ${item.lastname}`,
+                  item.languageId
                 )
               }
               isLoading={loading}
