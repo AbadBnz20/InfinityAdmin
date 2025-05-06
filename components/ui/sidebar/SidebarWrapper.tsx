@@ -59,23 +59,24 @@ export const SidebarWrapper = ({ permissions }: Props) => {
         })}
       >
         <div className={Sidebar.Header()}>
-          <div className="flex items-center gap-2">
-            <div className="grid grid-cols-3 gap-4">
+          <div className="flex items-center gap-2 w-full">
+            <div className="grid justify-center  gap-4 w-full">
               {mounted && (
                 <img
                   src={image}
                   alt="Infinity Luxury Travel Logo"
-                  className="h-10 object-fill"
+                  
+                  className="h-16 w-16 object-fill"
                 />
               )}
-              <div className="col-span-2">
+              {/* <div className="col-span-2">
                 <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
                   Dashboard
                 </h3>
                 <span className="text-xs font-medium text-default-500">
                   admin
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
