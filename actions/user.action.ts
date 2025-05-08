@@ -11,13 +11,18 @@ import { headers } from "next/headers";
 
 export const ListUsers = async () => {
   const supabase = await createClient();
-  const { data: profile } = await supabase.from("profile_with_parther").select(`
+  const { data: profile } = await supabase
+    .from("profile_with_parther")
+    .select(
+      `
     *,
     state (name),
     package (name),
     language (name),
     location (name)
-  `).eq("state", true);
+  `
+    )
+    .eq("state", true);
   // .not('role', 'is', null)
   // .eq('role.is_admin', is_admin);
   return profile as User[];
@@ -45,44 +50,66 @@ export const InsertUsers = async (
     .eq("IdUser", user?.id)
     .single();
   if (parther.id) {
-    const { data: users, error } = await supabase
+    const { data: profile } = await supabase
       .from("profile")
-      .update([
-        {
-          firstname: parther.firstname,
-          lastname: parther.lastname,
-          address: parther.address,
-          stateId: parther.stateId,
-          packageId: parther.packageId,
-          languageId: parther.languageId,
-          DateSold: DateSold,
-          Expiration: Expiration,
-          discount: +parther.discount,
-          IdCountry: parther.IdCountry,
-          IdCity: parther.IdCity,
-          IdLocation: admin?.IdLocation,
-          NroContract: parther.NroContract,
-          SecondaryEmail: parther.SecondaryEmail,
-          StatusWallet: parther.StatusWallet,
-          Note: parther.Note,
-        },
-      ])
+      .select("user_id")
       .eq("profileId", parther.id)
-      .select();
+      .single();
+    const usercookie: UserData = {
+      firstname: parther.firstname,
+      lastname: parther.lastname,
+      email: parther.email!,
+      phono: parther.photo,
+    };
 
-    console.log(users);
-    if (error) {
+    const { data: user, error: error2 } =
+      await supabase.auth.admin.updateUserById(profile?.user_id, {
+        email: parther.email,
+        phone: parther.phone,
+        email_confirm: true,
+        phone_confirm: true,
+        user_metadata: usercookie,
+      });
+    if (!error2) {
+      const { data: users, error } = await supabase
+        .from("profile")
+        .update([
+          {
+            firstname: parther.firstname,
+            lastname: parther.lastname,
+            address: parther.address,
+            stateId: parther.stateId,
+            packageId: parther.packageId,
+            languageId: parther.languageId,
+            DateSold: DateSold,
+            Expiration: Expiration,
+            discount: +parther.discount,
+            IdCountry: parther.IdCountry,
+            IdCity: parther.IdCity,
+            IdLocation: admin?.IdLocation,
+            NroContract: parther.NroContract,
+            SecondaryEmail: parther.SecondaryEmail,
+            StatusWallet: parther.StatusWallet,
+            Note: parther.Note,
+          },
+        ])
+        .eq("profileId", parther.id)
+        .select();
+
+      console.log(users);
+      if (error) {
+        return {
+          status: false,
+          message: error.message,
+        };
+      }
+
+      revalidatePath("/partner");
       return {
-        status: false,
-        message: error.message,
+        status: true,
+        message: "Actualizado correctamente",
       };
     }
-
-    revalidatePath("/partner");
-    return {
-      status: true,
-      message: "Actualizado correctamente",
-    };
   }
   const usercookie: UserData = {
     firstname: parther.firstname,
@@ -93,7 +120,7 @@ export const InsertUsers = async (
 
   const { data, error } = await supabase.auth.admin.createUser({
     email: parther.email,
-    phone: `${parther.code}${parther.phone}`,
+    phone: parther.phone,
     email_confirm: true,
     phone_confirm: true,
     user_metadata: usercookie,
@@ -134,17 +161,17 @@ export const InsertUsers = async (
     ])
     .select();
 
-  const { data: phone } = await supabase
-    .from("phone")
-    .insert([
-      {
-        type: "Phone",
-        code: parther.code,
-        number: parther.phone,
-        profileId: users?.[0].profileId,
-      },
-    ])
-    .select();
+  // const { data: phone } = await supabase
+  //   .from("phone")
+  //   .insert([
+  //     {
+  //       type: "Phone",
+  //       code: parther.code,
+  //       number: parther.phone,
+  //       profileId: users?.[0].profileId,
+  //     },
+  //   ])
+  //   .select();
 
   if (error2) {
     console.log(error2);
@@ -161,6 +188,33 @@ export const InsertUsers = async (
   };
 };
 
+export const ChangeEmailAdmin = async (email: string, userId: string) => {
+  const supabase = await createClient();
+
+  const { data: profile } = await supabase
+    .from("profile")
+    .select("user_id")
+    .eq("profileId", userId)
+    .single();
+  console.log(profile);
+  const { data: user, error } = await supabase.auth.admin.updateUserById(
+    profile?.user_id,
+    { email: email, email_confirm: true }
+  );
+
+  revalidatePath("/users");
+  if (error) {
+    return {
+      status: false,
+      message: error.message,
+    };
+  }
+  return {
+    status: true,
+    message: "Email  Actualizado",
+  };
+};
+
 export const GetUser = async (id: string) => {
   const supabase = await createClient();
 
@@ -169,10 +223,21 @@ export const GetUser = async (id: string) => {
     .select("*")
     .eq("profileId", id)
     .single();
+
+  const { data: user, error: userError } =
+    await supabase.auth.admin.getUserById(profile.user_id);
   if (error) {
     return {} as Profile;
   }
-  return profile as Profile;
+  if (userError) {
+    return {} as Profile;
+  }
+  const UserProfile: Profile = {
+    ...profile,
+    email: user.user?.email,
+    phone: user.user?.phone,
+  };
+  return UserProfile as Profile;
 };
 
 export const GetStateActive = async (id: string) => {
@@ -223,7 +288,7 @@ export const GetRoleActive = async () => {
   const { data: state, error } = await supabase
     .from("role")
     .select("*")
-    .eq("state", true)
+    .eq("state", true);
   if (error) {
     return [];
   }
@@ -274,13 +339,10 @@ export const DeleteUser = async (id: string) => {
     .eq("profileId", id)
     .select();
 
-
   const { data: user, error: error2 } =
     await supabase.auth.admin.updateUserById(profile?.user_id, {
       ban_duration: "120000h",
     });
 
   revalidatePath("/partner");
-
-
 };

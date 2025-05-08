@@ -1,7 +1,8 @@
 "use client";
-import { Phone } from "@/interfaces/phones-interfaces";
+
+import { Points } from "@/interfaces/point-interfaces";
 import {
-  Chip,
+
   Pagination,
   Table,
   TableBody,
@@ -13,71 +14,44 @@ import {
 import React, { useCallback, useMemo, useState } from "react";
 
 export const columns = [
-  { name: "Tipo", uid: "type" },
-  { name: "Codigo", uid: "code" },
-  { name: "Numero", uid: "number" },
-  { name: "Nota", uid: "note" },
-  { name: "Nombre", uid: "profile.firstname" },
-  { name: "Apellido", uid: "profile.lastname" },
-  { name: "Estado", uid: "state" },
+  { name: "Nombre", uid: "firstname" },
+  { name: "Apellido", uid: "lastname" },
+  { name: "Email", uid: "email" },
+  { name: "Celular", uid: "phone" },
 ];
 interface TableProps {
-  items: Phone[];
+  items: Points[];
 }
 export const TablePhones = ({ items: rows }: TableProps) => {
-  const renderCell = useCallback((item: Phone, columnKey: React.Key) => {
+  const renderCell = useCallback((item: Points, columnKey: React.Key) => {
     switch (columnKey) {
-      case "profile.firstname":
+      case "firstname":
         return (
           <div>
-            <span>{item.profile.firstname}</span>
+            <span>{item.firstname}</span>
           </div>
         );
-      case "profile.lastname":
+      case "lastname":
         return (
           <div>
-            <span>{item.profile.lastname}</span>
+            <span>{item.lastname}</span>
           </div>
         );
-      case "type":
+      case "email":
         return (
           <div>
-            <span>{item.type}</span>
+            <span>{item.email}</span>
           </div>
         );
-      case "code":
+      case "phone":
         return (
           <div>
-            <span>{item.code}</span>
+            <span>{item.phone}</span>
           </div>
         );
-      case "number":
-        return (
-          <div>
-            <span>{item.number}</span>
-          </div>
-        );
-      case "note":
-        return (
-          <div>
-            <span>{item.note}</span>
-          </div>
-        );
-      case "state":
-        return (
-          <Chip
-            size="sm"
-            variant="flat"
-            color={item.state ? "success" : "danger"}
-          >
-            <span className="capitalize text-xs">
-              {item.state ? "Activo" : "Inactivo"}
-            </span>
-          </Chip>
-        );
+
       default:
         return;
-      // <span>{item[columnKey as keyof State]?.toString() || ""}</span>;
     }
   }, []);
 
@@ -159,7 +133,7 @@ export const TablePhones = ({ items: rows }: TableProps) => {
         </TableHeader>
         <TableBody items={items}>
           {(item) => (
-            <TableRow key={item.phoneId}>
+            <TableRow key={item.profileId}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

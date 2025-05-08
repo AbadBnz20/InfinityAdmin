@@ -17,7 +17,7 @@ export default async function PartherPage() {
             <div className="my-3">
               <ModalMain
                 active={permission.write}
-                title="Registrar Nuevo Usuario"
+                title="Registrar Nuevo Socio"
                 size="3xl"
               >
                 <UserForm  />

@@ -1,7 +1,6 @@
-import { Input, Navbar, NavbarContent } from '@nextui-org/react';
+import {  Navbar, NavbarContent } from '@nextui-org/react';
 import React from 'react'
 import { BurguerButton } from './BurguerButton';
-import {  IoSearchOutline } from 'react-icons/io5';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { UserDropdown } from './UserDropdown';
 import { ToastContainer } from "react-toastify";
@@ -25,7 +24,7 @@ export const NavbarWrapper = ({ children }: Props) => {
         <BurguerButton />
       </NavbarContent>
       <NavbarContent className="w-full max-md:hidden">
-        <Input
+        {/* <Input
           startContent={<IoSearchOutline size={'20px'} />}
           isClearable
           className="w-1/3"
@@ -34,7 +33,7 @@ export const NavbarWrapper = ({ children }: Props) => {
             mainWrapper: "w-full",
           }}
           placeholder="Search..."
-        />
+        /> */}
       </NavbarContent>
       <NavbarContent
         justify="end"

@@ -6,6 +6,7 @@ import {
   Avatar,
   Button,
   Chip,
+  Input,
   Pagination,
   Table,
   TableBody,
@@ -17,10 +18,11 @@ import {
 } from "@nextui-org/react";
 import { useCallback, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
-import { IoSendOutline } from "react-icons/io5";
+import { IoSearchOutline, IoSendOutline } from "react-icons/io5";
 import { DeleteUser, UpdateSendEmail } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import { ModalConfirm } from "../modal/ModalConfirm";
+import { DownloadParther } from "../contentButton/DownloadParther";
 
 export const columns = [
   { name: "Imagen", uid: "photo" },
@@ -55,13 +57,16 @@ interface TableProps {
 export const TableUser = ({ items: rows, update }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
   const [loading, setloading] = useState(false);
-  const OnSendEmail = async (id: string, email: string, fullname: string, language:string) => {
+  const OnSendEmail = async (
+    id: string,
+    email: string,
+    fullname: string,
+    language: string
+  ) => {
     setloading(true);
 
     const languageemail =
-    language === "3fbff8d6-c2e2-476d-99f4-ebf47b2797cd"
-      ? "en"
-      : "es";
+      language === "3fbff8d6-c2e2-476d-99f4-ebf47b2797cd" ? "en" : "es";
 
     const res = await fetch("/api/send", {
       method: "POST",
@@ -242,7 +247,7 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
               variant="light"
               size="sm"
             >
-              ( {item.SendEmail}/3) 
+              ( {item.SendEmail}/3)
               <IoSendOutline />
             </Button>
           </div>
@@ -253,15 +258,32 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
   }, []);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [search, setsearch] = useState("");
   const [page, setPage] = useState(1);
   const pages = Math.ceil(rows.length / rowsPerPage);
+
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) {
+      return rows; 
+    }
+  
+    return rows.filter((item) => {
+      const searchValue = search.toLowerCase();
+      return (
+        item.firstname.toLowerCase().includes(searchValue) ||
+        item.lastname.toLowerCase().includes(searchValue) ||
+        item.email.toLowerCase().includes(searchValue) ||
+        item.phone.toLowerCase().includes(searchValue) ||
+        item.NroContract.toString().toLowerCase().includes(searchValue)
+      );
+    });
+  }, [rows, search]);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
-    return rows.slice(start, end);
-  }, [page, rows, rowsPerPage]);
+    return filteredRows.slice(start, end);
+  }, [page, rows, rowsPerPage,filteredRows]);
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -271,13 +293,32 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
     []
   );
 
+  const onSearchChange = (value?: string) => {
+    console.log(value);
+    if (value) {
+      setsearch(value);
+      setPage(1);
+    } else {
+      setsearch("");
+    }
+  };
+
+  const onClear = useCallback(() => {
+    setsearch("");
+    setPage(1);
+  }, []);
+
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {rows.length} items
-          </span>
+          <div>
+            <span className="text-default-400 text-small">
+              Total {rows.length} items
+            </span>
+          </div>
+          <div className="flex gap-2 flex-col items-end">
+            <DownloadParther data={rows} />
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -289,6 +330,8 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
               <option value="15">15</option>
             </select>
           </label>
+          </div>
+          
         </div>
       </div>
     );
@@ -312,6 +355,15 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
 
   return (
     <div className=" w-full flex flex-col gap-4">
+      <Input
+        isClearable
+        className="w-full sm:max-w-[40%]"
+        placeholder="Buscar..."
+        startContent={<IoSearchOutline size={"20px"} />}
+        value={search}
+        onClear={() => onClear()}
+        onValueChange={onSearchChange}
+      />
       <Table
         topContent={topContent}
         bottomContent={bottomContent}
