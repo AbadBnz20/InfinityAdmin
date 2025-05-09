@@ -45,13 +45,13 @@ const translations = {
       "Enter the code to complete your access.",
     ],
     assistance:
-      "If you need assistance or have any questions, our member support team is available to assist you at any time. Write to us at members@infinityluxurytravelclub.com or contact us at (+52) 998 478 8050 , (+1) 800 871 9040.",
+      "If you need assistance or have any questions, our member support team is available to assist you at any time. Write to us at members@infinityluxurytravelclub.com or contact us at (+52)  998 500 2798 , (+1) 800 871 9040.",
     closing:
       "We hope you enjoy all the exclusive benefits we have prepared for you!",
     sincerely: "Sincerely",
     platformName: "Advantage Infinity Club",
     contactEmail: "members@infinityluxurytravelclub.com",
-    contactNumbers: "(+52) 998 478 8050 | (+1) 800 871 9040",
+    contactNumbers: "(+52) 998 500 2798 | (+1) 800 871 9040",
   },
 };
 
