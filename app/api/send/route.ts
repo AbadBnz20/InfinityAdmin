@@ -13,10 +13,13 @@ export async function POST(request: Request) {
   } = body;
 
   try {
+
+    const textlanguage= language === "es" ?  "¡Bienvenido a Infinity Luxury Travel Club! Accede a tu plataforma exclusiva.":  "Welcome to Infinity Luxury Travel Club! Access your exclusive platform.";
+
     const {  error } = await resend.emails.send({
       from: "InfinityTravelClub <onboarding@advantageinfinityclub.com>",
       to: [email],
-      subject: "¡Bienvenido a Infinity Luxury Travel Club! Accede a tu plataforma exclusiva.",
+      subject:textlanguage,
       react: EmailTemplate({
         fullName: fullName,
         language:language

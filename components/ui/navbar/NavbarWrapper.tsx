@@ -1,7 +1,6 @@
 import {  Navbar, NavbarContent } from '@nextui-org/react';
 import React from 'react'
 import { BurguerButton } from './BurguerButton';
-import { NotificationsDropdown } from './NotificationsDropdown';
 import { UserDropdown } from './UserDropdown';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -40,7 +39,7 @@ export const NavbarWrapper = ({ children }: Props) => {
         className="w-fit data-[justify=end]:flex-grow-0"
       >
         
-        <NotificationsDropdown />
+        {/* <NotificationsDropdown /> */}
         <NavbarContent>
           <UserDropdown />
         </NavbarContent>

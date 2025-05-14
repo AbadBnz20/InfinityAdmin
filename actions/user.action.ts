@@ -69,6 +69,7 @@ export const InsertUsers = async (
         email_confirm: true,
         phone_confirm: true,
         user_metadata: usercookie,
+        
       });
     if (!error2) {
       const { data: users, error } = await supabase
@@ -124,6 +125,7 @@ export const InsertUsers = async (
     email_confirm: true,
     phone_confirm: true,
     user_metadata: usercookie,
+    ban_duration:'24h'
   });
 
   if (error) {
