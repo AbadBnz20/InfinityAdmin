@@ -23,7 +23,7 @@ export default async function PartherPage() {
                 <UserForm  />
               </ModalMain>
             </div>
-            {permission.read && <TableUser items={users} update />}
+            {permission.read && <TableUser items={users} update={permission.update} deleteRom={permission.delete} />}
           </>
         )}
       </div>

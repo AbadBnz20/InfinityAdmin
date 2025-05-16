@@ -1,12 +1,24 @@
 "use client";
 
 import { Admin } from "@/interfaces/admin-interfaces";
-import { Chip, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import {
+  Chip,
+  Input,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
+import { ModalConfirm } from "../modal/ModalConfirm";
+import { DeleteAdmin } from "@/actions/admin.action";
+import { IoSearchOutline } from "react-icons/io5";
 
 export const columns = [
   { name: "Nombre", uid: "firstName" },
-  { name: "Apellido", uid: "lastName" },
   { name: "Dirección", uid: "address" },
   { name: "Email", uid: "email" },
   { name: "Teléfono", uid: "phone" },
@@ -17,15 +29,16 @@ export const columns = [
   { name: "Departamento", uid: "department.name" },
   { name: "Estado", uid: "state.name" },
   { name: "Estado", uid: "status" },
-//   { name: "Acciones", uid: "actions" },
+    { name: "Acciones", uid: "actions" },
 ];
 
 interface TableProps {
   items: Admin[];
   update: boolean;
+  deleteRom: boolean;
 }
-export const TableAdmin = ({ items: rows }: TableProps) => {
-//   const { onChanseItem, onOpen } = useModalStore();
+export const TableAdmin = ({ items: rows, deleteRom }: TableProps) => {
+  //   const { onChanseItem, onOpen } = useModalStore();
   const renderCell = useCallback((item: Admin, columnKey: React.Key) => {
     switch (columnKey) {
       case "firstName":
@@ -72,13 +85,13 @@ export const TableAdmin = ({ items: rows }: TableProps) => {
             <span>{item.location.name}</span>
           </div>
         );
-        case "position.name":
+      case "position.name":
         return (
           <div>
             <span>{item.position.name}</span>
           </div>
         );
-        case "department.name":
+      case "department.name":
         return (
           <div>
             <span>{item.department.name}</span>
@@ -103,39 +116,64 @@ export const TableAdmin = ({ items: rows }: TableProps) => {
             </span>
           </Chip>
         );
-      // case "actions":
-      //   return (
-      //     <div className="flex items-center gap-4">
-      //       {update && (
-      //         <Tooltip content="Editar" color="primary">
-      //           <button
-      //             onClick={() => {
-      //               onChanseItem(item.profileId);
-      //               onOpen();
-      //             }}
-      //           >
-      //             <EditIcon size={20} fill="#979797" />
-      //           </button>
-      //         </Tooltip>
-      //       )}
+      case "actions":
+        return (
+          <div className="flex items-center gap-4">
+            {/* {update && (
+              <Tooltip content="Editar" color="primary">
+                <button
+                  onClick={() => {
+                    onChanseItem(item.profileId);
+                    onOpen();
+                  }}
+                >
+                  <EditIcon size={20} fill="#979797" />
+                </button>
+              </Tooltip>
+            )} */}
 
-      //     </div>
-      //   );
+            {deleteRom && (
+              <ModalConfirm idItem={item.IdAdmin} Ondelete={DeleteAdmin} />
+            )}
+          </div>
+        );
       default:
         return;
     }
   }, []);
 
+
+
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [search, setsearch] = useState("");
   const [page, setPage] = useState(1);
   const pages = Math.ceil(rows.length / rowsPerPage);
+
+
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) {
+      return rows; 
+    }
+  
+    return rows.filter((item) => {
+      const searchValue = search.toLowerCase();
+      return (
+        item.firstName.toLowerCase().includes(searchValue) ||
+        item.lastName.toLowerCase().includes(searchValue) ||
+        item.email.toLowerCase().includes(searchValue) ||
+        item.phone.toLowerCase().includes(searchValue)
+      );
+    });
+  }, [rows, search]);
+
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return rows.slice(start, end);
-  }, [page, rows, rowsPerPage]);
+    return filteredRows.slice(start, end);
+  }, [page, rows, rowsPerPage,filteredRows]);
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -184,34 +222,58 @@ export const TableAdmin = ({ items: rows }: TableProps) => {
     );
   }, [items.length, page, pages]);
 
+ const onSearchChange = (value?: string) => {
+    if (value) {
+      setsearch(value);
+      setPage(1);
+    } else {
+      setsearch("");
+    }
+  };
+
+  const onClear = useCallback(() => {
+    setsearch("");
+    setPage(1);
+  }, []);
+
+
   return (
     <div className=" w-full flex flex-col gap-4">
-          <Table
-            topContent={topContent}
-            bottomContent={bottomContent}
-            aria-label="Example table with custom cells"
-          >
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn
-                  key={column.uid}
-                  hideHeader={column.uid === "actions"}
-                  align={column.uid === "actions" ? "center" : "start"}
-                >
-                  {column.name}
-                </TableColumn>
+      <Input
+        isClearable
+        className="w-full sm:max-w-[40%]"
+        placeholder="Buscar..."
+        startContent={<IoSearchOutline size={"20px"} />}
+        value={search}
+        onClear={() => onClear()}
+        onValueChange={onSearchChange}
+      />
+      <Table
+        topContent={topContent}
+        bottomContent={bottomContent}
+        aria-label="Example table with custom cells"
+      >
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              hideHeader={column.uid === "actions"}
+              align={column.uid === "actions" ? "center" : "start"}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody items={items}>
+          {(item) => (
+            <TableRow key={item.IdAdmin}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
-            </TableHeader>
-            <TableBody items={items}>
-              {(item) => (
-                <TableRow key={item.IdAdmin}>
-                  {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 };

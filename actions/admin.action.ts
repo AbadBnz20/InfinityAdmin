@@ -74,3 +74,27 @@ export const InsertAdmin = async (useradmin: StateFormAdmin) => {
     message: "Guardado correctamente",
   };
 };
+
+
+
+export const DeleteAdmin = async (id: string) => {
+  const supabase = await createClient();
+  const { data: profile, error } = await supabase
+    .from("admin")
+    .select("IdUser")
+    .eq("IdAdmin", id)
+    .single();
+
+  const { data } = await supabase
+    .from("profile")
+    .update({ state: false })
+    .eq("profileId", id)
+    .select();
+
+  const { data: user, error: error2 } =
+    await supabase.auth.admin.updateUserById(profile?.IdUser, {
+      ban_duration: "120000h",
+    });
+
+  revalidatePath("/users");
+};

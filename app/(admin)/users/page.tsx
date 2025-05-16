@@ -9,6 +9,7 @@ export default async function UsersPage() {
     ListAdmin(),
     GetPermissionBySession("Usuarios"),
   ]);
+
   return (
     <div className="container">
       <h3 className="text-xl font-semibold">Administradores</h3>
@@ -24,7 +25,7 @@ export default async function UsersPage() {
             </ModalMain>
           </div>
 
-          {permission.read && <TableAdmin items={users} update />}
+          {permission.read && <TableAdmin items={users} update deleteRom={permission.delete} />}
         </>
       )}
     </div>

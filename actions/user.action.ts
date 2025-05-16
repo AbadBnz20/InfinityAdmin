@@ -69,7 +69,6 @@ export const InsertUsers = async (
         email_confirm: true,
         phone_confirm: true,
         user_metadata: usercookie,
-        
       });
     if (!error2) {
       const { data: users, error } = await supabase
@@ -125,7 +124,7 @@ export const InsertUsers = async (
     email_confirm: true,
     phone_confirm: true,
     user_metadata: usercookie,
-    ban_duration:'24h'
+    ban_duration: "24h",
   });
 
   if (error) {
@@ -347,4 +346,99 @@ export const DeleteUser = async (id: string) => {
     });
 
   revalidatePath("/partner");
+};
+
+export interface UserByExcel {
+  NroContract: string;
+  firstname: string;
+  lastname: string;
+  address: string;
+  DateSold: string;
+  Expiration: string;
+  email: string;
+  SecondaryEmail: string;
+  phone: string;
+  birthday: string;
+  IdCountry: string;
+  stateId: string;
+  IdCity: string;
+  packageId: string;
+  languageId: string;
+  StatusWallet: string;
+  discount: string;
+  Note: string;
+  photo: string;
+  IdLocation: string;
+}
+
+export const ImportUserByExcel = async (parther: UserByExcel[]) => {
+  const users = await Promise.all(
+    parther.map(async (user) => {
+      const supabase = await createClient();
+      const usercookie: UserData = {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email!,
+        phono: user.photo,
+      };
+
+      const { data, error } = await supabase.auth.admin.createUser({
+        email: user.email,
+        phone: user.phone,
+        email_confirm: true,
+        phone_confirm: true,
+        user_metadata: usercookie,
+        ban_duration: "24h",
+      });
+
+      if (error) {
+        return {
+          status: false,
+          message: `Nro de Contrato: ${user.NroContract}, Error:${error.message} `,
+        };
+      }
+
+      const { data: users, error: error2 } = await supabase
+        .from("profile")
+        .insert([
+          {
+            user_id: data.user.id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            address: user.address,
+            photo: user.photo,
+            stateId: user.stateId,
+            packageId: user.packageId,
+            languageId: user.languageId,
+            discount: +user.discount,
+            birthdate: user.birthday,
+
+            IdCountry: user.IdCountry,
+            IdCity: user.IdCity,
+            IdLocation: user.IdLocation,
+            NroContract: user.NroContract,
+            DateSold: user.DateSold,
+            Expiration: user.Expiration,
+            SecondaryEmail: user.SecondaryEmail,
+            StatusWallet: user.StatusWallet,
+            Note: user.Note,
+          },
+        ])
+        .select();
+      if (error2) {
+        console.log(error2);
+        return {
+          status: false,
+          message: `Nro de Contrato: ${user.NroContract}, Error:${error2.message} `,
+        };
+      }
+
+      return {
+        status: true,
+        message: `Nro de Contrato: ${user.NroContract}, "Guardado correctamente `,
+      };
+    })
+  );
+
+  return users;
 };

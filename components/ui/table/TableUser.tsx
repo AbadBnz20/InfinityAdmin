@@ -23,6 +23,7 @@ import { DeleteUser, UpdateSendEmail } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import { ModalConfirm } from "../modal/ModalConfirm";
 import { DownloadParther } from "../contentButton/DownloadParther";
+import { ImportButtonParther } from "../contentButton/ImportButtonParther";
 
 export const columns = [
   { name: "Imagen", uid: "photo" },
@@ -53,8 +54,9 @@ export const columns = [
 interface TableProps {
   items: Profile[];
   update: boolean;
+  deleteRom:boolean;
 }
-export const TableUser = ({ items: rows, update }: TableProps) => {
+export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
   const [loading, setloading] = useState(false);
   const OnSendEmail = async (
@@ -225,8 +227,10 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
                 </button>
               </Tooltip>
             )}
-
-            <ModalConfirm idItem={item.profileId} Ondelete={DeleteUser} />
+          {
+            deleteRom &&  <ModalConfirm idItem={item.profileId} Ondelete={DeleteUser} />
+          }
+           
           </div>
         );
       case "SendEmail":
@@ -294,7 +298,6 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
   );
 
   const onSearchChange = (value?: string) => {
-    console.log(value);
     if (value) {
       setsearch(value);
       setPage(1);
@@ -313,12 +316,13 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div>
+            <div> <ImportButtonParther/></div>
             <span className="text-default-400 text-small">
               Total {rows.length} items
             </span>
           </div>
           <div className="flex gap-2 flex-col items-end">
-            <DownloadParther data={rows} />
+             <DownloadParther data={rows} />
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -327,6 +331,7 @@ export const TableUser = ({ items: rows, update }: TableProps) => {
             >
               <option value="5">5</option>
               <option value="10">10</option>
+              
               <option value="15">15</option>
             </select>
           </label>
