@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { SelectState } from "../select/SelectState";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
+import { State } from "@/interfaces/state-interfaces";
 
 
 
@@ -17,9 +18,15 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
     name: string;
     IdState: string;
   }
-export const UserCityForm = () => {
+
+  interface Props {
+    state:State[]
+  }
+
+export const UserCityForm = ({state}:Props) => {
      const {
         register,
+        control,
         handleSubmit,
         formState: { errors },
         setValue,
@@ -82,6 +89,8 @@ const value = watch("IdState");
       />
 
       <SelectState
+      control={control}
+        state={state}
         name="IdState"
         register={register}
         errors={errors.IdState}

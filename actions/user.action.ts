@@ -81,6 +81,7 @@ export const InsertUsers = async (
             stateId: parther.stateId,
             packageId: parther.packageId,
             languageId: parther.languageId,
+            coOwnerTelephone: parther.coOwnerTelephone,
             DateSold: DateSold,
             Expiration: Expiration,
             discount: +parther.discount,
@@ -143,6 +144,7 @@ export const InsertUsers = async (
         lastname: parther.lastname,
         address: parther.address,
         photo: parther.photo,
+        coOwnerTelephone: parther.coOwnerTelephone,
         stateId: parther.stateId,
         packageId: parther.packageId,
         languageId: parther.languageId,
@@ -241,7 +243,7 @@ export const GetUser = async (id: string) => {
   return UserProfile as Profile;
 };
 
-export const GetStateActive = async (id: string) => {
+export const GetStateActive = async (id?: string) => {
   const supabase = await createClient();
 
   let query = supabase.from("state").select("*").eq("state", true);

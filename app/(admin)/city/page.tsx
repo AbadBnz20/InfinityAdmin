@@ -1,14 +1,16 @@
 import { ListCity } from "@/actions/ctity.action";
 import { GetPermissionBySession } from "@/actions/permissions.action";
+import { GetStateActive } from "@/actions/user.action";
 import { CityForm } from "@/components/form/CityForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
 import { TableCity } from "@/components/ui/table/TableCity";
 
 export default async function CityPage() {
   // const city = await ListCity();
-  const [city, permission] = await Promise.all([
+  const [city, permission,states] = await Promise.all([
     ListCity(),
     GetPermissionBySession("Ciudades"),
+    GetStateActive()
   ]);
   return (
     <div className="container">
@@ -17,7 +19,7 @@ export default async function CityPage() {
         <>
           <div className="my-3">
             <ModalMain active title="Registrar Nueva Ciudad">
-              <CityForm />
+              <CityForm state={states} />
             </ModalMain>
           </div>
           <TableCity items={city} update={permission.update} deletecell={permission.delete} />

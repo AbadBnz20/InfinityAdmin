@@ -20,6 +20,9 @@ import { toast } from "react-toastify";
 import { InsertAdmin } from "@/actions/admin.action";
 import { SelectLocation } from "../select/SelectLocation";
 import { SelectCity } from "../select/SelectCity";
+import { Countries } from "@/interfaces/countries-interfaces";
+import { State } from "@/interfaces/state-interfaces";
+import { City } from "@/interfaces/city-interfaces";
 
 export interface StateFormAdmin {
   id?: string;
@@ -38,7 +41,14 @@ export interface StateFormAdmin {
   IdPosition: string;
 }
 
-export const AdminForm = () => {
+
+export interface Props {
+  countries: Countries[];
+  states: State[];
+  cities:City[];
+}
+
+export const AdminForm = ({cities,countries,states}:Props) => {
   const {
     register,
     handleSubmit,
@@ -193,6 +203,8 @@ export const AdminForm = () => {
       )}
       <SelectLocation register={register} errors={errors} watch={watch} />
       <SelectCountry
+      control={control}
+      countries={countries}
         register={register}
         errors={errors.IdCountry}
         name="IdCountry"
@@ -200,6 +212,8 @@ export const AdminForm = () => {
       />
 
       <SelectState
+       control={control}
+        state={states}
         name="IdState"
         register={register}
         errors={errors.IdState}
@@ -207,6 +221,7 @@ export const AdminForm = () => {
       />
 
       <SelectCity
+      cities={cities}
         control={control}
         name="IdCity"
         error={errors.IdCity}

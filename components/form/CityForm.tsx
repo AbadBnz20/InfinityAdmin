@@ -14,10 +14,17 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
+import { State } from "@/interfaces/state-interfaces";
 
-export const CityForm = () => {
+ interface Props{
+  state:State[];
+ }
+
+
+export const CityForm = ({state}:Props) => {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     setValue,
@@ -78,6 +85,8 @@ export const CityForm = () => {
       />
 
       <SelectState
+       state={state}
+        control={control}
         name="stateId"
         register={register}
         errors={errors.stateId}

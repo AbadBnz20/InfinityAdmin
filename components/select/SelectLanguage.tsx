@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { StateFormUser } from '../form/UserForm';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
-import { GetLanguagesActive } from '@/actions/user.action';
 import { Languages } from '@/interfaces/languages-interfaces';
 import { Progress, Select, SelectItem } from '@nextui-org/react';
 interface Props {
     register: UseFormRegister<StateFormUser>;
     errors: FieldErrors<StateFormUser>;
     watch: UseFormWatch<StateFormUser>;
+    languages:Languages[];
   }
-export const SelectLanguage = ({ register, errors,watch }: Props) => {
+export const SelectLanguage = ({ register, errors,watch,languages }: Props) => {
     const value = watch("languageId");
     const [data, setdata] = useState<Languages[]>([]);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
       const GetCountry = async () => {
         setLoading(true);
-        const resp = await GetLanguagesActive();
-        setdata(resp);
+
+
+         setTimeout(() => {
+        setdata(languages);
         setLoading(false);
+      }, 50);
+
+        // const resp = await GetLanguagesActive();
+        // setdata(resp);
+        // setLoading(false);
       };
   
       GetCountry();

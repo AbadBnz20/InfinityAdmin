@@ -2,7 +2,6 @@
 import { useModalStore } from "@/store/ModalStore";
 import {
   Checkbox,
-  DateInput,
   DatePicker,
   DateValue,
   Input,
@@ -14,15 +13,21 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
 import { SelectPackage } from "../select/SelectPackage";
 import { SelectLanguage } from "../select/SelectLanguage";
-import {  GetUser, InsertUsers } from "@/actions/user.action";
+import { GetUser, InsertUsers } from "@/actions/user.action";
 import { toast } from "react-toastify";
 
-import { getLocalTimeZone, parseDate } from "@internationalized/date";
+import { getLocalTimeZone, now, parseDate } from "@internationalized/date";
 import { SelectCity } from "../select/SelectCity";
 import { SelectCountry } from "../select/SelectCountry";
 import { SelectStatusWallet } from "../select/SelectStatusWallet";
-
-
+import { Countries } from "@/interfaces/countries-interfaces";
+import { State } from "@/interfaces/state-interfaces";
+import { City } from "@/interfaces/city-interfaces";
+import { Packages } from "@/interfaces/package-interfaces";
+import { Languages } from "@/interfaces/languages-interfaces";
+import { SelectCodeProfile } from "../select/SelectCodeProfile";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { Contries } from "@/data/countries";
 export interface StateFormUser {
   id?: string;
   sendEmail: boolean;
@@ -38,7 +43,10 @@ export interface StateFormUser {
   lastname: string;
   address: string;
   email: string;
+  code: string;
   phone: string;
+  coCode: string;
+  coOwnerTelephone: string;
   photo: string;
   stateId: string;
   discount: string;
@@ -47,7 +55,21 @@ export interface StateFormUser {
   languageId: string;
 }
 
-export const UserForm = () => {
+export interface Props {
+  countries: Countries[];
+  states: State[];
+  cities: City[];
+  packages: Packages[];
+  languages: Languages[];
+}
+
+export const UserForm = ({
+  countries,
+  states,
+  cities,
+  packages,
+  languages,
+}: Props) => {
   const {
     register,
     setValue,
@@ -70,10 +92,28 @@ export const UserForm = () => {
     const GetItem = async () => {
       if (idItem) {
         const resp = await GetUser(idItem);
-       
+
         // console.log(resp);
         setValue("id", resp.profileId);
-        setValue("phone", resp.phone);
+
+        const phoneNumber = parsePhoneNumberFromString(`+${resp.phone}`);
+        const code = Contries.find(
+          (x) => x.code === `+${phoneNumber?.countryCallingCode}`
+        );
+        if (code) {
+          setValue("code", code?.key);
+        }
+        const coPhoneNumber = parsePhoneNumberFromString(
+          `+${resp.coOwnerTelephone}`
+        );
+        const coCode = Contries.find(
+          (x) => x.code === `+${coPhoneNumber?.countryCallingCode}`
+        );
+        if (coCode) {
+          setValue("coCode", coCode?.key);
+        }
+        setValue("coOwnerTelephone", coPhoneNumber?.nationalNumber || "");
+        setValue("phone", phoneNumber?.nationalNumber || "");
         setValue("email", resp.email);
         setValue("firstname", resp.firstname);
         setValue("lastname", resp.lastname);
@@ -99,13 +139,24 @@ export const UserForm = () => {
     GetItem();
   }, [idItem]);
 
+  const SeachCode = (code: string) => {
+    const codeNumber = Contries.find((x) => x.key === code);
+    const codeNumberSplit = codeNumber?.code.split("+")[1];
+    return codeNumberSplit;
+  };
+
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
-
+    console.log(state);
     const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
     const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
     const Expiration =
       state.Expiration.toDate(getLocalTimeZone()).toISOString();
+
+    const codeNumber = SeachCode(state.code);
+    state.phone = `${codeNumber}${state.phone.trim()}`;
+    const coCodeNumber = SeachCode(state.coCode);
+    state.coOwnerTelephone = `${coCodeNumber}${state.coOwnerTelephone.trim()}`;
 
     try {
       state.photo =
@@ -143,9 +194,6 @@ export const UserForm = () => {
       toast.success(resp.message, {
         position: "top-right",
       });
-     
-
-     
     } catch (error) {
       console.log(error);
       toast.error("Ha ocurrido un error inesperado", {
@@ -207,6 +255,9 @@ export const UserForm = () => {
             <DatePicker
               label="Fecha de inicio"
               {...field}
+              granularity="day"
+              showMonthAndYearPickers
+              defaultValue={now(getLocalTimeZone())}
               isInvalid={!!errors.DateSold}
               errorMessage={errors.DateSold?.message}
             />
@@ -220,6 +271,7 @@ export const UserForm = () => {
             <DatePicker
               label="Fecha de Expiracion"
               {...field}
+              showMonthAndYearPickers
               isInvalid={!!errors.Expiration}
               errorMessage={errors.Expiration?.message}
             />
@@ -256,14 +308,22 @@ export const UserForm = () => {
           isInvalid={!!errors.SecondaryEmail}
           errorMessage={errors.SecondaryEmail?.message}
         />
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-5">
+          <div className="col-span-2">
+            <SelectCodeProfile
+              name="code"
+              watch={watch}
+              errors={errors}
+              control={control}
+            />
+          </div>
           <Input
             type="number"
             label="Celular"
-            startContent={
-              idItem ? <span className="text-sm text-gray-500">+</span> : null
-            }
-            className={`${idItem ? "col-span-full" : "col-span-2"} `}
+            classNames={{
+              inputWrapper: "rounded-none  rounded-br-md rounded-tr-md",
+            }}
+            className={`col-span-3`}
             placeholder="Ingrese celular"
             {...register("phone", {
               required: "El campo es requerido",
@@ -278,26 +338,63 @@ export const UserForm = () => {
           />
         </div>
 
+        <div className="grid grid-cols-5">
+          <div className="col-span-2">
+            <SelectCodeProfile
+              name="coCode"
+              watch={watch}
+              errors={errors}
+              control={control}
+            />
+          </div>
+          <Input
+            type="number"
+            label="Celular Co-Titular"
+            classNames={{
+              inputWrapper: "rounded-none  rounded-br-md rounded-tr-md",
+            }}
+            className={`col-span-3`}
+            placeholder="Ingrese celular"
+            {...register("coOwnerTelephone", {
+              required: "El campo es requerido",
+              pattern: {
+                value: /^[0-9]+$/,
+                message: "Solo se permiten números",
+              },
+            })}
+            value={watch("coOwnerTelephone")}
+            isInvalid={!!errors.coOwnerTelephone}
+            errorMessage={errors.coOwnerTelephone?.message}
+          />
+        </div>
+
         <Controller
           name="birthday"
           control={control}
           rules={{ required: "La fecha de nacimiento es requerida" }}
           render={({ field }) => (
-            <DateInput
+            <DatePicker
               {...field}
+              showMonthAndYearPickers
               label={"Fecha Nacimiento"}
               isInvalid={!!errors.birthday}
               errorMessage={errors.birthday?.message}
             />
           )}
         />
+
         <SelectCountry
+          control={control}
+          countries={countries}
           register={register}
           errors={errors.IdCountry}
           name="IdCountry"
           value={valuecountry}
         />
+
         <SelectState
+          control={control}
+          state={states}
           name="stateId"
           register={register}
           errors={errors.stateId}
@@ -305,13 +402,24 @@ export const UserForm = () => {
         />
 
         <SelectCity
+          cities={cities}
           control={control}
           name="IdCity"
           error={errors.IdCity}
           value={valuecity}
         />
-        <SelectPackage register={register} errors={errors} watch={watch} />
-        <SelectLanguage register={register} errors={errors} watch={watch} />
+        <SelectPackage
+          packages={packages}
+          register={register}
+          errors={errors}
+          watch={watch}
+        />
+        <SelectLanguage
+          languages={languages}
+          register={register}
+          errors={errors}
+          watch={watch}
+        />
 
         {/* <Input
         type="text"

@@ -3,22 +3,27 @@ import { StateFormUser } from '../form/UserForm';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 import { Packages } from '@/interfaces/package-interfaces';
 import { Progress, Select, SelectItem } from '@nextui-org/react';
-import { GetPackageActive } from '@/actions/user.action';
 interface Props {
     register: UseFormRegister<StateFormUser>;
     errors: FieldErrors<StateFormUser>;
     watch: UseFormWatch<StateFormUser>;
+    packages: Packages[];
   }
-export const SelectPackage = ({ register, errors,watch }: Props) => {
+export const SelectPackage = ({ register, errors,watch,packages }: Props) => {
     const value = watch("packageId");
     const [data, setdata] = useState<Packages[]>([]);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
       const GetCountry = async () => {
         setLoading(true);
-        const resp = await GetPackageActive();
-        setdata(resp);
+
+        setTimeout(() => {
+        setdata(packages);
         setLoading(false);
+      }, 50);
+        // const resp = await GetPackageActive();
+        // setdata(resp);
+        // setLoading(false);
       };
   
       GetCountry();

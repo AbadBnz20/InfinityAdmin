@@ -46,7 +46,7 @@ export const SelectStatusWallet = ({ register, errors, watch }: Props) => {
       setTimeout(() => {
         setdata(StatusWallet); 
         setLoading(false); 
-      }, 1000); 
+      }, 50); 
     };
 
     GetCountry();

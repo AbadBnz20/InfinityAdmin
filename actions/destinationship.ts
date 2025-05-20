@@ -86,7 +86,7 @@ export const DeleteDestinationShip = async (id: string) => {
   };
 };
 
-export const GetCityActive = async (id:string) => {
+export const GetCityActive = async (id?:string) => {
   const supabase = await createClient();
 
   // const { data: state, error } = await supabase

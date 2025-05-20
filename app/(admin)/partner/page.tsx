@@ -1,13 +1,20 @@
+import { GetCountryActive } from "@/actions/countries.action";
+import { GetCityActive } from "@/actions/destinationship";
 import { GetPermissionBySession } from "@/actions/permissions.action";
-import { ListUsers } from "@/actions/user.action";
+import { GetLanguagesActive, GetPackageActive, GetStateActive, ListUsers } from "@/actions/user.action";
 import { UserForm } from "@/components/form/UserForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
 import { TableUser } from "@/components/ui/table/TableUser";
 
 export default async function PartherPage() {
-   const [users, permission] = await Promise.all([
+   const [users, permission,countries,states,cities,packages,languages] = await Promise.all([
       ListUsers(),
       GetPermissionBySession("Socios"),
+      GetCountryActive(),
+      GetStateActive(),
+      GetCityActive(),
+      GetPackageActive(),
+      GetLanguagesActive()
     ]);
     return (
       <div className="container">
@@ -20,7 +27,7 @@ export default async function PartherPage() {
                 title="Registrar Nuevo Socio"
                 size="3xl"
               >
-                <UserForm  />
+                <UserForm  countries={countries} states={states} cities={cities} packages={packages} languages={languages}  />
               </ModalMain>
             </div>
             {permission.read && <TableUser items={users} update={permission.update} deleteRom={permission.delete} />}

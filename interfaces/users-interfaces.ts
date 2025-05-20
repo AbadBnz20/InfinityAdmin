@@ -43,6 +43,7 @@ export interface Profile {
   phone: string;
   created_at: string;
   stateId: string;
+  coOwnerTelephone: string;
   packageId: string;
   languageId: string;
   birthdate: string;

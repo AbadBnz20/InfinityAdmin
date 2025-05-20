@@ -10,13 +10,19 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectCity } from "../select/SelectCity";
+import { City } from "@/interfaces/city-interfaces";
 
 export interface DestinationShip {
   id?: string;
   name: string;
   cityId: string;
 }
-export const DestinationShipForm = () => {
+
+
+interface Props {
+  cities:City[];
+}
+export const DestinationShipForm = ({cities}:Props) => {
   const {
     register,
     control,
@@ -76,7 +82,7 @@ export const DestinationShipForm = () => {
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
       />
-      <SelectCity  control={control} name="cityId" error={errors.cityId} value={value} />
+      <SelectCity cities={cities}  control={control} name="cityId" error={errors.cityId} value={value} />
       <CotentButtonForm state={loading} />
     </form>
   );

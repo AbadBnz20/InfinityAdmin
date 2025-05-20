@@ -7,6 +7,7 @@ import { SelectCountry } from "../select/SelectCountry";
 import { useModalStore } from "@/store/ModalStore";
 import { toast } from "react-toastify";
 import { GetState, InsertState } from "@/actions/state.action";
+import { Countries } from "@/interfaces/countries-interfaces";
 
 export interface StateForm {
   id?: string;
@@ -14,10 +15,15 @@ export interface StateForm {
   countryId: string;
 }
 
-export const StatesForm = () => {
+interface Props {
+  countries:Countries[]
+}
+
+export const StatesForm = ({countries}:Props) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     setValue,
     watch,
@@ -72,7 +78,7 @@ export const StatesForm = () => {
         errorMessage={errors.name?.message}
       />
 
-      <SelectCountry register={register} errors={errors.countryId} name="countryId" value={value}  />
+      <SelectCountry control={control} countries={countries} register={register} errors={errors.countryId} name="countryId" value={value}  />
       <CotentButtonForm state={loading} />
     </form>
   );

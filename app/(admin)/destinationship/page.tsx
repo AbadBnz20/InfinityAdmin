@@ -1,4 +1,4 @@
-import { ListDestinationShip } from "@/actions/destinationship";
+import { GetCityActive, ListDestinationShip } from "@/actions/destinationship";
 import { GetPermissionBySession } from "@/actions/permissions.action";
 import { DestinationShipForm } from "@/components/form/DestinationShipForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
@@ -6,9 +6,10 @@ import { TableDestinationShip } from "@/components/ui/table/TableDestinationShip
 
 export default async function DestinationShipPage() {
   // const destination = await ListDestinationShip();
-  const [destination, permission] = await Promise.all([
+  const [destination, permission,cities] = await Promise.all([
     ListDestinationShip(),
     GetPermissionBySession("DestinosYates"),
+    GetCityActive()
   ]);
   return (
     <div className="container">
@@ -17,7 +18,7 @@ export default async function DestinationShipPage() {
         <>
           <div className="my-3">
             <ModalMain active title="Registrar Nuevo Origen/Destino de Yates">
-              <DestinationShipForm />
+              <DestinationShipForm cities={cities} />
             </ModalMain>
           </div>
           {permission.read && (

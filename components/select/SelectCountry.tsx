@@ -1,9 +1,14 @@
-import { GetCountryActive } from "@/actions/countries.action";
 import { Countries } from "@/interfaces/countries-interfaces";
 import { SelectStore } from "@/store/SelectStore";
-import { Progress, Select, SelectItem } from "@nextui-org/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Progress,
+} from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import {
+  Control,
+  Controller,
   FieldError,
   FieldValues,
   Path,
@@ -16,28 +21,33 @@ interface Props<T extends FieldValues> {
   errors?: FieldError;
   name: Path<T>;
   value: PathValue<T, Path<T>>;
+  countries: Countries[];
+  control: Control<T>;
 }
 export const SelectCountry = <T extends FieldValues>({
-  register,
   errors,
   name,
   value,
+  countries,
+  control,
 }: Props<T>) => {
   const [data, setdata] = useState<Countries[]>([]);
   const [loading, setLoading] = useState(false);
-  const {setCountry}= SelectStore();
+  const { setCountry } = SelectStore();
   useEffect(() => {
     const GetCountry = async () => {
-      setCountry(value)
+      setCountry(value);
       setLoading(true);
-      const resp = await GetCountryActive();
-      setdata(resp);
-      setLoading(false);
-
+      // const resp = await GetCountryActive();
+      setTimeout(() => {
+        setdata(countries);
+        setLoading(false);
+      }, 50);
     };
 
     GetCountry();
   }, [value]);
+
   if (loading) {
     return (
       <div className="my-4">
@@ -52,18 +62,45 @@ export const SelectCountry = <T extends FieldValues>({
   }
 
   return (
-    <Select
-      items={data}
-      label="Pais"
-      placeholder="Seleccione Pais"
-    
-      {...register(name, { required: "El Pais es requerido" })}
-      isInvalid={!!errors}
-      errorMessage={errors?.message}
-    >
-      {(animal) => (
-        <SelectItem key={animal.countryId}>{animal.name}</SelectItem>
+    <Controller
+      name={name}
+      control={control}
+      rules={{ required: "El Pais es requerido" }}
+      render={({ field }) => (
+        <Autocomplete
+          {...field}
+          defaultItems={data}
+          label="Pais"
+          className="w-full"
+          placeholder="selecciona el Pais"
+          selectedKey={field.value}
+          onSelectionChange={(key) => {
+            field.onChange(key);
+            // console.log(key)
+          }}
+          isInvalid={!!errors}
+          errorMessage={errors?.message}
+        >
+          {(item) => (
+            <AutocompleteItem key={item.countryId}>
+              {item.name}
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
       )}
-    </Select>
+    />
   );
 };
+
+//  <Select
+//     items={data}
+//     label="Pais"
+//     placeholder="Seleccione Pais"
+//     {...register(name, { required: "El Pais es requerido" })}
+//     isInvalid={!!errors}
+//     errorMessage={errors?.message}
+//   >
+//     {(animal) => (
+//       <SelectItem key={animal.countryId}>{animal.name}</SelectItem>
+//     )}
+//   </Select>

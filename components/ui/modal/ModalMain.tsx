@@ -24,7 +24,7 @@ export const ModalMain = ({  children, title,size="md",active }: Props) => {
      {
       active && <Button color="primary" onPress={onOpen}>Registrar Nuevo</Button>
      }
-      <Modal size={size} scrollBehavior={'inside'} isOpen={isOpen} onOpenChange={onOpenChange}  hideCloseButton={true} >
+      <Modal  isDismissable={false} size={size} scrollBehavior={'inside'} isOpen={isOpen} onOpenChange={onOpenChange}  hideCloseButton={true} >
         <ModalContent>
           <>
             <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
