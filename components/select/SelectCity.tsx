@@ -10,6 +10,7 @@ import {
 import { City } from "@/interfaces/city-interfaces";
 import { Autocomplete, AutocompleteItem, Progress } from "@nextui-org/react";
 import { SelectStore } from "@/store/SelectStore";
+import { GetCityActive } from "@/actions/destinationship";
 
 interface Props<T extends FieldValues> {
   control: Control<T, any>;
@@ -23,7 +24,6 @@ export const SelectCity = <T extends FieldValues>({
   name,
   error,
   value,
-  cities,
 }: Props<T>) => {
   const [data, setdata] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,19 +32,19 @@ export const SelectCity = <T extends FieldValues>({
     const GetCountry = async () => {
       setLoading(true);
 
-      setTimeout(() => {
-        if (idState) {
-          const resp = cities.filter((item) => item.stateId === idState);
-          setdata(resp);
-        } else {
-          setdata(cities);
-        }
-        setLoading(false);
-      }, 50);
+      // setTimeout(() => {
+      //   if (idState) {
+      //     const resp = cities.filter((item) => item.stateId === idState);
+      //     setdata(resp);
+      //   } else {
+      //     setdata(cities);
+      //   }
+      //   setLoading(false);
+      // }, 50);
 
-      // const resp = await GetCityActive(idState);
-      // setdata(resp);
-      // setLoading(false);
+      const resp = await GetCityActive(idState);
+      setdata(resp);
+      setLoading(false);
     };
 
     GetCountry();

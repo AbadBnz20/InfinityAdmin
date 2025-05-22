@@ -105,6 +105,10 @@ export const GetCityActive = async (id?:string) => {
   if (error) {
     return [];
   }
+  
+// const find = state?.filter((item) => item.stateId === '815b82ce-01ee-4bbb-8160-fcb04e52b779');
+  // console.log(state.length)
+
   return state as City[];
 };
 

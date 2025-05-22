@@ -1,6 +1,7 @@
 "use client";
 import {
   Chip,
+  Input,
   Pagination,
   Table,
   TableBody,
@@ -16,6 +17,7 @@ import { Countries } from "@/interfaces/countries-interfaces";
 import { useModalStore } from "@/store/ModalStore";
 import { ModalConfirm } from "../modal/ModalConfirm";
 import { DeleteCountry } from "@/actions/countries.action";
+import { IoSearchOutline } from "react-icons/io5";
 export const columns = [
   { name: "Nombre", uid: "name" },
   { name: "Estado", uid: "state" },
@@ -82,14 +84,34 @@ export const TableC = ({ items: rows, update, deletecell }: TableProps) => {
   }, []);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
+    const [search, setsearch] = useState("");
   const pages = Math.ceil(rows.length / rowsPerPage);
+
+
+const filteredRows = useMemo(() => {
+    if (!search.trim()) {
+      return rows; 
+    }
+  
+    return rows.filter((item) => {
+      const searchValue = search.toLowerCase();
+      return (
+        item.name.toLowerCase().includes(searchValue) 
+      );
+    });
+  }, [rows, search]);
+
+
+
+
+
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return rows.slice(start, end);
-  }, [page, rows, rowsPerPage]);
+    return filteredRows.slice(start, end);
+  }, [page, rows, rowsPerPage,filteredRows]);
 
   const onRowsPerPageChange = React.useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -138,8 +160,31 @@ export const TableC = ({ items: rows, update, deletecell }: TableProps) => {
     );
   }, [items.length, page, pages]);
 
+const onSearchChange = (value?: string) => {
+    if (value) {
+      setsearch(value);
+      setPage(1);
+    } else {
+      setsearch("");
+    }
+  };
+  const onClear = useCallback(() => {
+    setsearch("");
+    setPage(1);
+  }, []);
+
+
   return (
     <div className="w-full flex flex-col gap-4">
+      <Input
+        isClearable
+        className="w-full sm:max-w-[40%]"
+        placeholder="Buscar..."
+        startContent={<IoSearchOutline size={"20px"} />}
+        value={search}
+        onClear={() => onClear()}
+        onValueChange={onSearchChange}
+      />
       <Table
         topContent={topContent}
         bottomContent={bottomContent}

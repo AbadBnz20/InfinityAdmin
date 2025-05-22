@@ -80,6 +80,7 @@ export const UserForm = ({
   } = useForm<StateFormUser>({
     defaultValues: {
       discount: "0",
+      DateSold: now(getLocalTimeZone()),
     },
   });
 
@@ -148,6 +149,9 @@ export const UserForm = ({
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
     console.log(state);
+
+
+
     const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
     const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
     const Expiration =
@@ -257,7 +261,6 @@ export const UserForm = ({
               {...field}
               granularity="day"
               showMonthAndYearPickers
-              defaultValue={now(getLocalTimeZone())}
               isInvalid={!!errors.DateSold}
               errorMessage={errors.DateSold?.message}
             />

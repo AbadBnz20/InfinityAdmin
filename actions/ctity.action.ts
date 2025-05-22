@@ -7,10 +7,15 @@ import { revalidatePath } from "next/cache";
 
 export const ListCity = async () => {
   const supabase = await createClient();
-  let { data: city, error } = await supabase.from("city").select("*, state (name)").eq("status", true);
- 
+  let { data: city, error,count } = await supabase.from("city").select("*, state (name)",{count:"exact"}).eq("status", true).range(0, 2000);
+  // const { data: city, error, } = await supabase.rpc("get_active_cities").range(0, 2000);
+//  console.log(city?.length);
+
 return city as City[];
 };
+
+
+
 
 
 export const InsertCity = async (
