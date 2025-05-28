@@ -28,6 +28,7 @@ export const columns = [
   { name: "Fecha de retorno", uid: "return_date" },
   { name: "Presupuesto(USD)", uid: "budget" },
   { name: "Pasajeros", uid: "passengers" },
+  { name: "Nota", uid: "details" },
 ];
 
 interface TableProps {
@@ -108,6 +109,13 @@ export const TableJourney = ({ items: rows }: TableProps) => {
             </span>
           </div>
         );
+      case "details":
+        return (
+          <div>
+            <span>{item.details}</span>
+          </div>
+        );
+      
       default:
         return;
     }

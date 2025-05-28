@@ -7,16 +7,40 @@ import { revalidatePath } from "next/cache";
 
 export const ListCity = async () => {
   const supabase = await createClient();
-  let { data: city, error,count } = await supabase.from("city").select("*, state (name)",{count:"exact"}).eq("status", true).range(0, 2000);
-  // const { data: city, error, } = await supabase.rpc("get_active_cities").range(0, 2000);
-//  console.log(city?.length);
+  let {
+    data: city,
+    error,
+    count,
+  } = await supabase
+    .from("city")
+    .select("*, state (name)", { count: "exact" })
+    .eq("status", true);
 
-return city as City[];
+  return city as City[];
 };
 
+export const ListCityForPage = async (
+  start: number = 0,
+  end: number = 1000,
+  searchTerm: string = ""
+) => {
+  const supabase = await createClient();
+  let query = supabase
+    .from("city")
+    .select("*, state (name)", { count: "exact" })
+    .eq("status", true)
+    .range(start, end);
 
+  if (searchTerm.trim()) {
+    query = query.ilike("name", `%${searchTerm.trim()}%`);
+  }
 
-
+  const { data: city, error, count } = await query;
+  return {
+    city: city as City[],
+    count: count,
+  };
+};
 
 export const InsertCity = async (
   name: string,
@@ -53,22 +77,20 @@ export const InsertCity = async (
   };
 };
 
-
-
 export const GetState = async (id: string) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("city")
     .select("*")
-    .eq("cityId", id).single();
+    .eq("cityId", id)
+    .single();
   if (error) {
     return {} as City;
   }
 
   return data as City;
 };
-
 
 export const DeleteCity = async (id: string) => {
   const supabase = await createClient();

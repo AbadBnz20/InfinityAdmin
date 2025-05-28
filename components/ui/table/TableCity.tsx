@@ -6,6 +6,7 @@ import {
   Chip,
   Input,
   Pagination,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -14,9 +15,9 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
-import { DeleteCity } from "@/actions/ctity.action";
+import { DeleteCity, ListCityForPage } from "@/actions/ctity.action";
 import { ModalConfirm } from "../modal/ModalConfirm";
 import { IoSearchOutline } from "react-icons/io5";
 
@@ -28,12 +29,14 @@ export const columns = [
 ];
 
 interface TableProps {
-  items: City[];
   update: boolean;
   deletecell: boolean;
 }
-export const TableCity = ({ items: rows, update, deletecell }: TableProps) => {
+export const TableCity = ({ update, deletecell }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
+  const [rows, setrows] = useState<City[]>([]);
+  const [totalpages, setTotalpages] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const renderCell = useCallback((item: City, columnKey: React.Key) => {
     switch (columnKey) {
@@ -76,9 +79,9 @@ export const TableCity = ({ items: rows, update, deletecell }: TableProps) => {
                 </button>
               </Tooltip>
             )}
-            {
-                  deletecell && <ModalConfirm idItem={item.cityId} Ondelete={DeleteCity} />
-                }
+            {deletecell && (
+              <ModalConfirm idItem={item.cityId} Ondelete={DeleteCity} />
+            )}
           </div>
         );
       default:
@@ -86,32 +89,36 @@ export const TableCity = ({ items: rows, update, deletecell }: TableProps) => {
       // <span>{item[columnKey as keyof State]?.toString() || ""}</span>;
     }
   }, []);
+
+  useEffect(() => {
+    GetCities();
+  }, []);
+
+  const GetCities = async () => {
+    setLoading(true);
+    const cities = await ListCityForPage(0, 4);
+    setrows(cities.city);
+    setTotalpages(cities.count || 0);
+    setLoading(false);
+  };
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
-   const [search, setsearch] = useState("");
-  const pages = Math.ceil(rows.length / rowsPerPage);
+  const [search, setsearch] = useState("");
+  const pages = Math.ceil(totalpages / rowsPerPage);
+  const loadingState = loading || totalpages === 0 ? "loading" : "idle";
 
-const filteredRows = useMemo(() => {
-    if (!search.trim()) {
-      return rows; 
-    }
-  
-    return rows.filter((item) => {
-      const searchValue = search.toLowerCase();
-      return (
-        item.name.toLowerCase().includes(searchValue) 
-      );
-    });
-  }, [rows, search]);
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      OnChansePages(1, search);
+    }, 400);
 
+    return () => clearTimeout(delayDebounce);
+  }, [search, rowsPerPage]);
 
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredRows.slice(start, end);
-  }, [page, rows, rowsPerPage,filteredRows]);
-
+  useEffect(() => {
+    OnChansePages(page,search);
+  }, [page, rowsPerPage, search]);
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));
@@ -119,6 +126,17 @@ const filteredRows = useMemo(() => {
     },
     []
   );
+
+  const OnChansePages = async (page: number, searchTerm: string = "") => {
+    setLoading(true);
+    setPage(page);
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage - 1;
+    const cities = await ListCityForPage(start, end, searchTerm);
+    setrows(cities.city);
+    setTotalpages(cities.count || 0);
+    setLoading(false);
+  };
 
   const topContent = useMemo(() => {
     return (
@@ -153,14 +171,13 @@ const filteredRows = useMemo(() => {
           color="primary"
           page={page}
           total={pages}
-          onChange={setPage}
+          onChange={OnChansePages}
         />
       </div>
     );
-  }, [items.length, page, pages]);
+  }, [page, pages]);
 
-
-const onSearchChange = (value?: string) => {
+  const onSearchChange = (value?: string) => {
     if (value) {
       setsearch(value);
       setPage(1);
@@ -173,10 +190,9 @@ const onSearchChange = (value?: string) => {
     setPage(1);
   }, []);
 
-
   return (
     <div className=" w-full flex flex-col gap-4">
-       <Input
+      <Input
         isClearable
         className="w-full sm:max-w-[40%]"
         placeholder="Buscar..."
@@ -201,7 +217,12 @@ const onSearchChange = (value?: string) => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody
+          isLoading={loading}
+          loadingContent={<Spinner label="Loading..." />}
+          items={rows}
+          loadingState={loadingState}
+        >
           {(item) => (
             <TableRow key={item.cityId}>
               {(columnKey) => (

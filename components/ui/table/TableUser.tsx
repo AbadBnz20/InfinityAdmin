@@ -8,6 +8,7 @@ import {
   Chip,
   Input,
   Pagination,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -16,10 +17,10 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { EditIcon } from "../icons/edit-icon";
 import { IoSearchOutline, IoSendOutline } from "react-icons/io5";
-import { DeleteUser, UpdateSendEmail } from "@/actions/user.action";
+import { DeleteUser, ListUsers, UpdateSendEmail } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import { ModalConfirm } from "../modal/ModalConfirm";
 import { DownloadParther } from "../contentButton/DownloadParther";
@@ -52,11 +53,10 @@ export const columns = [
 ];
 
 interface TableProps {
-  items: Profile[];
   update: boolean;
-  deleteRom:boolean;
+  deleteRom: boolean;
 }
-export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
+export const TableUser = ({ update, deleteRom }: TableProps) => {
   const { onChanseItem, onOpen } = useModalStore();
   const [loading, setloading] = useState(false);
   const OnSendEmail = async (
@@ -227,10 +227,9 @@ export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
                 </button>
               </Tooltip>
             )}
-          {
-            deleteRom &&  <ModalConfirm idItem={item.profileId} Ondelete={DeleteUser} />
-          }
-           
+            {deleteRom && (
+              <ModalConfirm idItem={item.profileId} Ondelete={DeleteUser} />
+            )}
           </div>
         );
       case "SendEmail":
@@ -261,33 +260,49 @@ export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
     }
   }, []);
 
+  const [rows, setrows] = useState<Profile[]>([]);
+  const [isloading, setIsLoading] = useState(false);
+  const [totalpages, setTotalpages] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setsearch] = useState("");
   const [page, setPage] = useState(1);
-  const pages = Math.ceil(rows.length / rowsPerPage);
+  const pages = Math.ceil(totalpages / rowsPerPage);
+  const loadingState = loading || totalpages === 0 ? "loading" : "idle";
 
-  const filteredRows = useMemo(() => {
-    if (!search.trim()) {
-      return rows; 
-    }
-  
-    return rows.filter((item) => {
-      const searchValue = search.toLowerCase();
-      return (
-        item.firstname.toLowerCase().includes(searchValue) ||
-        item.lastname.toLowerCase().includes(searchValue) ||
-        item.email.toLowerCase().includes(searchValue) ||
-        item.phone.toLowerCase().includes(searchValue) ||
-        item.NroContract.toString().toLowerCase().includes(searchValue)
-      );
-    });
-  }, [rows, search]);
+  useEffect(() => {
+    GetCities();
+  }, []);
 
-  const items = useMemo(() => {
+  const GetCities = async () => {
+    setIsLoading(true);
+    const cities = await ListUsers(0, 4);
+    setrows(cities.profile);
+    setTotalpages(cities.count || 0);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      OnChansePages(1, search);
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [search, rowsPerPage]);
+
+  useEffect(() => {
+    OnChansePages(page, search);
+  }, [page, rowsPerPage, search]);
+
+  const OnChansePages = async (page: number, searchTerm: string = "") => {
+    setIsLoading(true);
+    setPage(page);
     const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return filteredRows.slice(start, end);
-  }, [page, rows, rowsPerPage,filteredRows]);
+    const end = start + rowsPerPage - 1;
+    const cities = await ListUsers(start, end, searchTerm);
+    setrows(cities.profile);
+    setTotalpages(cities.count || 0);
+    setIsLoading(false);
+  };
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -316,27 +331,29 @@ export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div>
-            <div> <ImportButtonParther/></div>
+            <div>
+              {" "}
+              <ImportButtonParther />
+            </div>
             <span className="text-default-400 text-small">
               Total {rows.length} items
             </span>
           </div>
           <div className="flex gap-2 flex-col items-end">
-             <DownloadParther data={rows} />
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              
-              <option value="15">15</option>
-            </select>
-          </label>
+            <DownloadParther data={rows} />
+            <label className="flex items-center text-default-400 text-small">
+              Rows per page:
+              <select
+                className="bg-transparent outline-none text-default-400 text-small"
+                onChange={onRowsPerPageChange}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+
+                <option value="15">15</option>
+              </select>
+            </label>
           </div>
-          
         </div>
       </div>
     );
@@ -352,11 +369,11 @@ export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
           color="primary"
           page={page}
           total={pages}
-          onChange={setPage}
+          onChange={OnChansePages}
         />
       </div>
     );
-  }, [items.length, page, pages]);
+  }, [page, pages]);
 
   return (
     <div className=" w-full flex flex-col gap-4">
@@ -385,7 +402,12 @@ export const TableUser = ({ items: rows, update, deleteRom }: TableProps) => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody
+          items={rows}
+          isLoading={isloading}
+          loadingContent={<Spinner label="Loading..." />}
+          loadingState={loadingState}
+        >
           {(item) => (
             <TableRow key={item.profileId}>
               {(columnKey) => (

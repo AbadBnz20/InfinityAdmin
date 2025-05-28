@@ -11,6 +11,7 @@ export interface Journey {
   return_date: string;
   createDate: string;
   budget: number;
+  details: string;
   passengers: number;
   adult: number;
   childrens: Array<string>;

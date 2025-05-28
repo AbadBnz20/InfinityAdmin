@@ -9,9 +9,13 @@ import { createClient } from "@/utils/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
-export const ListUsers = async () => {
+export const ListUsers = async (
+  start: number = 0,
+  end: number = 1000,
+  searchTerm: string = ""
+) => {
   const supabase = await createClient();
-  const { data: profile } = await supabase
+  let query = supabase
     .from("profile_with_parther")
     .select(
       `
@@ -20,12 +24,27 @@ export const ListUsers = async () => {
     package (name),
     language (name),
     location (name)
-  `
+  `,
+      { count: "exact" }
     )
-    .eq("state", true);
+    .eq("state", true)
+    .range(start, end);
+
+  if (searchTerm.trim()) {
+    const term = `%${searchTerm.trim()}%`;
+    query = query.or(
+      `firstname.ilike.${term},email.ilike.${term},phone.ilike.${term},NroContract.ilike.${term}`
+    );
+  }
+
+  const { data: profile, error, count } = await query;
+
   // .not('role', 'is', null)
   // .eq('role.is_admin', is_admin);
-  return profile as User[];
+  return {
+    profile: profile as User[],
+    count,
+  };
 };
 
 export interface UserData {
@@ -258,11 +277,6 @@ export const GetStateActive = async (id?: string) => {
   }
   return state as State[];
 };
-
-
-
-
-
 
 export const GetPackageActive = async () => {
   const supabase = await createClient();

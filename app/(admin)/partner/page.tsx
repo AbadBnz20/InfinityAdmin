@@ -1,13 +1,13 @@
 import { GetCountryActive } from "@/actions/countries.action";
 import { GetPermissionBySession } from "@/actions/permissions.action";
-import { GetLanguagesActive, GetPackageActive, GetStateActive, ListUsers } from "@/actions/user.action";
+import { GetLanguagesActive, GetPackageActive, GetStateActive } from "@/actions/user.action";
 import { UserForm } from "@/components/form/UserForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
 import { TableUser } from "@/components/ui/table/TableUser";
 
 export default async function PartherPage() {
-   const [users, permission,countries,states,packages,languages] = await Promise.all([
-      ListUsers(),
+   const [ permission,countries,states,packages,languages] = await Promise.all([
+   
       GetPermissionBySession("Socios"),
       GetCountryActive(),
       GetStateActive(),
@@ -28,7 +28,7 @@ export default async function PartherPage() {
                 <UserForm  countries={countries} states={states} cities={[]} packages={packages} languages={languages}  />
               </ModalMain>
             </div>
-            {permission.read && <TableUser items={users} update={permission.update} deleteRom={permission.delete} />}
+            {permission.read && <TableUser update={permission.update} deleteRom={permission.delete} />}
           </>
         )}
       </div>
