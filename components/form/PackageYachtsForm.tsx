@@ -24,6 +24,8 @@ export interface StateFormPackageYachts {
     state: boolean,
     ubicationId: string,
     cabin: string,
+    name_en:string,
+    cabin_en:string,
    
 }
 
@@ -53,6 +55,8 @@ useEffect(() => {
         setValue('points',resp.points.toString());
         setValue('ubicationId',resp.ubicationId);
         setValue('cabin',resp.cabin);
+        setValue('name_en',resp.name_en);
+        setValue('cabin_en',resp.cabin_en);
         setValue("url",resp.image);
 
       }
@@ -100,6 +104,17 @@ useEffect(() => {
         errorMessage={errors.name?.message}
       />
       <Input
+        type="text"
+        label="Nombre (Inglés)"
+        placeholder="Ingrese marca"
+        {...register("name_en", {
+          required: "El campo es requerido",
+        })}
+        value={watch("name_en")}
+        isInvalid={!!errors.name_en}
+        errorMessage={errors.name_en?.message}
+      />
+      <Input
         type="number"
         label="Tiempo"
         startContent={
@@ -123,6 +138,17 @@ useEffect(() => {
         value={watch("cabin")}
         isInvalid={!!errors.cabin}
         errorMessage={errors.cabin?.message}
+      />
+       <Input
+        type="text"
+        label="Camarote (Inglés)"
+        placeholder="Ingrese camarote"
+        {...register("cabin_en", {
+          required: "El campo es requerido",
+        })}
+        value={watch("cabin_en")}
+        isInvalid={!!errors.cabin_en}
+        errorMessage={errors.cabin_en?.message}
       />
       <Input
         type="number"

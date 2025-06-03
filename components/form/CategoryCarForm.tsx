@@ -11,6 +11,7 @@ import { GetCategoryCars, InsertCategoryCars } from "@/actions/categorycars";
 interface StateForm {
   id?: string;
   name: string;
+  name_en:string;
 }
 export const CategoryCarForm = () => {
     const {
@@ -30,6 +31,7 @@ export const CategoryCarForm = () => {
             const resp = await GetCategoryCars(idItem);
             setValue("id", resp.categoryCarId);
             setValue("name", resp.name);
+            setValue("name_en", resp.name_en);
           }
         };
     
@@ -40,7 +42,7 @@ export const CategoryCarForm = () => {
       const OnSubmit = async (state: StateForm) => {
         setLoading(true);
     try {
-      const resp = await InsertCategoryCars(state.name,state.id);
+      const resp = await InsertCategoryCars(state.name,state.name_en,state.id);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -70,6 +72,16 @@ export const CategoryCarForm = () => {
         value={watch("name")}
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
+      />
+       <Input
+        type="text"
+        label="Nombre (Inglés)"
+        placeholder="Ingrese nombre"
+        className="mt-3"
+        {...register("name_en", { required: "El campo es requerido" })}
+        value={watch("name_en")}
+        isInvalid={!!errors.name_en}
+        errorMessage={errors.name_en?.message}
       />
 
       <CotentButtonForm state={loading} />

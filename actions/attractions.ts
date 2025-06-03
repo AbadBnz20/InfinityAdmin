@@ -11,20 +11,20 @@ export const ListAttractions = async () => {
   return attractions as Attractions[];
 };
 
-export const InsertAttractions = async (name: string, id?: string) => {
+export const InsertAttractions = async (name: string, name_en:string, id?: string) => {
   const supabase = await createClient();
 
   let response;
   if (id) {
     response = await supabase
       .from("attractions")
-      .update({ name: name })
+      .update({ name: name,name_en:name_en })
       .eq("attractionsId", id)
       .select();
   } else {
     response = await supabase
       .from("attractions")
-      .insert([{ name: name }])
+      .insert([{ name: name,name_en:name_en }])
       .select();
   }
   const { error } = response;

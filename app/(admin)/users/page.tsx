@@ -1,19 +1,22 @@
 import { ListAdmin } from "@/actions/admin.action";
-import { GetCountryActive } from "@/actions/countries.action";
-import { GetCityActive } from "@/actions/destinationship";
+import { ListDepartaments } from "@/actions/departaments.action";
+import { ListLocations } from "@/actions/location.action";
 import { GetPermissionBySession } from "@/actions/permissions.action";
-import { GetStateActive } from "@/actions/user.action";
+import { ListPositions } from "@/actions/position.action";
+import { GetRoleActive } from "@/actions/user.action";
 import { AdminForm } from "@/components/form/AdminForm";
 import { ModalMain } from "@/components/ui/modal/ModalMain";
 import { TableAdmin } from "@/components/ui/table/TableAdmin";
 
 export default async function UsersPage() {
-  const [users, permission,countries,states,cities] = await Promise.all([
+  const [users, permission,locations,positions,departaments,roles] = await Promise.all([
     ListAdmin(),
     GetPermissionBySession("Usuarios"),
-    GetCountryActive(),
-    GetStateActive(),
-    GetCityActive(),
+    ListLocations(),
+    ListPositions(),
+    ListDepartaments(),
+    GetRoleActive()
+
   ]);
 
   return (
@@ -27,12 +30,12 @@ export default async function UsersPage() {
               title="Registrar Nuevo Usuario"
               size="3xl"
             >
-              <AdminForm countries={countries} states={states} cities={cities} />
+              <AdminForm roles={roles} departaments={departaments} locations={locations} positions={positions}  />
             </ModalMain>
           </div>
 
           {permission.read && (
-            <TableAdmin items={users} update deleteRom={permission.delete} />
+            <TableAdmin items={users} update={permission.update} deleteRom={permission.delete} />
           )}
         </>
       )}

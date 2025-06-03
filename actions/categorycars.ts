@@ -11,20 +11,20 @@ export const ListCategoryCars = async () => {
   return categoryCars as CategoryCars[];
 };
 
-export const InsertCategoryCars = async (name: string, id?: string) => {
+export const InsertCategoryCars = async (name: string, name_en:string, id?: string) => {
   const supabase = await createClient();
 
   let response;
   if (id) {
     response = await supabase
       .from("categoryCars")
-      .update({ name: name })
+      .update({ name: name,name_en:name_en })
       .eq("categoryCarId", id)
       .select();
   } else {
     response = await supabase
       .from("categoryCars")
-      .insert([{ name: name }])
+      .insert([{ name: name,name_en:name_en }])
       .select();
   }
   const { error } = response;

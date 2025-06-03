@@ -14,6 +14,9 @@ export interface StateFormRoom {
   url?: string;
   image: File;
   name: string;
+  name_en: string;
+  typeOfBed_en: string;
+  detail_en: string;
   numberOfBeds: string;
   typeOfBed: string;
   detail: string;
@@ -33,25 +36,25 @@ export const RoomForm = () => {
   const { onClose, idItem } = useModalStore();
   const [loading, setLoading] = useState(false);
 
-
-useEffect(() => {
+  useEffect(() => {
     const GetItem = async () => {
       if (idItem) {
         const resp = await GetPackageRoom(idItem);
-        setValue('IdRoom',resp.IdRoom);
-        setValue('name',resp.name);
-        setValue('numberOfBeds',resp.numberOfBeds.toString());
-        setValue('detail',resp.detail);
-        setValue('numberOfGuests',resp.numberOfGuests.toString());
-        setValue('typeOfBed',resp.typeOfBed);
-        setValue("url",resp.url);
-
+        setValue("IdRoom", resp.IdRoom);
+        setValue("name", resp.name);
+        setValue("name_en", resp.name_en);
+        setValue("typeOfBed_en", resp.typeOfBed_en);
+        setValue("detail_en", resp.detail_en);
+        setValue("numberOfBeds", resp.numberOfBeds.toString());
+        setValue("detail", resp.detail);
+        setValue("numberOfGuests", resp.numberOfGuests.toString());
+        setValue("typeOfBed", resp.typeOfBed);
+        setValue("url", resp.url);
       }
     };
 
     GetItem();
   }, [idItem]);
-
 
   const OnSubmit = async (state: StateFormRoom) => {
     // console.log(state);
@@ -87,9 +90,20 @@ useEffect(() => {
           {...register("name", {
             required: "El campo es requerido",
           })}
-          value={watch("name")}
+          value={watch("name")?? ""}
           isInvalid={!!errors.name}
           errorMessage={errors.name?.message}
+        />
+         <Input
+          type="text"
+          label="Nombre (Inglés)"
+          placeholder="Ingrese nombre"
+          {...register("name_en", {
+            required: "El campo es requerido",
+          })}
+          value={watch("name_en")?? ""}
+          isInvalid={!!errors.name_en}
+          errorMessage={errors.name_en?.message}
         />
         <Input
           type="number"
@@ -98,7 +112,7 @@ useEffect(() => {
           {...register("numberOfBeds", {
             required: "El campo es requerido",
           })}
-          value={watch("numberOfBeds")}
+          value={watch("numberOfBeds")?? ""}
           isInvalid={!!errors.numberOfBeds}
           errorMessage={errors.numberOfBeds?.message}
         />
@@ -109,9 +123,20 @@ useEffect(() => {
           {...register("typeOfBed", {
             required: "El campo es requerido",
           })}
-          value={watch("typeOfBed")}
+          value={watch("typeOfBed")?? ""}
           isInvalid={!!errors.typeOfBed}
           errorMessage={errors.typeOfBed?.message}
+        />
+        <Input
+          type="text"
+          label="Tipo de camas (Inglés)"
+          placeholder="Ingrese tipo"
+          {...register("typeOfBed_en", {
+            required: "El campo es requerido",
+          })}
+          value={watch("typeOfBed_en")?? ""}
+          isInvalid={!!errors.typeOfBed_en}
+          errorMessage={errors.typeOfBed_en?.message}
         />
         <Input
           type="number"
@@ -120,7 +145,7 @@ useEffect(() => {
           {...register("numberOfGuests", {
             required: "El campo es requerido",
           })}
-          value={watch("numberOfGuests")}
+          value={watch("numberOfGuests")?? ""}
           isInvalid={!!errors.numberOfGuests}
           errorMessage={errors.numberOfGuests?.message}
         />
@@ -131,9 +156,20 @@ useEffect(() => {
           {...register("detail", {
             required: "El campo es requerido",
           })}
-          value={watch("detail")}
+          value={watch("detail")?? ""}
           isInvalid={!!errors.detail}
           errorMessage={errors.detail?.message}
+        />
+        <Textarea
+          type="text"
+          label="Detalle (Inglés)"
+          placeholder="Ingrese detalle"
+          {...register("detail_en", {
+            required: "El campo es requerido",
+          })}
+          value={watch("detail_en")?? ""}
+          isInvalid={!!errors.detail_en}
+          errorMessage={errors.detail_en?.message}
         />
 
         <InputFileRoom

@@ -9,7 +9,7 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 import { State } from "@/interfaces/state-interfaces";
-import { Autocomplete, AutocompleteItem, Progress, } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Progress } from "@nextui-org/react";
 import { SelectStore } from "@/store/SelectStore";
 
 interface Props<T extends FieldValues> {
@@ -19,7 +19,8 @@ interface Props<T extends FieldValues> {
   name: Path<T>;
   value: PathValue<T, Path<T>>;
   state: State[];
-  control:Control<T>;
+  control: Control<T>;
+  isfilter?: boolean;
 }
 
 export const SelectState = <T extends FieldValues>({
@@ -27,7 +28,8 @@ export const SelectState = <T extends FieldValues>({
   name,
   value,
   state,
-  control
+  control,
+  isfilter = false,
 }: Props<T>) => {
   const [data, setdata] = useState<State[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,25 +37,27 @@ export const SelectState = <T extends FieldValues>({
 
   useEffect(() => {
     const GetCountry = async () => {
-      setState(value);
+      if (!isfilter) {
+        setState(value);
+      }
+
       setLoading(true);
-      
+
       setTimeout(() => {
         if (idCountry) {
           const resp = state.filter((item) => item.countryId === idCountry);
-           setdata(resp);
-        }else {
+          setdata(resp);
+        } else {
           setdata(state);
         }
         setLoading(false);
       }, 50);
 
       // const resp = await GetStateActive(idCountry);
-
     };
 
     GetCountry();
-  }, [value, idCountry]);
+  }, [value, idCountry, state]);
 
   if (loading) {
     return (
@@ -68,7 +72,7 @@ export const SelectState = <T extends FieldValues>({
     );
   }
   return (
-   <Controller
+    <Controller
       name={name}
       control={control}
       rules={{ required: "El Estado es requerido" }}
@@ -88,9 +92,7 @@ export const SelectState = <T extends FieldValues>({
           errorMessage={errors?.message}
         >
           {(item) => (
-            <AutocompleteItem key={item.stateId}>
-              {item.name}
-            </AutocompleteItem>
+            <AutocompleteItem key={item.stateId}>{item.name}</AutocompleteItem>
           )}
         </Autocomplete>
       )}
@@ -98,16 +100,13 @@ export const SelectState = <T extends FieldValues>({
   );
 };
 
-
-
-
-  // <Select
-  //     items={data}
-  //     label="Estado"
-  //     placeholder="Seleccione Estado"
-  //     {...register(name, { required: "El Estado es requerido" })}
-  //     isInvalid={!!errors}
-  //     errorMessage={errors?.message}
-  //   >
-  //     {(animal) => <SelectItem key={animal.stateId}>{animal.name}</SelectItem>}
-  //   </Select>
+// <Select
+//     items={data}
+//     label="Estado"
+//     placeholder="Seleccione Estado"
+//     {...register(name, { required: "El Estado es requerido" })}
+//     isInvalid={!!errors}
+//     errorMessage={errors?.message}
+//   >
+//     {(animal) => <SelectItem key={animal.stateId}>{animal.name}</SelectItem>}
+//   </Select>

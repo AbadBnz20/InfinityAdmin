@@ -388,6 +388,7 @@ export interface UserByExcel {
   StatusWallet: string;
   discount: string;
   Note: string;
+  coOwnerTelephone: string;
   photo: string;
   IdLocation: string;
 }
@@ -433,7 +434,7 @@ export const ImportUserByExcel = async (parther: UserByExcel[]) => {
             languageId: user.languageId,
             discount: +user.discount,
             birthdate: user.birthday,
-
+            coOwnerTelephone: user.coOwnerTelephone,
             IdCountry: user.IdCountry,
             IdCity: user.IdCity,
             IdLocation: user.IdLocation,

@@ -9,5 +9,10 @@ export interface Car {
   image: string;
   description: string;
   transferprice: number;
+  model_en: string;
+  description_en: string;
+  type_en: string;
+  brand_en: string;
+  color_en: string;
   state: boolean;
 }

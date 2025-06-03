@@ -24,6 +24,7 @@ export const SelectCity = <T extends FieldValues>({
   name,
   error,
   value,
+  cities
 }: Props<T>) => {
   const [data, setdata] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export const SelectCity = <T extends FieldValues>({
     };
 
     GetCountry();
-  }, [value, idState]);
+  }, [value, idState,cities]);
   if (loading) {
     return (
       <div className="my-4">

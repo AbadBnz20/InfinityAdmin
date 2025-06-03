@@ -14,19 +14,19 @@ export const ListCategory = async () => {
 };
 
 
-export const InsertCategory = async (name: string, id?: string) => {
+export const InsertCategory = async (name: string, name_en:string, id?: string) => {
   const supabase = await createClient();
   let response;
   if (id) {
     response = await supabase
       .from("category_origin_destination")
-      .update({ name: name })
+      .update({ name: name,name_en: name_en })
       .eq("categoryId", id)
       .select();
   } else {
     response = await supabase
       .from("category_origin_destination")
-      .insert([{ name: name }])
+      .insert([{ name: name,name_en: name_en }])
       .select();
   }
   const { error } = response;
@@ -115,6 +115,7 @@ export const ListDestinations = async () => {
 export const InsertDestination = async (
   name: string,
   categoryoriginId: string,
+   name_en:string,
   id?: string
 ) => {
   const supabase = await createClient();
@@ -123,13 +124,13 @@ export const InsertDestination = async (
   if (id) {
     response = await supabase
       .from("origin_destination")
-      .update({ name: name, categoryoriginId: categoryoriginId })
+      .update({ name: name,name_en:name_en, categoryoriginId: categoryoriginId })
       .eq("origindestinationId", id)
       .select();
   } else {
     response = await supabase
       .from("origin_destination")
-      .insert([{ name: name, categoryoriginId: categoryoriginId }])
+      .insert([{ name: name,name_en:name_en, categoryoriginId: categoryoriginId }])
       .select();
   }
   const { error } = response;

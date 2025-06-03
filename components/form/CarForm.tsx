@@ -20,6 +20,11 @@ export interface StateFormCard {
   image: File;
   description: string;
   transferprice: string;
+  model_en: string;
+  description_en: string;
+  type_en: string;
+  brand_en: string;
+  color_en: string;
 }
 export const CarForm = () => {
   const {
@@ -32,7 +37,6 @@ export const CarForm = () => {
   } = useForm<StateFormCard>();
   const { onClose, idItem } = useModalStore();
   const [loading, setLoading] = useState(false);
-
 
   useEffect(() => {
     const GetItem = async () => {
@@ -47,10 +51,16 @@ export const CarForm = () => {
         setValue("ability", resp.ability.toString());
         setValue("description", resp.description);
         setValue("transferprice", resp.transferprice.toString());
+
+        setValue("model_en", resp.model_en);
+        setValue("description_en", resp.description_en);
+        setValue("type_en", resp.type_en);
+        setValue("brand_en", resp.brand_en);
+        setValue("color_en", resp.color_en);
+
         // const imageFile = await urlToFile(resp.image, "image.jpg");
         // setValue("image", imageFile);
-        setValue("url",resp.image);
-
+        setValue("url", resp.image);
       }
     };
 
@@ -92,8 +102,19 @@ export const CarForm = () => {
             required: "El campo es requerido",
           })}
           value={watch("brand")}
-          isInvalid={!!errors.ability}
-          errorMessage={errors.ability?.message}
+          isInvalid={!!errors.brand}
+          errorMessage={errors.brand?.message}
+        />
+          <Input
+          type="text"
+          label="Marca (Inglés)"
+          placeholder="Ingrese marca"
+          {...register("brand_en", {
+            required: "El campo es requerido",
+          })}
+          value={watch("brand_en")}
+          isInvalid={!!errors.brand_en}
+          errorMessage={errors.brand_en?.message}
         />
         <Input
           type="text"
@@ -103,6 +124,15 @@ export const CarForm = () => {
           value={watch("model")}
           isInvalid={!!errors.model}
           errorMessage={errors.model?.message}
+        />
+        <Input
+          type="text"
+          label="Modelo (Inglés)"
+          placeholder="Ingrese modelo"
+          {...register("model_en", { required: "El campo es requerido" })}
+          value={watch("model_en")}
+          isInvalid={!!errors.model_en}
+          errorMessage={errors.model_en?.message}
         />
         <Input
           type="text"
@@ -132,8 +162,19 @@ export const CarForm = () => {
             required: "El campo es requerido",
           })}
           value={watch("type")}
-          isInvalid={!!errors.ability}
-          errorMessage={errors.ability?.message}
+          isInvalid={!!errors.type}
+          errorMessage={errors.type?.message}
+        />
+         <Input
+          type="text"
+          label="Tipo (Inglés)"
+          placeholder="Ingrese tipo"
+          {...register("type_en", {
+            required: "El campo es requerido",
+          })}
+          value={watch("type_en")}
+          isInvalid={!!errors.type_en}
+          errorMessage={errors.type_en?.message}
         />
         <Input
           type="text"
@@ -143,8 +184,19 @@ export const CarForm = () => {
             required: "El campo es requerido",
           })}
           value={watch("color")}
-          isInvalid={!!errors.ability}
-          errorMessage={errors.ability?.message}
+          isInvalid={!!errors.color}
+          errorMessage={errors.color?.message}
+        />
+        <Input
+          type="text"
+          label="Color (Inglés)"
+          placeholder="Ingrese color"
+          {...register("color_en", {
+            required: "El campo es requerido",
+          })}
+          value={watch("color_en")}
+          isInvalid={!!errors.color_en}
+          errorMessage={errors.color_en?.message}
         />
         <Textarea
           type="text"
@@ -154,6 +206,15 @@ export const CarForm = () => {
           value={watch("description")}
           isInvalid={!!errors.description}
           errorMessage={errors.description?.message}
+        />
+         <Textarea
+          type="text"
+          label="Descripcion (Inglés)"
+          placeholder="Ingrese descripcion"
+          {...register("description_en", { required: "El campo es requerido" })}
+          value={watch("description_en")}
+          isInvalid={!!errors.description_en}
+          errorMessage={errors.description_en?.message}
         />
         <Input
           type="text"
@@ -170,7 +231,12 @@ export const CarForm = () => {
           isInvalid={!!errors.transferprice}
           errorMessage={errors.transferprice?.message}
         />
-        <InputFile control={control} watch={watch} errors={errors} isRequired={!idItem} />
+        <InputFile
+          control={control}
+          watch={watch}
+          errors={errors}
+          isRequired={!idItem}
+        />
       </div>
       <CotentButtonForm state={loading} />
     </form>

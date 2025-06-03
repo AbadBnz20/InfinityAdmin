@@ -11,20 +11,20 @@ export const ListTypeOfExperience = async () => {
   return categoryCars as TypeOfExperience[];
 };
 
-export const InsertTypeOfExperience = async (name: string, id?: string) => {
+export const InsertTypeOfExperience = async (name: string, name_en:string, id?: string) => {
   const supabase = await createClient();
 
   let response;
   if (id) {
     response = await supabase
       .from("typeOfExperience")
-      .update({ name: name })
+      .update({ name: name,name_en:name_en }) 
       .eq("typeOfExperienceId", id)
       .select();
   } else {
     response = await supabase
       .from("typeOfExperience")
-      .insert([{ name: name }])
+      .insert([{ name: name, name_en:name_en }])
       .select();
   }
   const { error } = response;

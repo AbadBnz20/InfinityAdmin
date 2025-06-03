@@ -1,55 +1,32 @@
-"use client";
-
-
-import { GetState, InsertCity } from "@/actions/ctity.action";
-import { useModalStore } from "@/store/ModalStore";
-import { Input } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import { InsertCity } from "@/actions/ctity.action";
+import { State } from "@/interfaces/state-interfaces";
+import { Button, Input } from "@nextui-org/react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
-import { State } from "@/interfaces/state-interfaces";
-
-
 export interface CityForm {
   id?: string;
   name: string;
   stateId: string;
 }
 
+interface Props {
+  onClose: () => void;
+  handleChange: () => Promise<void>;
+  state: State[];
+}
 
- interface Props{
-  state:State[];
- }
-
-
-export const CityForm = ({state}:Props) => {
+export const CityFormAdmin = ({ onClose, handleChange, state }: Props) => {
   const {
     register,
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
     watch,
   } = useForm<CityForm>();
   const value = watch("stateId");
-
   const [loading, setLoading] = useState(false);
-  const { onClose, idItem } = useModalStore();
-
-  useEffect(() => {
-    const GetItem = async () => {
-      if (idItem) {
-        const resp = await GetState(idItem);
-        setValue("id", resp.cityId);
-        setValue("name", resp.name);
-        setValue("stateId", resp.stateId);
-      }
-    };
-
-    GetItem();
-  }, [idItem]);
 
   const OnSubmit = async (state: CityForm) => {
     setLoading(true);
@@ -61,6 +38,7 @@ export const CityForm = ({state}:Props) => {
           position: "top-right",
         });
       }
+      handleChange();
       onClose();
       toast.success(resp.message, {
         position: "top-right",
@@ -88,14 +66,26 @@ export const CityForm = ({state}:Props) => {
       />
 
       <SelectState
-       state={state}
+        state={state}
         control={control}
         name="stateId"
         register={register}
         errors={errors.stateId}
         value={value}
+        isfilter
       />
-      <CotentButtonForm state={loading} />
+      <div className="mt-5 flex justify-end flex-row col-span-2 gap-2">
+        <Button color="danger" variant="light" onPress={onClose}>
+          Cerrar
+        </Button>
+        <Button
+          isLoading={loading}
+          color="primary"
+          onClick={handleSubmit(OnSubmit)}
+        >
+          Guardar
+        </Button>
+      </div>
     </form>
   );
 };

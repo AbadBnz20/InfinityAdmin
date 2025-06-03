@@ -10,6 +10,7 @@ import { GetCategory, InsertCategory } from "@/actions/destinations.action";
 export interface State {
   id?: string;
   name: string;
+  name_en:string;
 }
 export const CategoryForm = () => {
   const {
@@ -28,6 +29,7 @@ export const CategoryForm = () => {
         const resp = await GetCategory(idItem);
         setValue("id", resp.categoryId);
         setValue("name", resp.name);
+        setValue("name_en", resp.name_en);
       }
     };
 
@@ -38,7 +40,7 @@ export const CategoryForm = () => {
   const OnSubmit = async (state: State) => {
     setLoading(true);
     try {
-      const resp = await InsertCategory(state.name, state.id);
+      const resp = await InsertCategory(state.name,state.name_en, state.id);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -67,6 +69,16 @@ export const CategoryForm = () => {
         value={watch("name")}
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
+      />
+      <Input
+        type="text"
+        label="Nombre (Inglés)"
+        placeholder="Ingrese nombre"
+        className="mt-3"
+        {...register("name_en", { required: "El campo es requerido" })}
+        value={watch("name_en")}
+        isInvalid={!!errors.name_en}
+        errorMessage={errors.name_en?.message}
       />
       <CotentButtonForm state={loading} />
     </form>

@@ -71,10 +71,10 @@ export const ImportButtonParther = () => {
             currentRow.push(String(cell.v));
           }
         }
-
         allRows.push(currentRow);
 
         if (row !== range.s.r) {
+
           const user: UserByExcel = {
             NroContract: currentRow[0],
             firstname: currentRow[1],
@@ -97,6 +97,7 @@ export const ImportButtonParther = () => {
             photo:
               "https://res.cloudinary.com/devz7obre/image/upload/v1743004842/pngtree-user-profile-avatar-vector-admin-png-image_5289693_szfiow.png",
             IdLocation: currentRow[18],
+            coOwnerTelephone: currentRow[19],
           };
 
           users.push(user);

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { GetAttractions, InsertAttractions } from "@/actions/attractions";
 import { useModalStore } from "@/store/ModalStore";
@@ -11,6 +11,7 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 interface StateForm {
   id?: string;
   name: string;
+  name_en: string;
 }
 export const AttractionsForm = () => {
   const {
@@ -29,6 +30,7 @@ export const AttractionsForm = () => {
         const resp = await GetAttractions(idItem);
         setValue("id", resp.attractionsId);
         setValue("name", resp.name);
+        setValue("name_en", resp.name_en);
       }
     };
 
@@ -38,7 +40,7 @@ export const AttractionsForm = () => {
   const OnSubmit = async (state: StateForm) => {
     setLoading(true);
     try {
-      const resp = await InsertAttractions(state.name, state.id);
+      const resp = await InsertAttractions(state.name,state.name_en, state.id);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -68,6 +70,16 @@ export const AttractionsForm = () => {
         value={watch("name")}
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
+      />
+      <Input
+        type="text"
+        label="Nombre (Inglés)"
+        placeholder="Ingrese nombre"
+        className="mt-3"
+        {...register("name_en", { required: "El campo es requerido" })}
+        value={watch("name_en")}
+        isInvalid={!!errors.name_en}
+        errorMessage={errors.name_en?.message}
       />
 
       <CotentButtonForm state={loading} />

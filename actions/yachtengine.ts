@@ -7,24 +7,31 @@ import { revalidatePath } from "next/cache";
 export const ListYachtEngine = async () => {
   const supabase = await createClient();
 
-  const { data: yachtEngine } = await supabase.from("motorYacht").select("*").eq("state", true);
+  const { data: yachtEngine } = await supabase
+    .from("motorYacht")
+    .select("*")
+    .eq("state", true);
   return yachtEngine as YachtEngine[];
 };
 
-export const InsertYachtEngine = async (name: string, id?: string) => {
+export const InsertYachtEngine = async (
+  name: string,
+  name_en: string,
+  id?: string
+) => {
   const supabase = await createClient();
 
   let response;
   if (id) {
     response = await supabase
       .from("motorYacht")
-      .update({ name: name })
+      .update({ name: name, name_en: name_en })
       .eq("motorYachtId", id)
       .select();
   } else {
     response = await supabase
       .from("motorYacht")
-      .insert([{ name: name }])
+      .insert([{ name: name, name_en: name_en }])
       .select();
   }
   const { error } = response;

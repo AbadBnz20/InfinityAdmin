@@ -23,6 +23,7 @@ interface Props<T extends FieldValues> {
   value: PathValue<T, Path<T>>;
   countries: Countries[];
   control: Control<T>;
+  isfilter?: boolean;
 }
 export const SelectCountry = <T extends FieldValues>({
   errors,
@@ -30,13 +31,16 @@ export const SelectCountry = <T extends FieldValues>({
   value,
   countries,
   control,
+  isfilter = false,
 }: Props<T>) => {
   const [data, setdata] = useState<Countries[]>([]);
   const [loading, setLoading] = useState(false);
   const { setCountry } = SelectStore();
   useEffect(() => {
     const GetCountry = async () => {
-      setCountry(value);
+      if (!isfilter) {
+        setCountry(value);
+      }
       setLoading(true);
       // const resp = await GetCountryActive();
       setTimeout(() => {
@@ -46,7 +50,7 @@ export const SelectCountry = <T extends FieldValues>({
     };
 
     GetCountry();
-  }, [value]);
+  }, [value,countries]);
 
   if (loading) {
     return (

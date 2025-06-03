@@ -41,7 +41,7 @@ export const SelectCategory = ({ register, errors, watch }: Props) => {
     return (
       <Select
         items={data}
-        label="Pais"
+        label="Categoria"
         placeholder="Seleccione Categoria"
         className="mt-3"
         defaultSelectedKeys={[value]}

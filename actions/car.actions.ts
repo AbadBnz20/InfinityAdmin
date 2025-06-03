@@ -70,6 +70,11 @@ interface CarData {
   type: string;
   brand: string;
   color: string;
+  model_en: string;
+  description_en: string;
+  type_en: string;
+  brand_en: string;
+  color_en: string;
   image?: string;
   url?: string;
 }
@@ -86,6 +91,11 @@ export const InsertCar = async (data: StateFormCard) => {
     type: data.type,
     brand: data.brand,
     color: data.color,
+    model_en: data.model_en,
+    description_en: data.description_en,
+    type_en: data.type_en,
+    brand_en: data.brand_en,
+    color_en: data.color_en,
   };
 
   if (data.carId) {

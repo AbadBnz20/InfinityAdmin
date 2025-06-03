@@ -1,19 +1,19 @@
-'use client';
-
-import { GetTypeOfExperience, InsertTypeOfExperience } from "@/actions/typeofexperience";
+"use client";
 import { useModalStore } from "@/store/ModalStore";
 import { Input } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
+import { EditPoints, GetPoints } from "@/actions/point.action";
 
-interface StateForm {
-  id?: string;
-  name: string;
-  name_en:string;
+export interface StateForm {
+  id: string;
+  points: string;
+  dollar: string;
 }
-export const TypeOfExperienceForm = () => {
+
+export const PointForm = () => {
   const {
     register,
     handleSubmit,
@@ -26,12 +26,10 @@ export const TypeOfExperienceForm = () => {
 
   useEffect(() => {
     const GetItem = async () => {
-      if (idItem) {
-        const resp = await GetTypeOfExperience(idItem);
-        setValue("id", resp.typeOfExperienceId);
-        setValue("name", resp.name);
-        setValue("name_en", resp.name_en);
-      }
+      const resp = await GetPoints();
+      setValue("id", resp.idPointDollar);
+      setValue("points", resp.points);
+      setValue("dollar", resp.dollar);
     };
 
     GetItem();
@@ -40,7 +38,8 @@ export const TypeOfExperienceForm = () => {
   const OnSubmit = async (state: StateForm) => {
     setLoading(true);
     try {
-      const resp = await InsertTypeOfExperience(state.name,state.name_en, state.id);
+
+      const resp = await EditPoints(state.points, state.dollar, state.id);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -59,27 +58,26 @@ export const TypeOfExperienceForm = () => {
     }
     setLoading(false);
   };
-
   return (
     <form onSubmit={handleSubmit(OnSubmit)}>
       <Input
         type="text"
-        label="Nombre"
-        placeholder="Ingrese nombre"
-        {...register("name", { required: "El campo es requerido" })}
-        value={watch("name")}
-        isInvalid={!!errors.name}
-        errorMessage={errors.name?.message}
+        label="Punto"
+        placeholder="Ingrese punto"
+        {...register("points", { required: "El campo es requerido" })}
+        value={watch("points")}
+        isInvalid={!!errors.points}
+        errorMessage={errors.points?.message}
       />
       <Input
         type="text"
-        label="Nombre (Inglés)"
-        placeholder="Ingrese nombre"
-        className="mt-3"
-        {...register("name_en", { required: "El campo es requerido" })}
-        value={watch("name_en")}
-        isInvalid={!!errors.name_en}
-        errorMessage={errors.name_en?.message}
+        label="Dolar ($)"
+        placeholder="Ingrese valor"
+        className="mt-2"
+        {...register("dollar", { required: "El campo es requerido" })}
+        value={watch("dollar")}
+        isInvalid={!!errors.dollar}
+        errorMessage={errors.dollar?.message}
       />
 
       <CotentButtonForm state={loading} />

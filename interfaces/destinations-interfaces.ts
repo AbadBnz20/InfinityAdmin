@@ -1,12 +1,14 @@
 export interface Category {
   categoryId: string;
   name: string;
+  name_en: string;
   state: boolean;
 }
 
 export interface Destination {
   origindestinationId: string;
   name: string;
+  name_en: string;
   description: string | null;
   registration_date: string;
   state: boolean;
@@ -20,12 +22,12 @@ export interface DestinationShip {
   description: string | null;
   registration_date: Date;
   state: boolean;
-  cityId:string;
-  city:City
+  cityId: string;
+  city: City;
 }
 
-interface City{
-  name:string
+interface City {
+  name: string;
 }
 
 export interface DestinationYach {
@@ -34,6 +36,5 @@ export interface DestinationYach {
   description: string | null;
   registration_date: Date;
   state: boolean;
-  cityId:string;
-
+  cityId: string;
 }

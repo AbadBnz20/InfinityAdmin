@@ -59,7 +59,6 @@ export const ListPackageYachts = async () => {
   const { data: yachtPackage, error } = await supabase
     .from("yachtPackage")
     .select("*, origin_destination_ship (name)").eq("state", true);
-    console.log(yachtPackage)
   return yachtPackage as packageyachts[];
 };
 
@@ -73,6 +72,8 @@ interface PackageYach {
   ubicationId: string;
   name: string;
   cabin:string;
+    name_en:string,
+    cabin_en:string,
 }
 
 export const InsertPackageYachts = async (data: StateFormPackageYachts) => {
@@ -86,7 +87,9 @@ export const InsertPackageYachts = async (data: StateFormPackageYachts) => {
     points:+data.points,
     ubicationId:data.ubicationId,
     cabin:data.cabin,
-    name:data.name
+    name:data.name,
+    name_en:data.name_en,
+    cabin_en:data.cabin_en,
   };
 
   if (data.yachtPackageId) {
@@ -112,7 +115,7 @@ export const InsertPackageYachts = async (data: StateFormPackageYachts) => {
   }
 
   const { error } = response;
-  console.log({data,error});
+  // console.log({data,error});
   if (error) {
     return {
       status: false,

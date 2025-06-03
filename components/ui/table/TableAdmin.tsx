@@ -11,11 +11,15 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
 } from "@nextui-org/react";
 import React, { useCallback, useMemo, useState } from "react";
 import { ModalConfirm } from "../modal/ModalConfirm";
 import { DeleteAdmin } from "@/actions/admin.action";
 import { IoSearchOutline } from "react-icons/io5";
+
+import { useModalStore } from "@/store/ModalStore";
+import { EditIcon } from "../icons/edit-icon";
 
 export const columns = [
   { name: "Nombre", uid: "firstName" },
@@ -37,8 +41,8 @@ interface TableProps {
   update: boolean;
   deleteRom: boolean;
 }
-export const TableAdmin = ({ items: rows, deleteRom }: TableProps) => {
-  //   const { onChanseItem, onOpen } = useModalStore();
+export const TableAdmin = ({ items: rows,update, deleteRom }: TableProps) => {
+    const { onChanseItem, onOpen } = useModalStore();
   const renderCell = useCallback((item: Admin, columnKey: React.Key) => {
     switch (columnKey) {
       case "firstName":
@@ -119,18 +123,18 @@ export const TableAdmin = ({ items: rows, deleteRom }: TableProps) => {
       case "actions":
         return (
           <div className="flex items-center gap-4">
-            {/* {update && (
+            {update && (
               <Tooltip content="Editar" color="primary">
                 <button
                   onClick={() => {
-                    onChanseItem(item.profileId);
+                    onChanseItem(item.IdAdmin);
                     onOpen();
                   }}
                 >
                   <EditIcon size={20} fill="#979797" />
                 </button>
               </Tooltip>
-            )} */}
+            )}
 
             {deleteRom && (
               <ModalConfirm idItem={item.IdAdmin} Ondelete={DeleteAdmin} />

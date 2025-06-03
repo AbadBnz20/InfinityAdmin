@@ -4,9 +4,12 @@ import { createClient } from "../utils/server";
 import { revalidatePath } from "next/cache";
 
 export const ListCountries = async () => {
-      const supabase = await createClient();
-  
-  const { data: country } = await supabase.from("country").select("*").eq("state", true);
+  const supabase = await createClient();
+
+  const { data: country } = await supabase
+    .from("country")
+    .select("*")
+    .eq("state", true);
   return country as Countries[];
 };
 
@@ -35,6 +38,7 @@ export const InsertCountry = async (name: string, id?: string) => {
   }
 
   revalidatePath("/countries");
+  revalidatePath("/users");
   return {
     status: true,
     message: id ? "Actualizado correctamente" : "Guardado correctamente",

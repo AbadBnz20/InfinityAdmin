@@ -70,6 +70,9 @@ export interface StateRoom {
   name: string;
   numberOfBeds: string;
   typeOfBed: string;
+  name_en: string;
+  typeOfBed_en: string;
+  detail_en: string;
   detail: string;
   numberOfGuests: string;
 }
@@ -84,6 +87,9 @@ export const InterRoom = async (data: StateFormRoom) => {
     typeOfBed: data.typeOfBed,
     detail: data.detail,
     numberOfGuests: data.numberOfGuests,
+    name_en: data.name_en,
+    typeOfBed_en: data.typeOfBed_en,
+    detail_en: data.detail_en,
   };
 
   if (data.IdRoom) {
@@ -109,7 +115,7 @@ export const InterRoom = async (data: StateFormRoom) => {
   }
 
   const { error } = response;
-  console.log({ data, error });
+  // console.log({ data, error });
   if (error) {
     return {
       status: false,
@@ -124,7 +130,6 @@ export const InterRoom = async (data: StateFormRoom) => {
       : "Guardado correctamente",
   };
 };
-
 
 export const GetPackageRoom = async (id: string) => {
   const supabase = await createClient();
@@ -141,26 +146,25 @@ export const GetPackageRoom = async (id: string) => {
   return data as Room;
 };
 
-
 export const DeleteYachsRoom = async (id: string) => {
-    const supabase = await createClient();
-  
-    const { error } = await supabase
-      .from("room")
-      .update({ state: false })
-      .eq("IdRoom", id)
-      .select();
-  
-    if (error) {
-      return {
-        status: false,
-        message: error.message,
-      };
-    }
-  
-    revalidatePath("/rooms");
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("room")
+    .update({ state: false })
+    .eq("IdRoom", id)
+    .select();
+
+  if (error) {
     return {
-      status: true,
-      message: "Eliminado correctamente",
+      status: false,
+      message: error.message,
     };
+  }
+
+  revalidatePath("/rooms");
+  return {
+    status: true,
+    message: "Eliminado correctamente",
   };
+};

@@ -16,7 +16,6 @@ export default async function AdminLayout({
   if (!user) {
     return redirect("/auth/login");
   }
-
   const permissions = await GetPermissionsByUser(user.id);
   console.log(permissions.length)
   if (permissions.length == 0) {

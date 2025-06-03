@@ -14,15 +14,16 @@ interface Props {
   title: string;
   size?:"md" | "xs" | "sm" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | undefined;
   active: boolean;
+  buttontitle?: string;
 }
 
-export const ModalMain = ({  children, title,size="md",active }: Props) => {
+export const ModalMain = ({  children, title,size="md",active,buttontitle='Registrar Nuevo' }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useModalStore();
 
   return (
     <>
      {
-      active && <Button color="primary" onPress={onOpen}>Registrar Nuevo</Button>
+      active && <Button color="primary" onPress={onOpen}>{buttontitle}</Button>
      }
       <Modal  isDismissable={false} size={size} scrollBehavior={'inside'} isOpen={isOpen} onOpenChange={onOpenChange}  hideCloseButton={true} >
         <ModalContent>

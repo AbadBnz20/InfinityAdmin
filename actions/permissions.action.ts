@@ -11,7 +11,6 @@ export const GetPermissionsByUser = async (id: string) => {
       .select("IdRole")
       .eq("IdUser", id)
       .single();
-
     if (role) {
       const { data: permisions, error: error3 } = await supabase
         .from("permissions")

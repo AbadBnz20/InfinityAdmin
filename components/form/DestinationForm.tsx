@@ -12,6 +12,7 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 export interface DestinationForm {
   id?: string;
   name: string;
+  name_en:string;
   categoryoriginId: string;
 }
 export const DestinationForm = () => {
@@ -31,6 +32,7 @@ export const DestinationForm = () => {
         const resp = await GetDestination(idItem);
         setValue("id", resp.origindestinationId);
         setValue("name", resp.name);
+        setValue("name_en", resp.name_en);
         setValue("categoryoriginId", resp.categoryoriginId);
       }
     };
@@ -44,6 +46,7 @@ export const DestinationForm = () => {
       const resp = await InsertDestination(
         state.name,
         state.categoryoriginId,
+        state.name_en,
         state.id
       );
       if (!resp.status) {
@@ -75,6 +78,16 @@ export const DestinationForm = () => {
         value={watch("name")}
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
+      />
+      <Input
+        type="text"
+        label="Nombre (Inglés)"
+        placeholder="Ingrese nombre"
+        className="mt-3"
+        {...register("name_en", { required: "El campo es requerido" })}
+        value={watch("name_en")}
+        isInvalid={!!errors.name_en}
+        errorMessage={errors.name_en?.message}
       />
 
       <SelectCategory register={register} errors={errors} watch={watch} />

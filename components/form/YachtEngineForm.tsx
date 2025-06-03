@@ -11,6 +11,7 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 interface StateForm {
   id?: string;
   name: string;
+  name_en:string;
 }
 export const YachtEngineForm = () => {
   const {
@@ -29,6 +30,7 @@ export const YachtEngineForm = () => {
         const resp = await GetYachtEngine(idItem);
         setValue("id", resp.motorYachtId);
         setValue("name", resp.name);
+        setValue("name_en", resp.name_en);
       }
     };
 
@@ -38,7 +40,7 @@ export const YachtEngineForm = () => {
   const OnSubmit = async (state: StateForm) => {
     setLoading(true);
     try {
-      const resp = await InsertYachtEngine(state.name, state.id);
+      const resp = await InsertYachtEngine(state.name,state.name_en, state.id);
       if (!resp.status) {
         onClose();
         return toast.error(resp.message, {
@@ -68,6 +70,16 @@ export const YachtEngineForm = () => {
         value={watch("name")}
         isInvalid={!!errors.name}
         errorMessage={errors.name?.message}
+      />
+      <Input
+        type="text"
+        label="Nombre (Inglés)"
+        placeholder="Ingrese nombre"
+        className="mt-3"
+        {...register("name_en", { required: "El campo es requerido" })}
+        value={watch("name_en")}
+        isInvalid={!!errors.name_en}
+        errorMessage={errors.name_en?.message}
       />
 
       <CotentButtonForm state={loading} />
