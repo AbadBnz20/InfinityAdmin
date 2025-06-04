@@ -35,7 +35,7 @@ export const InsertAdmin = async (useradmin: StateFormAdmin) => {
     const { data: user, error: error2 } =
       await supabase.auth.admin.updateUserById(profile?.IdUser, {
         email: useradmin.email,
-        phone: useradmin.phone,
+        phone:`${useradmin.code}${useradmin.phone}`,
         email_confirm: true,
         phone_confirm: true,
         user_metadata: usercookie,

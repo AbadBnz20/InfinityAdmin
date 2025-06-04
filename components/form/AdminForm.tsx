@@ -1,11 +1,9 @@
 "use client";
 
 import { useModalStore } from "@/store/ModalStore";
-import {
-  Input,
-} from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
-import {  useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Contries } from "@/data/countries";
 import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
@@ -33,6 +31,8 @@ import { Location } from "@/interfaces/location-interfaces";
 import { Position } from "@/interfaces/position-interfaces";
 import { Department } from "@/interfaces/departments-interfaces";
 import { Role } from "@/interfaces/roles-interfaces";
+// import { LocationData } from "@/interfaces/LocationData-interfaces";
+// import { ListLocationsAdmin } from "@/actions/locationData.action";
 
 export interface StateFormAdmin {
   id?: string;
@@ -52,14 +52,18 @@ export interface StateFormAdmin {
 }
 
 interface Props {
-   locations: Location[];
-    positions: Position[];
-     departaments: Department[];
-     roles:Role[];
+  locations: Location[];
+  positions: Position[];
+  departaments: Department[];
+  roles: Role[];
 }
 
-
-export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
+export const AdminForm = ({
+  locations,
+  positions,
+  departaments,
+  roles,
+}: Props) => {
   const {
     register,
     setValue,
@@ -78,6 +82,13 @@ export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
   const [stateData, setStateData] = useState<State[]>([]);
   const [cityData, setCityData] = useState<City[]>([]);
 
+  // const [alldata, setAlldata] = useState<LocationData>({
+  //   countries: [],
+  //   states: [],
+  //   cities: [],
+  // });
+
+
   useEffect(() => {
     const fetchData = async () => {
       await Promise.all([
@@ -88,7 +99,7 @@ export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
 
       if (idItem) {
         const resp = await GetAdmin(idItem);
-        // console.log(resp);
+        console.log(resp);
 
         setValue("id", resp.IdAdmin);
         setValue("firstname", resp.firstName);
@@ -115,10 +126,12 @@ export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
     };
 
     fetchData();
-    console.log('cambiado')
   }, []);
-
   const handleCountriesChange = async () => {
+
+    // const resplocation = await ListLocationsAdmin();
+    // console.log(resplocation)
+
     const resp = await GetCountryActive();
     // console.log(resp)
     setCountriesData(resp);
@@ -136,19 +149,17 @@ export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
     setCityData(resp);
   };
 
-
-    const SeachCode = (code: string) => {
-      const codeNumber = Contries.find((x) => x.key === code);
-      const codeNumberSplit = codeNumber?.code.split("+")[1];
-      return codeNumberSplit;
-    };
+  const SeachCode = (code: string) => {
+    const codeNumber = Contries.find((x) => x.key === code);
+    const codeNumberSplit = codeNumber?.code.split("+")[1];
+    return codeNumberSplit;
+  };
   const OnSubmit = async (state: StateFormAdmin) => {
     setLoading(true);
     try {
-        const codeNumber = SeachCode(state.code);
+      const codeNumber = SeachCode(state.code);
       state.code = codeNumber?.replace("+", "") || "";
-      console.log(state)
-
+      console.log(state);
 
       const resp = await InsertAdmin(state);
       if (!resp.status) {
@@ -247,7 +258,12 @@ export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
           />
         </div>
       </>
-      <SelectLocation locations={locations} register={register} errors={errors} watch={watch} />
+      <SelectLocation
+        locations={locations}
+        register={register}
+        errors={errors}
+        watch={watch}
+      />
       <div>
         <div className="flex items-center">
           <span className="">
@@ -334,11 +350,21 @@ export const AdminForm = ({locations,positions,departaments,roles}:Props) => {
       </div>
 
       <div className="mt-7">
-        <SelectPosition positions={positions} register={register} errors={errors} watch={watch} />
+        <SelectPosition
+          positions={positions}
+          register={register}
+          errors={errors}
+          watch={watch}
+        />
       </div>
-      <SelectDepartment departaments={departaments} register={register} errors={errors} watch={watch} />
+      <SelectDepartment
+        departaments={departaments}
+        register={register}
+        errors={errors}
+        watch={watch}
+      />
       <SelectRole
-      roles={roles}
+        roles={roles}
         name="IdRole"
         is_admin
         register={register}
