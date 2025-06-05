@@ -13,7 +13,7 @@ import { CotentButtonForm } from "../ui/contentButton/CotentButtonForm";
 import { SelectState } from "../select/SelectState";
 import { SelectPackage } from "../select/SelectPackage";
 import { SelectLanguage } from "../select/SelectLanguage";
-import { GetUser, InsertUsers } from "@/actions/user.action";
+import { GetStateActive, GetUser, InsertUsers } from "@/actions/user.action";
 import { toast } from "react-toastify";
 
 import { getLocalTimeZone, now, parseDate } from "@internationalized/date";
@@ -28,6 +28,12 @@ import { Languages } from "@/interfaces/languages-interfaces";
 import { SelectCodeProfile } from "../select/SelectCodeProfile";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { Contries } from "@/data/countries";
+import { GetCountryActive } from "@/actions/countries.action";
+import { GetCityActive } from "@/actions/destinationship";
+import { ModalAdminRegister } from "../ui/modal/ModalAdminRegister";
+import { CountriesFormAdmin } from "./CountriesFormAdmin";
+import { StateFormAdmin } from "./StateFormAdmin";
+import { CityFormAdmin } from "./CityFormAdmin";
 export interface StateFormUser {
   id?: string;
   sendEmail: boolean;
@@ -56,17 +62,12 @@ export interface StateFormUser {
 }
 
 export interface Props {
-  countries: Countries[];
-  states: State[];
-  cities: City[];
+
   packages: Packages[];
   languages: Languages[];
 }
 
 export const UserForm = ({
-  countries,
-  states,
-  cities,
   packages,
   languages,
 }: Props) => {
@@ -86,11 +87,19 @@ export const UserForm = ({
 
   const [loading, setLoading] = useState(false);
   const { onClose, idItem } = useModalStore();
+  const [countriesData, setCountriesData] = useState<Countries[]>([]);
+  const [stateData, setStateData] = useState<State[]>([]);
+  const [cityData, setCityData] = useState<City[]>([]);
   const value = watch("stateId");
   const valuecity = watch("IdCity");
   const valuecountry = watch("IdCountry");
   useEffect(() => {
     const GetItem = async () => {
+      await Promise.all([
+        handleCountriesChange(),
+        handleStateChange(),
+        handleCityChange(),
+      ]);
       if (idItem) {
         const resp = await GetUser(idItem);
 
@@ -140,6 +149,21 @@ export const UserForm = ({
     GetItem();
   }, [idItem]);
 
+  const handleCountriesChange = async () => {
+    const resp = await GetCountryActive();
+    setCountriesData(resp);
+  };
+
+  const handleStateChange = async () => {
+    const resp = await GetStateActive();
+    setStateData(resp);
+  };
+
+  const handleCityChange = async () => {
+    const resp = await GetCityActive();
+    setCityData(resp);
+  };
+
   const SeachCode = (code: string) => {
     const codeNumber = Contries.find((x) => x.key === code);
     const codeNumberSplit = codeNumber?.code.split("+")[1];
@@ -149,8 +173,6 @@ export const UserForm = ({
   const OnSubmit = async (state: StateFormUser) => {
     setLoading(true);
     console.log(state);
-
-
 
     const birthday = state.birthday.toDate(getLocalTimeZone()).toISOString();
     const DateSold = state.DateSold.toDate(getLocalTimeZone()).toISOString();
@@ -370,47 +392,130 @@ export const UserForm = ({
             errorMessage={errors.coOwnerTelephone?.message}
           />
         </div>
+        <div className="mt-7">
+          <Controller
+            name="birthday"
+            control={control}
+            rules={{ required: "La fecha de nacimiento es requerida" }}
+            render={({ field }) => (
+              <DatePicker
+                {...field}
+                showMonthAndYearPickers
+                label={"Fecha Nacimiento"}
+                isInvalid={!!errors.birthday}
+                errorMessage={errors.birthday?.message}
+              />
+            )}
+          />
+        </div>
 
-        <Controller
-          name="birthday"
-          control={control}
-          rules={{ required: "La fecha de nacimiento es requerida" }}
-          render={({ field }) => (
-            <DatePicker
-              {...field}
-              showMonthAndYearPickers
-              label={"Fecha Nacimiento"}
-              isInvalid={!!errors.birthday}
-              errorMessage={errors.birthday?.message}
-            />
-          )}
-        />
+        <div>
+          <div className="flex items-center">
+            <span className="">
+              <label className="text-[12px] ">
+                Deseas registrar Nuevo pais?{" "}
+              </label>
+            </span>
+            <div>
+              <ModalAdminRegister title="Registrar Nuevo País">
+                {(onClose) => (
+                  <CountriesFormAdmin
+                    onClose={onClose}
+                    handleCountriesChange={handleCountriesChange}
+                  />
+                )}
+              </ModalAdminRegister>
+            </div>
+          </div>
+          <SelectCountry
+            control={control}
+            countries={countriesData}
+            register={register}
+            errors={errors.IdCountry}
+            name="IdCountry"
+            value={valuecountry}
+          />
+        </div>
 
-        <SelectCountry
+        {/* <SelectCountry
           control={control}
           countries={countries}
           register={register}
           errors={errors.IdCountry}
           name="IdCountry"
           value={valuecountry}
-        />
+        /> */}
+        <div>
+          <div className="flex items-center">
+            <span className="">
+              <label className="text-[12px] ">
+                Deseas registrar Nuevo estado?{" "}
+              </label>
+            </span>
+            <div>
+              <ModalAdminRegister title="Registrar Nuevo Estado">
+                {(onClose) => (
+                  <StateFormAdmin
+                    onClose={onClose}
+                    handleChange={handleStateChange}
+                    countries={countriesData}
+                  />
+                )}
+              </ModalAdminRegister>
+            </div>
+          </div>
 
-        <SelectState
+          <SelectState
+            control={control}
+            state={stateData}
+            name="stateId"
+            register={register}
+            errors={errors.stateId}
+            value={value}
+          />
+        </div>
+        {/* <SelectState
           control={control}
           state={states}
           name="stateId"
           register={register}
           errors={errors.stateId}
           value={value}
-        />
-
-        <SelectCity
+        /> */}
+        <div>
+          <div className="flex items-center">
+            <span className="">
+              <label className="text-[12px] ">
+                Deseas registrar Nuevo ciudad?{" "}
+              </label>
+            </span>
+            <div>
+              <ModalAdminRegister title="Registrar Nuevo Ciudad">
+                {(onClose) => (
+                  <CityFormAdmin
+                    onClose={onClose}
+                    handleChange={handleCityChange}
+                    state={stateData}
+                  />
+                )}
+              </ModalAdminRegister>
+            </div>
+          </div>
+          <SelectCity
+            cities={cityData}
+            control={control}
+            name="IdCity"
+            error={errors.IdCity}
+            value={valuecity}
+          />
+        </div>
+        {/* <SelectCity
           cities={cities}
           control={control}
           name="IdCity"
           error={errors.IdCity}
           value={valuecity}
-        />
+        /> */}
         <SelectPackage
           packages={packages}
           register={register}
